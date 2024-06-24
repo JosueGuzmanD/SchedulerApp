@@ -1,15 +1,13 @@
 ﻿using SchedulerApp.Domain.Common.Enums;
 
-namespace SchedulerApp.Domain.Entities
+namespace SchedulerApp.Application.Dtos
 {
-    public class SchedulerConfiguration
+    public class SchedulerConfigurationDto
     {
         public SchedulerType Type { get; set; }
         public bool IsEnabled { get; set; }
         public DateTime Date { get; set; }
         public SchedulerFrequency Frequency { get; set; }
         public int DaysFrequency { get; set; }
-        public DateTime LimitStartDateTime { get; set; }
-        public DateTime LimitEndDateTime { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace SchedulerApp.Domain.Enums
+﻿namespace SchedulerApp.Domain.Common.Enums
 {
     public enum SchedulerType
     {
