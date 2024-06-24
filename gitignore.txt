@@ -1,0 +1,90 @@
+# Visual Studio
+.vscode/
+.vs/
+# Rider
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+# Mono Auto Generated Files
+mono_crash.*
+# Windows image file caches
+Thumbs.db
+Thumbs.db:encryptable
+# Folder config file
+Desktop.ini
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+# Build Results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+# Uncomment if you have tasks that create the project's static files in wwwroot
+#wwwroot/
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+# Auto-generated files
+Generated_Code/
+# Backup & report files from converting an old project file to a newer
+# format, or upgrading a project to a new version of .NET
+*.Backup
+*.Report
+# NUnit
+*.VisualState.xml
+TestResult.xml
+# Build results
+[Dd]ebug*/
+[Rr]elease*/
+x64/
+x86/
+[Aa][Rr][Mm]*/
+[Aa][Rr][Mm]64*/
+[Bb]uild/
+[Bb]uilds/
+# Microsoft Azure Web App publish settings
+#   *.PublishSettings
+# Microsoft Azure Web App publish settings
+#   *.azurePubxml
+# Local History for Visual Studio
+.localhistory
+# Windows image file caches
+Thumbs.db
+# Folder config file
+Desktop.ini
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+# Logs
+*.log
+# Azure Pipelines
+.azurite
+.vs/
+.vscode/
+## Environment and other settings
+.env
+*.env
+.env.*
+# Rider
+.idea/
+# Rider log directory
+.idea/
+# EditorConfig
+.editorconfig
+# Log files
+*.log

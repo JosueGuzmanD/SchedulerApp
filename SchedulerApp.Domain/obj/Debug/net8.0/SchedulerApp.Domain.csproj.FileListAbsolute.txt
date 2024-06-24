@@ -1,0 +1,11 @@
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\bin\Debug\net8.0\SchedulerApp.Domain.deps.json
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\bin\Debug\net8.0\SchedulerApp.Domain.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\bin\Debug\net8.0\SchedulerApp.Domain.pdb
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\obj\Debug\net8.0\SchedulerApp.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\obj\Debug\net8.0\SchedulerApp.Domain.AssemblyInfoInputs.cache
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\obj\Debug\net8.0\SchedulerApp.Domain.AssemblyInfo.cs
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\obj\Debug\net8.0\SchedulerApp.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\obj\Debug\net8.0\SchedulerApp.Domain.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\obj\Debug\net8.0\refint\SchedulerApp.Domain.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\obj\Debug\net8.0\SchedulerApp.Domain.pdb
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\obj\Debug\net8.0\ref\SchedulerApp.Domain.dll
