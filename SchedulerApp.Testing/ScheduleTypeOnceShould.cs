@@ -1,6 +1,8 @@
 ﻿using SchedulerApp.Application.Services;
 using SchedulerApp.Domain.Common.Enums;
 using SchedulerApp.Domain.Entities;
+using Xunit;
+using FluentAssertions;
 
 namespace SchedulerApp.Testing;
 
@@ -14,14 +16,20 @@ namespace SchedulerApp.Testing;
             {
                 Type = SchedulerType.Once,
                 IsEnabled = true,
-                Date = DateTime.Now,
+                Date = DateTime.Now.Date,
                 Frequency = 0,
                 DaysInterval = 0,
-                LimitEndDateTime = DateTime.Now,
-                LimitStartDateTime = DateTime.Now,
+                LimitEndDateTime = DateTime.Now.Date,
+                LimitStartDateTime = DateTime.Now.Date,
             };
+            var type = new ScheduleTypeOnce();
 
-            var output = new ScheduleTypeSelector().GetScheduleType;
+            var result = type.getNextExecutionTime(config);
+
+            result.ExecutionTime.Should().ContainSingle().Which.Should().Be(DateTime.Now.Date);
+
+            result.Description.Should().Contain($"Occurs Once. Schedule will be used on {DateTime.Now.Date} at {DateTime.Now.Hour} starting on {DateTime.Now.Date}");
+
 
         }
     }
