@@ -9,7 +9,7 @@ public class ScheduleTypeRecurring : IScheduleType
     {
         try
         {
-            if (configuration.IsEnabled == false)
+            if (!configuration.IsEnabled)
             {
                 throw new InvalidOperationException("You must enable a configuration type.");
             }
@@ -17,14 +17,14 @@ public class ScheduleTypeRecurring : IScheduleType
             var output = new ScheduleOutput()
             {
                 Description =
-                    $"Occurs every day. Schedule will be used on {configuration.Date} at {configuration.Date.Hour} starting on {configuration.LimitStartDateTime.Date}"
+                    $"Occurs every day. Schedule will be used on {configuration.StartDate} at {configuration.StartDate.Hour} starting on {configuration.LimitStartDateTime.Date}"
             };
 
             DateTime currentExecution = configuration.LimitStartDateTime;
             DateTime endDate = configuration.LimitEndDateTime == DateTime.MinValue ? DateTime.MaxValue : configuration.LimitEndDateTime;
             bool isInfinite = configuration.LimitEndDateTime == DateTime.MinValue;
 
-            int maxExecutions = 30;
+           const int maxExecutions = 30;
             int executionCount = 0;
 
             while (currentExecution <= endDate && executionCount < maxExecutions)

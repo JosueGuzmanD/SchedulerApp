@@ -6,7 +6,7 @@ namespace SchedulerApp.Domain.Entities;
     {
         public SchedulerType Type { get; set; }
         public bool IsEnabled { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime StartDate { get; set; }
         public SchedulerFrequency Frequency { get; set; }
         public int DaysInterval { get; set; }
         public DateTime LimitStartDateTime { get; set; }

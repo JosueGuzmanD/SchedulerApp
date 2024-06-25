@@ -15,10 +15,10 @@ public class ScheduleTypeOnce: IScheduleType
             }
             var output = new ScheduleOutput()
             {
-                Description = $"Occurs {configuration.Type}. Schedule will be used on {configuration.Date:dd/MM/yyyy} at {configuration.Date.Hour} starting on {configuration.LimitStartDateTime:dd/MM/yyyy}",
+                Description = $"Occurs {configuration.Type}. Schedule will be used on {configuration.StartDate:dd/MM/yyyy} at {configuration.StartDate.Hour} starting on {configuration.LimitStartDateTime:dd/MM/yyyy}",
                   
             };
-            output.ExecutionTime.Add(configuration.Date.Date);
+            output.ExecutionTime.Add(configuration.StartDate.Date);
 
             return output;
         }
