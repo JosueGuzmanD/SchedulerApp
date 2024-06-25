@@ -1,8 +1,9 @@
-﻿namespace SchedulerApp.Domain.Entities
-{
+﻿using System.Collections;
+namespace SchedulerApp.Domain.Entities;
+
     public class ScheduleOutput
     {
         public string Description { get; set; }
-        public DateTime ExecutionTime { get; set; }
+        public List<DateTime> ExecutionTime { get; set; }= new List<DateTime>();
     }
-}
+

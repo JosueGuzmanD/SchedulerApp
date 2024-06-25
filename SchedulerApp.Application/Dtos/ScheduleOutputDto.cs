@@ -1,9 +1,8 @@
 ﻿
-namespace SchedulerApp.Application.Dtos
+namespace SchedulerApp.Application.Dtos;
+
+public class ScheduleOutputDto
 {
-    internal class ScheduleOutputDto
-    {
-        public string Description { get; set; }
-        public DateTime ExecutionTime { get; set; }
-    }
+    public string Description { get; set; }
+    public List<DateTime> ExecutionTime { get; set; } = new List<DateTime>();
 }

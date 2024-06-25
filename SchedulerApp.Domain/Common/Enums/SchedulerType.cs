@@ -1,7 +1,8 @@
-﻿namespace SchedulerApp.Domain.Common.Enums
-{
+﻿namespace SchedulerApp.Domain.Common.Enums;
+
     public enum SchedulerType
     {
-        Once
+        Once,
+        Recurring
     }
-}
+

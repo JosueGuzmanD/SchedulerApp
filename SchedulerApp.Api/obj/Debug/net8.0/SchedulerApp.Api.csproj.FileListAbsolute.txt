@@ -30,3 +30,8 @@ C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Api\obj\Debug\net8.0\ref
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Api\obj\Debug\net8.0\SchedulerApp.Api.pdb
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Api\obj\Debug\net8.0\SchedulerApp.Api.genruntimeconfig.cache
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Api\obj\Debug\net8.0\ref\SchedulerApp.Api.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Api\bin\Debug\net8.0\SchedulerApp.Application.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Api\bin\Debug\net8.0\SchedulerApp.Domain.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Api\bin\Debug\net8.0\SchedulerApp.Application.pdb
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Api\bin\Debug\net8.0\SchedulerApp.Domain.pdb
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Api\obj\Debug\net8.0\SchedulerApp.Api.sourcelink.json

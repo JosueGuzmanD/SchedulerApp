@@ -9,3 +9,8 @@ C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Application\obj\Debug\ne
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Application\obj\Debug\net8.0\refint\SchedulerApp.Application.dll
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Application\obj\Debug\net8.0\SchedulerApp.Application.pdb
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Application\obj\Debug\net8.0\ref\SchedulerApp.Application.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Application\bin\Debug\net8.0\SchedulerApp.Domain.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Application\bin\Debug\net8.0\SchedulerApp.Domain.pdb
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Application\obj\Debug\net8.0\SchedulerApp.Application.csproj.AssemblyReference.cache
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Application\obj\Debug\net8.0\SchedulerApp.Application.sourcelink.json
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Application\obj\Debug\net8.0\Schedule.FB76BBEE.Up2Date

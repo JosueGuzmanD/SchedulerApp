@@ -9,3 +9,4 @@ C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\obj\Debug\net8.0\
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\obj\Debug\net8.0\refint\SchedulerApp.Domain.dll
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\obj\Debug\net8.0\SchedulerApp.Domain.pdb
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\obj\Debug\net8.0\ref\SchedulerApp.Domain.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Domain\obj\Debug\net8.0\SchedulerApp.Domain.sourcelink.json

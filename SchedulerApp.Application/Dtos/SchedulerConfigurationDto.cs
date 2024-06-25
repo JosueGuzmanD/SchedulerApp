@@ -1,7 +1,7 @@
 ﻿using SchedulerApp.Domain.Common.Enums;
 
-namespace SchedulerApp.Application.Dtos
-{
+namespace SchedulerApp.Application.Dtos;
+
     public class SchedulerConfigurationDto
     {
         public SchedulerType Type { get; set; }
@@ -10,4 +10,4 @@ namespace SchedulerApp.Application.Dtos
         public SchedulerFrequency Frequency { get; set; }
         public int DaysFrequency { get; set; }
     }
-}
+
