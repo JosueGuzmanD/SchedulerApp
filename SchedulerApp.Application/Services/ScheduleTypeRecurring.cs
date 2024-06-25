@@ -9,7 +9,11 @@ public class ScheduleTypeRecurring : IScheduleType
     {
         try
         {
-            
+            if (configuration.IsEnabled == false)
+            {
+                throw new InvalidOperationException("You must enable a configuration type.");
+            }
+
             var output = new ScheduleOutput()
             {
                 Description =

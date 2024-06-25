@@ -1,0 +1,12 @@
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Infrastructure\bin\Debug\net8.0\SchedulerApp.Infrastructure.deps.json
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Infrastructure\bin\Debug\net8.0\SchedulerApp.Infrastructure.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Infrastructure\bin\Debug\net8.0\SchedulerApp.Infrastructure.pdb
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Infrastructure\obj\Debug\net8.0\SchedulerApp.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Infrastructure\obj\Debug\net8.0\SchedulerApp.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Infrastructure\obj\Debug\net8.0\SchedulerApp.Infrastructure.AssemblyInfo.cs
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Infrastructure\obj\Debug\net8.0\SchedulerApp.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Infrastructure\obj\Debug\net8.0\SchedulerApp.Infrastructure.sourcelink.json
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Infrastructure\obj\Debug\net8.0\SchedulerApp.Infrastructure.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Infrastructure\obj\Debug\net8.0\refint\SchedulerApp.Infrastructure.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Infrastructure\obj\Debug\net8.0\SchedulerApp.Infrastructure.pdb
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Infrastructure\obj\Debug\net8.0\ref\SchedulerApp.Infrastructure.dll

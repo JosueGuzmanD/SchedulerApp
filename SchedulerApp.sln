@@ -3,23 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerApp.Domain", "SchedulerApp.Domain\SchedulerApp.Domain.csproj", "{CEE013F8-DFA5-4A5A-9309-BA32668C61D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerApp.Domain", "SchedulerApp.Domain\SchedulerApp.Domain.csproj", "{CEE013F8-DFA5-4A5A-9309-BA32668C61D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerApp.Infrastructure", "SchedulerApp.Infrastructure\SchedulerApp.Infrastructure.csproj", "{5FB5FE51-ED6C-4447-96A4-D043FD66A1C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerApp.Infrastructure", "SchedulerApp.Infrastructure\SchedulerApp.Infrastructure.csproj", "{5FB5FE51-ED6C-4447-96A4-D043FD66A1C4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4271A0CA-64FF-441C-BBEB-9516AC4CF16A} = {4271A0CA-64FF-441C-BBEB-9516AC4CF16A}
 		{CEE013F8-DFA5-4A5A-9309-BA32668C61D1} = {CEE013F8-DFA5-4A5A-9309-BA32668C61D1}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerApp.Application", "SchedulerApp.Application\SchedulerApp.Application.csproj", "{4271A0CA-64FF-441C-BBEB-9516AC4CF16A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerApp.Application", "SchedulerApp.Application\SchedulerApp.Application.csproj", "{4271A0CA-64FF-441C-BBEB-9516AC4CF16A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{CEE013F8-DFA5-4A5A-9309-BA32668C61D1} = {CEE013F8-DFA5-4A5A-9309-BA32668C61D1}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerApp.Api", "SchedulerApp.Api\SchedulerApp.Api.csproj", "{0C20A793-8F5F-4FBA-BBF1-1DFFD7264494}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerApp.Api", "SchedulerApp.Api\SchedulerApp.Api.csproj", "{0C20A793-8F5F-4FBA-BBF1-1DFFD7264494}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4271A0CA-64FF-441C-BBEB-9516AC4CF16A} = {4271A0CA-64FF-441C-BBEB-9516AC4CF16A}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerApp.Testing", "SchedulerApp.Testing\SchedulerApp.Testing.csproj", "{22D79FE6-3E8A-4D24-BFFF-07FF74EA1940}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{0C20A793-8F5F-4FBA-BBF1-1DFFD7264494}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C20A793-8F5F-4FBA-BBF1-1DFFD7264494}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C20A793-8F5F-4FBA-BBF1-1DFFD7264494}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22D79FE6-3E8A-4D24-BFFF-07FF74EA1940}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22D79FE6-3E8A-4D24-BFFF-07FF74EA1940}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22D79FE6-3E8A-4D24-BFFF-07FF74EA1940}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22D79FE6-3E8A-4D24-BFFF-07FF74EA1940}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

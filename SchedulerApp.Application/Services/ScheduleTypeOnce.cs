@@ -9,6 +9,10 @@ public class ScheduleTypeOnce: IScheduleType
     {
         try
         {
+            if (configuration.IsEnabled == false)
+            {
+                throw new InvalidOperationException("You must enable a configuration type.");
+            }
             var output = new ScheduleOutput()
             {
                 Description = $"Occurs {configuration.Type}. Schedule will be used on {configuration.Date:dd/MM/yyyy} at {configuration.Date.Hour} starting on {configuration.LimitStartDateTime:dd/MM/yyyy}",
