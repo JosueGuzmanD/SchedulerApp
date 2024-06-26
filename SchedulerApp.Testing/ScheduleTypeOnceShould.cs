@@ -8,7 +8,7 @@ namespace SchedulerApp.Testing;
     public class ScheduleTypeOnceShould
     {
         [Fact]
-        public void GetNextExecutionTime_ShouldReturnSingleExecution()
+        public void GetNextExecutionTime_ConfigurationEnabled_ShouldReturnSingleExecution()
         {
             var fixedDate = new DateTime(2025, 12, 25, 10, 0, 0);
 
@@ -17,15 +17,17 @@ namespace SchedulerApp.Testing;
             {
                 Type = SchedulerType.Once,
                 IsEnabled = true,
+                Frequency = SchedulerFrequency.Daily,
                 StartDate = fixedDate,
-                Frequency = 0,
-                DaysInterval = 0,
                 LimitEndDateTime = fixedDate.Date,
                 LimitStartDateTime = fixedDate.Date,
             };
             var type = new ScheduleTypeOnce();
+            //Act
 
             var result = type.getNextExecutionTime(config);
+
+            //Assert
 
             result.ExecutionTime.Should().ContainSingle().Which.Should().Be(fixedDate.Date);
 
@@ -33,43 +35,81 @@ namespace SchedulerApp.Testing;
     }
 
     [Fact]
-    public void GetNextExecutionTime_ShouldThrowExceptionWhenConfigurationNotEnabled()
+    public void GetNextExecutionTime_ConfigurationDisabled_ShouldThrowException()
     {
+        //Arrange
         var config = new SchedulerConfiguration()
         {
             Type = SchedulerType.Once,
             IsEnabled = false,
+            Frequency = SchedulerFrequency.Daily,
             StartDate = DateTime.Now.Date,
-            Frequency = 0,
-            DaysInterval = 0,
             LimitEndDateTime = DateTime.Now.Date,
             LimitStartDateTime = DateTime.Now.Date,
         };
 
         var type = new ScheduleTypeOnce();
 
+        //Act
         Action act = () => type.getNextExecutionTime(config);
 
+        //Assert
         act.Should().Throw<InvalidOperationException>().WithMessage("You must enable a configuration type.");
     }
 
     [Fact]
-    public void GetNextExecutionTime_ShouldHandlePastStartDate()
+    public void GetNextExecutionTime_StartDateInPast_ShouldReturnSingleExecution()
     {
-        var pastDate = new DateTime(2025, 06, 10, 10, 0, 0);
+        //Arrange
+        var pastDate = new DateTime(2024, 06, 10, 10, 0, 0);
         var config = new SchedulerConfiguration()
         {
             Type = SchedulerType.Once,
             IsEnabled = true,
+            Frequency = SchedulerFrequency.Daily,
             StartDate = pastDate,
-            DaysInterval = 0,
             LimitEndDateTime = pastDate.Date,
             LimitStartDateTime = pastDate.Date
         };
 
+        var type= new ScheduleTypeOnce();
 
+        //Act
+        var result= type.getNextExecutionTime(config);
+
+        //Assert
+        result.ExecutionTime.Should().ContainSingle()
+            .Which.Should().Be(pastDate.Date);
+
+        result.Description.Should()
+            .Be($"Occurs Once. Schedule will be used on {pastDate:dd/MM/yyyy} at {pastDate.Hour} starting on {pastDate:dd/MM/yyyy}");
     }
 
+    [Fact]
+    public void GetNextExecutionTime_StartDateInFuture_ShouldReturnSingleExecution()
+    {
+        //Arrange
+        DateTime futureDate = new DateTime(2025, 12, 12, 10, 0,0);
 
+        var config = new SchedulerConfiguration()
+        {
+            IsEnabled = true,
+            Type = SchedulerType.Once,
+            Frequency = SchedulerFrequency.Daily,
+            StartDate = futureDate,
+            LimitStartDateTime = futureDate.AddDays(2).Date,
+            LimitEndDateTime = futureDate.AddDays(2).Date
+        };
+        var type= new ScheduleTypeOnce();
+
+        //Act
+        var result=type.getNextExecutionTime(config);
+
+        //Assert
+        result.ExecutionTime.Should().ContainSingle().Which.Should().Be(futureDate.Date);
+
+        result.Description.Should()
+            .Be($"Occurs Once. Schedule will be used on {futureDate:dd/MM/yyyy} at {futureDate.Hour} starting on {config.LimitStartDateTime:dd/MM/yyyy}");
+    }
 }
 
