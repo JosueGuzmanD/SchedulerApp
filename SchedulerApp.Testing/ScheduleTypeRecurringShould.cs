@@ -124,7 +124,8 @@ namespace SchedulerApp.Testing;
             };
 
             type.ExecutionTime.Should().BeEquivalentTo(expectedDates);
-            type.Description.Should().Contain("Execution times are capped at 3 entries.");
+            type.Description.Should().Contain($"Occurs every day. Schedule will be used on {startingDate:dd/MM/yy} at {startingDate:HH:mm} starting on {startingDate:dd/MM/yy}. Execution times are capped at 3 entries.");
+
 
 
     }

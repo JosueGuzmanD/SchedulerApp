@@ -1,9 +1,9 @@
 ﻿using SchedulerApp.Domain.Entities;
 using SchedulerApp.Domain.Interfaces;
 
-namespace SchedulerApp.Application.Services;
+namespace SchedulerApplication.Services.Implementations;
 
-public class ScheduleTypeOnce: IScheduleType
+public class ScheduleTypeOnce : IScheduleType
 {
     public ScheduleOutput getNextExecutionTime(SchedulerConfiguration configuration)
     {
@@ -16,7 +16,7 @@ public class ScheduleTypeOnce: IScheduleType
             var output = new ScheduleOutput()
             {
                 Description = $"Occurs {configuration.Type}. Schedule will be used on {configuration.StartDate:dd/MM/yyyy} at {configuration.StartDate.Hour} starting on {configuration.LimitStartDateTime:dd/MM/yyyy}",
-                  
+
             };
             output.ExecutionTime.Add(configuration.StartDate.Date);
 

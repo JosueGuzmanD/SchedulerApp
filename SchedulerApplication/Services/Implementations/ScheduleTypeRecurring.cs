@@ -1,7 +1,7 @@
 ﻿using SchedulerApp.Domain.Entities;
 using SchedulerApp.Domain.Interfaces;
 
-namespace SchedulerApp.Application.Services;
+namespace SchedulerApplication.Services.Implementations;
 
 public class ScheduleTypeRecurring : IScheduleType
 {
@@ -16,13 +16,13 @@ public class ScheduleTypeRecurring : IScheduleType
 
             var output = new ScheduleOutput()
             {
-                Description = $"Occurs every day. Schedule will be used on {configuration.StartDate:dd/MM/yy} at {configuration.StartDate.Hour} starting on {configuration.LimitStartDateTime.Date:dd/MM/yy}"
+                Description = $"Occurs every day. Schedule will be used on {configuration.StartDate:dd/MM/yy} at {configuration.StartDate.Hour} starting on {configuration.LimitStartDateTime.Date:dd/MM/yy}."
             };
 
             DateTime currentExecution = configuration.StartDate;
             DateTime endDate = configuration.LimitEndDateTime == DateTime.MinValue ? DateTime.MaxValue : configuration.LimitEndDateTime;
 
-           const int maxExecutions = 3;
+            const int maxExecutions = 3;
             int executionCount = 0;
 
             while (currentExecution <= endDate && executionCount < maxExecutions)
@@ -36,7 +36,7 @@ public class ScheduleTypeRecurring : IScheduleType
                 currentExecution = currentExecution.AddDays(configuration.DaysInterval);
             }
 
-            if (configuration.LimitEndDateTime == DateTime.MinValue && executionCount == maxExecutions)
+            if (executionCount == maxExecutions)
             {
                 output.Description += ". Execution times are capped at 3 entries.";
             }
