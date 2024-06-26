@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerApp.Testing", "SchedulerApp.Testing\SchedulerApp.Testing.csproj", "{22D79FE6-3E8A-4D24-BFFF-07FF74EA1940}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2E20F05C-FAF7-416A-8405-915EBB0528CF} = {2E20F05C-FAF7-416A-8405-915EBB0528CF}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerApplication", "SchedulerApplication\SchedulerApplication.csproj", "{2E20F05C-FAF7-416A-8405-915EBB0528CF}"
 EndProject

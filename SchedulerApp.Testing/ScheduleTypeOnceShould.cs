@@ -1,7 +1,7 @@
-﻿using SchedulerApp.Application.Services;
-using SchedulerApp.Domain.Common.Enums;
+﻿using SchedulerApp.Domain.Common.Enums;
 using SchedulerApp.Domain.Entities;
 using FluentAssertions;
+using SchedulerApplication.Services.Implementations;
 
 namespace SchedulerApp.Testing;
 

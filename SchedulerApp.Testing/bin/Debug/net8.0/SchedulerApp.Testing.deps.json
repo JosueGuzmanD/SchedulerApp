@@ -10,7 +10,7 @@
         "dependencies": {
           "FluentAssertions": "6.12.0",
           "Microsoft.NET.Test.Sdk": "17.8.0",
-          "SchedulerApp.Application": "1.0.0",
+          "SchedulerApplication": "1.0.0",
           "coverlet.collector": "6.0.0",
           "xunit": "2.5.3",
           "xunit.runner.visualstudio": "2.5.3"
@@ -1060,17 +1060,9 @@
         }
       },
       "xunit.runner.visualstudio/2.5.3": {},
-      "SchedulerApp.Application/1.0.0": {
-        "dependencies": {
-          "SchedulerApp.Domain": "1.0.0"
-        },
+      "SchedulerApplication/1.0.0": {
         "runtime": {
-          "SchedulerApp.Application.dll": {}
-        }
-      },
-      "SchedulerApp.Domain/1.0.0": {
-        "runtime": {
-          "SchedulerApp.Domain.dll": {}
+          "SchedulerApplication.dll": {}
         }
       }
     }
@@ -1725,12 +1717,7 @@
       "path": "xunit.runner.visualstudio/2.5.3",
       "hashPath": "xunit.runner.visualstudio.2.5.3.nupkg.sha512"
     },
-    "SchedulerApp.Application/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "SchedulerApp.Domain/1.0.0": {
+    "SchedulerApplication/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

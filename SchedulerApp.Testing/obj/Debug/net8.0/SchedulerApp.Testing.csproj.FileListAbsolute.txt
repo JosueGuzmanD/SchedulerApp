@@ -91,10 +91,6 @@ C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\zh-Hant\Microsoft.TestPlatform.CrossPlatEngine.resources.dll
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\zh-Hant\Microsoft.VisualStudio.TestPlatform.Common.resources.dll
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
-C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\SchedulerApp.Application.dll
-C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\SchedulerApp.Domain.dll
-C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\SchedulerApp.Application.pdb
-C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\SchedulerApp.Domain.pdb
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\obj\Debug\net8.0\SchedulerApp.Testing.csproj.AssemblyReference.cache
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\obj\Debug\net8.0\SchedulerApp.Testing.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\obj\Debug\net8.0\SchedulerApp.Testing.AssemblyInfoInputs.cache
@@ -107,3 +103,5 @@ C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\obj\Debug\net8.0
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\obj\Debug\net8.0\SchedulerApp.Testing.pdb
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\obj\Debug\net8.0\SchedulerApp.Testing.genruntimeconfig.cache
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\obj\Debug\net8.0\ref\SchedulerApp.Testing.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\SchedulerApplication.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\SchedulerApplication.pdb

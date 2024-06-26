@@ -16,10 +16,10 @@ public class ScheduleTypeRecurring : IScheduleType
 
             var output = new ScheduleOutput()
             {
-                Description = $"Occurs every day. Schedule will be used on {configuration.StartDate:dd/MM/yy} at {configuration.StartDate.Hour} starting on {configuration.LimitStartDateTime.Date:dd/MM/yy}."
+                Description = $"Occurs every day. Schedule will be used on {configuration.StartDate:dd/MM/yy} at {configuration.StartDate.Hour} starting on {configuration.LimitStartDateTime.Date:dd/MM/yy}"
             };
 
-            DateTime currentExecution = configuration.StartDate;
+            DateTime currentExecution = configuration.StartDate.Date;
             DateTime endDate = configuration.LimitEndDateTime == DateTime.MinValue ? DateTime.MaxValue : configuration.LimitEndDateTime;
 
             const int maxExecutions = 3;
