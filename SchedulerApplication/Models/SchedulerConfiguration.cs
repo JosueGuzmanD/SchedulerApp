@@ -1,4 +1,5 @@
 ﻿using SchedulerApp.Domain.Common.Enums;
+using SchedulerApplication.ValueObjects;
 
 namespace SchedulerApp.Domain.Entities;
 
@@ -6,10 +7,10 @@ namespace SchedulerApp.Domain.Entities;
     {
         public SchedulerType Type { get; set; }
         public bool IsEnabled { get; set; }
-        public DateTime StartDate { get; set; }
-        public SchedulerFrequency Frequency { get; set; }
-        public int DaysInterval { get; set; }
-        public DateTime LimitStartDateTime { get; set; }
-        public DateTime LimitEndDateTime { get; set; }
-    }
+        public DateTime CurrentDate { get; set; }
+        public Frequency Frequency { get; set; }
+        public int DaysInterval { get; set; } 
+        public TimeInterval TimeInterval { get; set; }
+
+}
 

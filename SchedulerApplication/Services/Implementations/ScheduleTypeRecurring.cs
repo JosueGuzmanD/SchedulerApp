@@ -1,52 +1,37 @@
 ﻿using SchedulerApp.Domain.Entities;
-using SchedulerApp.Domain.Interfaces;
 
 namespace SchedulerApplication.Services.Implementations;
 
-public class ScheduleTypeRecurring : IScheduleType
+public class ScheduleTypeRecurring : ScheduleTypeBase
 {
-    public ScheduleOutput getNextExecutionTime(SchedulerConfiguration configuration)
+    public override ScheduleOutput getNextExecutionTime(SchedulerConfiguration configuration)
     {
-        try
+        ValidateConfiguration(configuration);
+
+        DateTime nextExecutionTime = CalculateNextExecutionTime(configuration);
+        return CreateScheduleOutput(configuration, nextExecutionTime);
+    }
+
+    private DateTime CalculateNextExecutionTime(SchedulerConfiguration configuration)
+    {
+        if (configuration.DaysInterval <= 0)
         {
-            if (!configuration.IsEnabled)
-            {
-                throw new InvalidOperationException("You must enable a configuration type.");
-            }
-
-            var output = new ScheduleOutput()
-            {
-                Description = $"Occurs every day. Schedule will be used on {configuration.StartDate:dd/MM/yy} at {configuration.StartDate.Hour} starting on {configuration.LimitStartDateTime.Date:dd/MM/yy}"
-            };
-
-            DateTime currentExecution = configuration.StartDate.Date;
-            DateTime endDate = configuration.LimitEndDateTime == DateTime.MinValue ? DateTime.MaxValue : configuration.LimitEndDateTime;
-
-            const int maxExecutions = 3;
-            int executionCount = 0;
-
-            while (currentExecution <= endDate && executionCount < maxExecutions)
-            {
-                if (currentExecution >= configuration.LimitStartDateTime)
-                {
-                    output.ExecutionTime.Add(currentExecution);
-                    executionCount++;
-                }
-
-                currentExecution = currentExecution.AddDays(configuration.DaysInterval);
-            }
-
-            if (executionCount == maxExecutions)
-            {
-                output.Description += ". Execution times are capped at 3 entries.";
-            }
-
-            return output;
+            throw new ArgumentException("DaysInterval must be greater than 0", nameof(configuration.DaysInterval));
         }
-        catch (Exception e)
+
+        DateTime currentExecution = configuration.CurrentDate;
+        DateTime endDate = configuration.TimeInterval.LimitEndDateTime == DateTime.MinValue ? DateTime.MaxValue : configuration.TimeInterval.LimitEndDateTime;
+
+        while (currentExecution <= endDate)
         {
-            Console.WriteLine(e);
-            throw;
+            if (currentExecution > configuration.CurrentDate)
+            {
+                return currentExecution;
+            }
+
+            currentExecution = currentExecution.AddDays(configuration.DaysInterval);
         }
+
+        throw new InvalidOperationException("No valid execution time found within the provided interval.");
     }
 }

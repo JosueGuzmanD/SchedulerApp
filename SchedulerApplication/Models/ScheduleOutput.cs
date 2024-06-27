@@ -1,9 +1,8 @@
-﻿using System.Collections;
-namespace SchedulerApp.Domain.Entities;
+﻿namespace SchedulerApp.Domain.Entities;
 
-    public class ScheduleOutput
+    public struct ScheduleOutput
     {
         public string Description { get; set; }
-        public List<DateTime> ExecutionTime { get; set; }= new List<DateTime>();
+        public DateTime ExecutionTime { get; set; }
     }
 

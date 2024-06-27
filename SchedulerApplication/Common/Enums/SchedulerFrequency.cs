@@ -1,6 +1,6 @@
 ﻿namespace SchedulerApp.Domain.Common.Enums;
 
-    public enum SchedulerFrequency
+    public enum Frequency
     {
         Daily
     }

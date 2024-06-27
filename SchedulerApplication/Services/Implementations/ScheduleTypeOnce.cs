@@ -1,31 +1,12 @@
 ﻿using SchedulerApp.Domain.Entities;
-using SchedulerApp.Domain.Interfaces;
 
 namespace SchedulerApplication.Services.Implementations;
 
-public class ScheduleTypeOnce : IScheduleType
+public class ScheduleTypeOnce : ScheduleTypeBase
 {
-    public ScheduleOutput getNextExecutionTime(SchedulerConfiguration configuration)
+    public override ScheduleOutput getNextExecutionTime(SchedulerConfiguration configuration)
     {
-        try
-        {
-            if (configuration.IsEnabled == false)
-            {
-                throw new InvalidOperationException("You must enable a configuration type.");
-            }
-            var output = new ScheduleOutput()
-            {
-                Description = $"Occurs {configuration.Type}. Schedule will be used on {configuration.StartDate:dd/MM/yyyy} at {configuration.StartDate.Hour} starting on {configuration.LimitStartDateTime:dd/MM/yyyy}",
-
-            };
-            output.ExecutionTime.Add(configuration.StartDate.Date);
-
-            return output;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+        ValidateConfiguration(configuration);
+        return CreateScheduleOutput(configuration, configuration.CurrentDate);
     }
 }
