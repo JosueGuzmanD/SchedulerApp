@@ -1,9 +1,9 @@
 ﻿using SchedulerApp.Domain.Entities;
 
-namespace SchedulerApp.Domain.Interfaces;
+namespace SchedulerApplication.Services.Interfaces;
 
-    public interface IScheduleType
-    {
-        ScheduleOutput getNextExecutionTime(SchedulerConfiguration configuration);
-    }
+public interface IScheduleType
+{
+    List<ScheduleOutput> GetNextExecutionTimes(SchedulerConfiguration configuration);
+}
 

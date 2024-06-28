@@ -3,7 +3,7 @@
     public class TimeInterval : IEquatable<TimeInterval>
     {
         public DateTime LimitStartDateTime { get;}
-        public DateTime LimitEndDateTime { get;}
+        public DateTime? LimitEndDateTime { get;}
 
         public TimeInterval(DateTime limitStartDateTime, DateTime limitEndDateTime)
         {

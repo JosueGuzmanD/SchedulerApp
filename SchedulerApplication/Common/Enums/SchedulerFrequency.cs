@@ -2,6 +2,7 @@
 
     public enum Frequency
     {
-        Daily
+        Daily,
+        Weekly
     }
 

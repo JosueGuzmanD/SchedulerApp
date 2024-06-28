@@ -1,8 +1,9 @@
 ﻿using SchedulerApp.Domain.Common.Enums;
-using SchedulerApp.Domain.Interfaces;
+using SchedulerApplication.Services.Interfaces;
+using SchedulerApplication.Services.ScheduleTypes;
 
-namespace SchedulerApplication.Services.Implementations;
-
+namespace SchedulerApplication.Services.Selectors;
+/*
 public class ScheduleTypeSelector
 {
     public IScheduleType GetScheduleType(SchedulerType type)
@@ -18,3 +19,4 @@ public class ScheduleTypeSelector
     }
 }
 
+*/
