@@ -1,11 +1,11 @@
-﻿using SchedulerApp.Domain.Common.Enums;
+﻿using SchedulerApplication.Common.Enums;
 
-namespace SchedulerApp.Domain.Entities;
+namespace SchedulerApplication.Models;
 
-    public abstract class SchedulerConfiguration
-    {
-        public SchedulerType Type { get; set; }
-        public bool IsEnabled { get; set; }
-        public DateTime CurrentDate { get; set; }
-    }
+public abstract class SchedulerConfiguration
+{
+    public SchedulerType Type { get; set; }
+    public bool IsEnabled { get; set; }
+    public DateTime CurrentDate { get; set; }
+}
 

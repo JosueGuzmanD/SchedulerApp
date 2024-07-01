@@ -1,4 +1,4 @@
-﻿using SchedulerApp.Domain.Entities;
+﻿using SchedulerApplication.Models;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.Interfaces;
 
@@ -14,6 +14,7 @@ public class DescriptionService : IDescriptionService
                 ? "Occurs every day"
                 : $"Occurs every {((RecurringSchedulerConfiguration)configuration).DaysInterval} days";
 
-        return $"{intervalDescription}. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.";
+        return
+            $"{intervalDescription}. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.";
     }
 }

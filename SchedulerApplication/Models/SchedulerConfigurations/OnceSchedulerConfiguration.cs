@@ -1,8 +1,6 @@
-﻿using SchedulerApp.Domain.Entities;
+﻿namespace SchedulerApplication.Models.SchedulerConfigurations;
 
-namespace SchedulerApplication.Models.SchedulerConfigurations
+public class OnceSchedulerConfiguration : SchedulerConfiguration
 {
-    public class OnceSchedulerConfiguration : SchedulerConfiguration
-    {
-    }
 }
+

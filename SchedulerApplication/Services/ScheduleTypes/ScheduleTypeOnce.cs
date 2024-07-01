@@ -1,4 +1,4 @@
-﻿using SchedulerApp.Domain.Entities;
+﻿using SchedulerApplication.Models;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.Interfaces;
 
@@ -22,13 +22,14 @@ public class ScheduleTypeOnce : ScheduleTypeBase<OnceSchedulerConfiguration>
         var executionTime = _onceExecutionService.CalculateNextExecutionTime(configuration);
         var description = _descriptionService.GenerateDescription(configuration, executionTime);
 
-        return new List<ScheduleOutput>
+        var list = new List<ScheduleOutput>
         {
-            new ScheduleOutput
+            new()
             {
                 Description = description,
                 ExecutionTime = executionTime
             }
         };
+        return list;
     }
 }

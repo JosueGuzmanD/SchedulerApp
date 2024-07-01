@@ -2,8 +2,8 @@
 
 namespace SchedulerApplication.ValueObjects;
 
-    public class HourTimeRange : IEquatable<HourTimeRange>
-    {
+public class HourTimeRange : IEquatable<HourTimeRange>
+{
     public TimeSpan StartHour { get; }
     public TimeSpan EndHour { get; }
     public int HourlyInterval { get; set; }
@@ -30,7 +30,8 @@ namespace SchedulerApplication.ValueObjects;
     public bool Equals(HourTimeRange other)
     {
         if (other == null) return false;
-        return StartHour == other.StartHour && EndHour == other.EndHour && HourlyInterval == other.HourlyInterval && HourlyFrequency == other.HourlyFrequency;
+        return StartHour == other.StartHour && EndHour == other.EndHour && HourlyInterval == other.HourlyInterval &&
+               HourlyFrequency == other.HourlyFrequency;
     }
 
     public override bool Equals(object obj)

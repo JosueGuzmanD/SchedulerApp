@@ -1,10 +1,9 @@
-﻿using SchedulerApp.Domain.Entities;
+﻿using SchedulerApplication.Models;
 
 namespace SchedulerApplication.Services.Interfaces;
 
-    public interface IDescriptionService
-    {
-      string GenerateDescription(SchedulerConfiguration configuration, DateTime executionTime);
-
-    }
+public interface IDescriptionService
+{
+    string GenerateDescription(SchedulerConfiguration configuration, DateTime executionTime);
+}
 

@@ -1,4 +1,4 @@
-﻿using SchedulerApp.Domain.Entities;
+﻿using SchedulerApplication.Models;
 
 namespace SchedulerApplication.Services.Interfaces;
 

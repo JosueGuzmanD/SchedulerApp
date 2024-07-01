@@ -1,8 +1,8 @@
-﻿namespace SchedulerApplication.Common.Enums
+﻿namespace SchedulerApplication.Common.Enums;
+
+public enum DailyHourFrequency
 {
-    public enum DailyHourFrequency{
-    
-        Once,
-        Recurrent
-    }
+    Once,
+    Recurrent
 }
+

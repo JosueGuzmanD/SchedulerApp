@@ -9,13 +9,14 @@ public class RecurringExecutionService : IRecurringExecutionService
     private readonly IHourCalculatorService _hourCalculator;
     private readonly IWeekCalculatorService _weekCalculator;
 
-    public RecurringExecutionService(IConfigurationValidator validator, IHourCalculatorService hourCalculator, IWeekCalculatorService weekCalculator)
+    public RecurringExecutionService(IConfigurationValidator validator, IHourCalculatorService hourCalculator,
+        IWeekCalculatorService weekCalculator)
     {
         _validator = validator;
         _hourCalculator = hourCalculator;
         _weekCalculator = weekCalculator;
     }
-  
+
     public List<DateTime> CalculateNextExecutionTimes(RecurringSchedulerConfiguration configuration)
     {
         int maxExecutions = 3;
@@ -28,8 +29,8 @@ public class RecurringExecutionService : IRecurringExecutionService
         DateTime endDate = configuration.TimeInterval.LimitEndDateTime ?? DateTime.MaxValue;
 
 
-
-        var weeklyDates = _weekCalculator.CalculateWeeklyDates(currentDate, configuration.DaysOfWeek, configuration.WeekInterval);
+        var weeklyDates =
+            _weekCalculator.CalculateWeeklyDates(currentDate, configuration.DaysOfWeek, configuration.WeekInterval);
 
         foreach (var date in weeklyDates)
         {

@@ -1,4 +1,4 @@
-﻿using SchedulerApp.Domain.Entities;
+﻿using SchedulerApplication.Models;
 using SchedulerApplication.Services.Interfaces;
 
 namespace SchedulerApplication.Common.Validator;

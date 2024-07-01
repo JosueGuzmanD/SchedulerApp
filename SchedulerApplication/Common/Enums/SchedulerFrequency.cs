@@ -1,8 +1,8 @@
-﻿namespace SchedulerApp.Domain.Common.Enums;
+﻿namespace SchedulerApplication.Common.Enums;
 
-    public enum Frequency
-    {
-        Daily,
-        Weekly
-    }
+public enum Frequency
+{
+    Daily,
+    Weekly
+}
 

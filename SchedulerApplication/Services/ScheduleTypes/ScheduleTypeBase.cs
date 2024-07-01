@@ -1,4 +1,4 @@
-﻿using SchedulerApp.Domain.Entities;
+﻿using SchedulerApplication.Models;
 using SchedulerApplication.Services.Interfaces;
 
 namespace SchedulerApplication.Services.ScheduleTypes;
@@ -7,7 +7,6 @@ public abstract class ScheduleTypeBase<TConfiguration> : IScheduleType where TCo
 {
     protected readonly IDescriptionService _descriptionService;
     protected readonly ISchedulerExecutionService _executionTimeService;
-    
 
     protected ScheduleTypeBase(IDescriptionService descriptionService, ISchedulerExecutionService executionTimeService)
     {
