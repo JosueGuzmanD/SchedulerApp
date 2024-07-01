@@ -1,5 +1,4 @@
-﻿using SchedulerApp.Domain.Entities;
-using SchedulerApplication.Models.SchedulerConfigurations;
+﻿using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.Interfaces;
 
 namespace SchedulerApplication.Services.ExecutionTime;
@@ -13,14 +12,9 @@ public class OnceExecutionService : IOnceExecutionService
         _validator = validator;
     }
 
-    public void ValidateConfiguration(SchedulerConfiguration configuration)
-    {
-        _validator.Validate(configuration);
-    }
-
     public DateTime CalculateNextExecutionTime(OnceSchedulerConfiguration configuration)
     {
-        ValidateConfiguration(configuration);
+        _validator.Validate(configuration);
         return configuration.CurrentDate;
     }
 }

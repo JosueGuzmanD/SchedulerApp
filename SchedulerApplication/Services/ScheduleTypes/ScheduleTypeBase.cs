@@ -7,6 +7,7 @@ public abstract class ScheduleTypeBase<TConfiguration> : IScheduleType where TCo
 {
     protected readonly IDescriptionService _descriptionService;
     protected readonly ISchedulerExecutionService _executionTimeService;
+    
 
     protected ScheduleTypeBase(IDescriptionService descriptionService, ISchedulerExecutionService executionTimeService)
     {

@@ -1,11 +1,9 @@
-﻿using SchedulerApp.Domain.Entities;
-using SchedulerApplication.Models.SchedulerConfigurations;
+﻿using SchedulerApplication.Models.SchedulerConfigurations;
 
 namespace SchedulerApplication.Services.Interfaces;
 
 public interface ISchedulerExecutionService
 {
-    void ValidateConfiguration(SchedulerConfiguration configuration);
 }
 public interface IOnceExecutionService : ISchedulerExecutionService
 {
@@ -15,4 +13,5 @@ public interface IOnceExecutionService : ISchedulerExecutionService
 public interface IRecurringExecutionService : ISchedulerExecutionService
 {
     List<DateTime> CalculateNextExecutionTimes(RecurringSchedulerConfiguration configuration);
+
 }

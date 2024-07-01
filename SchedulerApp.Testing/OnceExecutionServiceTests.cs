@@ -19,7 +19,7 @@ public class ScheduleTypeOnceTests
         validatorMock.Setup(v => v.Validate(It.IsAny<SchedulerConfiguration>()))
             .Throws(new ArgumentException("Configuration must be enabled."));
 
-        var configuration = new OnceSchedulerConfiguration
+        var configuration = new OnceSchedulerConfiguration 
         {
             IsEnabled = false,
             CurrentDate = new DateTime(2024, 06, 25)

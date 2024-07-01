@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using SchedulerApp.Domain.Entities;
+﻿using SchedulerApp.Domain.Entities;
 
 namespace SchedulerApplication.Services.Interfaces;
 

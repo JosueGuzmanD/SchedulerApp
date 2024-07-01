@@ -6,8 +6,8 @@ namespace SchedulerApplication.ValueObjects;
     {
     public TimeSpan StartHour { get; }
     public TimeSpan EndHour { get; }
-    public int HourlyInterval { get; }
-    public DailyHourFrequency HourlyFrequency { get; }
+    public int HourlyInterval { get; set; }
+    public DailyHourFrequency HourlyFrequency { get; set; }
 
     public HourTimeRange(TimeSpan startHour, TimeSpan endHour, int hourlyInterval, DailyHourFrequency hourlyFrequency)
     {
