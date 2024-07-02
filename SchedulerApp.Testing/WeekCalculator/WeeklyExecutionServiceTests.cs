@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using SchedulerApplication.Services.WeekCalculator;
 
-namespace SchedulerApp.Testing;
+namespace SchedulerApp.Testing.WeekCalculator;
 
 public class WeeklyExecutionServiceTests
 {

@@ -2,7 +2,7 @@
 using SchedulerApplication.Common.Validator;
 using SchedulerApplication.Models.SchedulerConfigurations;
 
-namespace SchedulerApp.Testing;
+namespace SchedulerApp.Testing.Validator;
 
 public class ConfigurationValidatorTests
 {

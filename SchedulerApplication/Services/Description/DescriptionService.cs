@@ -14,6 +14,11 @@ public class DescriptionService : IDescriptionService
                 ? "Occurs every day"
                 : $"Occurs every {((RecurringSchedulerConfiguration)configuration).DaysInterval} days";
 
+        if (configuration is RecurringSchedulerConfiguration { DaysInterval: 0 })
+        {
+            throw new IndexOutOfRangeException("Days interval cannot be 0");
+        }
+
         return
             $"{intervalDescription}. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.";
     }

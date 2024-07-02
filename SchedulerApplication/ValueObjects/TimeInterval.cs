@@ -7,7 +7,7 @@ public class TimeInterval : IEquatable<TimeInterval>
 
     public TimeInterval(DateTime limitStartDateTime, DateTime limitEndDateTime)
     {
-        if (LimitEndDateTime < LimitStartDateTime)
+        if (limitEndDateTime < limitStartDateTime)
             throw new ArgumentException("End date must be greater than or equal to start date");
 
         LimitStartDateTime = limitStartDateTime;

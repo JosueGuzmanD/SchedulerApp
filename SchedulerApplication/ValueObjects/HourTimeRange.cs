@@ -9,6 +9,15 @@ public class HourTimeRange : IEquatable<HourTimeRange>
     public int HourlyInterval { get; set; }
     public DailyHourFrequency HourlyFrequency { get; set; }
 
+    // Constructor solo para el caso 'Once'
+    public HourTimeRange(TimeSpan startHour)
+    {
+        StartHour = startHour;
+        HourlyFrequency = DailyHourFrequency.Once;
+
+        EndHour = TimeSpan.Zero;
+        HourlyInterval = 0;
+    }
     public HourTimeRange(TimeSpan startHour, TimeSpan endHour, int hourlyInterval, DailyHourFrequency hourlyFrequency)
     {
         if (startHour > endHour)

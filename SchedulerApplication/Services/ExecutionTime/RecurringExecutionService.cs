@@ -19,14 +19,14 @@ public class RecurringExecutionService : IRecurringExecutionService
 
     public List<DateTime> CalculateNextExecutionTimes(RecurringSchedulerConfiguration configuration)
     {
-        int maxExecutions = 3;
-        int executionCount = 0;
+        const int maxExecutions = 3;
+        var executionCount = 0;
 
         _validator.Validate(configuration);
 
-        List<DateTime> executionTimes = new List<DateTime>();
-        DateTime currentDate = configuration.CurrentDate;
-        DateTime endDate = configuration.TimeInterval.LimitEndDateTime ?? DateTime.MaxValue;
+        var executionTimes = new List<DateTime>();
+        var currentDate = configuration.CurrentDate;
+        var endDate = configuration.TimeInterval.LimitEndDateTime ?? DateTime.MaxValue;
 
 
         var weeklyDates =
@@ -36,12 +36,10 @@ public class RecurringExecutionService : IRecurringExecutionService
         {
             if (executionCount >= maxExecutions) break;
 
-            if (date >= configuration.TimeInterval.LimitStartDateTime && date <= endDate)
-            {
-                var hourlyExecutions = _hourCalculator.CalculateHour(date, configuration.HourTimeRange);
-                executionTimes.AddRange(hourlyExecutions);
-                executionCount++;
-            }
+            if (date < configuration.TimeInterval.LimitStartDateTime || date > endDate) continue;
+            var hourlyExecutions = _hourCalculator.CalculateHour(date, configuration.HourTimeRange);
+            executionTimes.AddRange(hourlyExecutions);
+            executionCount++;
         }
 
         return executionTimes;

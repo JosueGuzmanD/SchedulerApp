@@ -16,7 +16,6 @@ public abstract class ScheduleTypeBase<TConfiguration> : IScheduleType where TCo
 
     public List<ScheduleOutput> GetNextExecutionTimes(SchedulerConfiguration configuration)
     {
-        _executionTimeService.ValidateConfiguration(configuration);
         return CalculateNextExecutionTimes((TConfiguration)configuration);
     }
 
