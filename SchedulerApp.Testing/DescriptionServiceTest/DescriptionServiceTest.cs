@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.Description;
+using SchedulerApplication.ValueObjects;
 
 namespace SchedulerApp.Testing.DescriptionServiceTest;
 
@@ -14,14 +15,14 @@ public class DescriptionServiceTest
     {
         //Arrange
         var dateTime = DateTime.Parse(date);
-        var configuration = new OnceSchedulerConfiguration();
+        var configuration = new OnceSchedulerConfiguration(){TimeInterval = new TimeInterval(new DateTime(2025,04,12))};
         var service = new DescriptionService();
 
         //Act
         var result = service.GenerateDescription(configuration, dateTime);
 
         //Assert
-        result.Should().BeEquivalentTo($"Occurs Once. Schedule will be used on {dateTime:dd/MM/yyyy} at {dateTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+        result.Should().BeEquivalentTo($"Occurs Once. Schedule will be used on {dateTime:dd/MM/yyyy} at {dateTime:HH:mm} starting on {configuration.TimeInterval.LimitStartDateTime:dd/MM/yyyy}.");
     }
 
     [Fact]
@@ -29,7 +30,7 @@ public class DescriptionServiceTest
     {
         //Arrange
         var configuration = new RecurringSchedulerConfiguration()
-        { DaysInterval = 1 };
+        { DaysInterval = 1, TimeInterval = new TimeInterval(new DateTime(2025, 04, 12))};
         var service = new DescriptionService();
         var dateTime = new DateTime(2026, 01, 29, 03, 10, 39);
 
@@ -37,7 +38,7 @@ public class DescriptionServiceTest
         var result = service.GenerateDescription(configuration, dateTime);
 
         //Assert
-        result.Should().BeEquivalentTo($"Occurs every day. Schedule will be used on {dateTime:dd/MM/yyyy} at {dateTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+        result.Should().BeEquivalentTo($"Occurs every day. Schedule will be used on {dateTime:dd/MM/yyyy} at {dateTime:HH:mm} starting on {configuration.TimeInterval.LimitStartDateTime:dd/MM/yyyy}.");
 
     }
 
@@ -65,7 +66,7 @@ public class DescriptionServiceTest
     {
         //Arrange
         var configuration = new RecurringSchedulerConfiguration()
-        { DaysInterval = DaysInterval };
+        { DaysInterval = DaysInterval, TimeInterval = new TimeInterval(new DateTime(2024,02,12), new DateTime(2026,03,15))};
         var service = new DescriptionService();
         var dateTime = new DateTime(2028, 04, 5, 23, 23, 21, 21);
 
@@ -73,7 +74,7 @@ public class DescriptionServiceTest
         var result = service.GenerateDescription(configuration, dateTime);
 
         //Assert
-        result.Should().BeEquivalentTo($"Occurs every {configuration.DaysInterval} days. Schedule will be used on {dateTime:dd/MM/yyyy} at {dateTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+        result.Should().BeEquivalentTo($"Occurs every {configuration.DaysInterval} days. Schedule will be used on {dateTime:dd/MM/yyyy} at {dateTime:HH:mm} starting on {configuration.TimeInterval.LimitStartDateTime:dd/MM/yyyy}.");
     }
 }
 

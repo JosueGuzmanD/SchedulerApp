@@ -16,8 +16,8 @@ public abstract class ScheduleTypeBase<TConfiguration> : IScheduleType where TCo
 
     public List<ScheduleOutput> GetNextExecutionTimes(SchedulerConfiguration configuration)
     {
-        return CalculateNextExecutionTimes((TConfiguration)configuration);
+        return CreateScheduleOutput((TConfiguration)configuration);
     }
 
-    protected abstract List<ScheduleOutput> CalculateNextExecutionTimes(TConfiguration configuration);
+    protected abstract List<ScheduleOutput> CreateScheduleOutput(TConfiguration configuration);
 }

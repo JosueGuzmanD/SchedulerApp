@@ -16,7 +16,7 @@ public class ScheduleTypeOnce : ScheduleTypeBase<OnceSchedulerConfiguration>
         _validator = validator;
     }
 
-    protected override List<ScheduleOutput> CalculateNextExecutionTimes(OnceSchedulerConfiguration configuration)
+    protected override List<ScheduleOutput> CreateScheduleOutput(OnceSchedulerConfiguration configuration)
     {
         _validator.Validate(configuration);
         var executionTime = _onceExecutionService.CalculateNextExecutionTime(configuration);

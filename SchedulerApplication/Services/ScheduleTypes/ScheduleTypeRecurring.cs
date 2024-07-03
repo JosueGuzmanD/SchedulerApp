@@ -14,9 +14,9 @@ public class ScheduleTypeRecurring : ScheduleTypeBase<RecurringSchedulerConfigur
         _recurringExecutionService = recurringExecutionService;
     }
 
-    protected override List<ScheduleOutput> CalculateNextExecutionTimes(RecurringSchedulerConfiguration configuration)
+    protected override List<ScheduleOutput> CreateScheduleOutput(RecurringSchedulerConfiguration configuration)
     {
-        var executionTimes = _recurringExecutionService.CalculateNextExecutionTimes(configuration);
+        var executionTimes = _recurringExecutionService.CalculateNextExecutionTime(configuration);
         var outputs = new List<ScheduleOutput>();
 
         foreach (var time in executionTimes)

@@ -62,5 +62,6 @@ public class HourTimeRange : IEquatable<HourTimeRange>
     {
         return !(left == right);
     }
+
 }
 

@@ -2,5 +2,6 @@
 
 public class OnceSchedulerConfiguration : SchedulerConfiguration
 {
+    public DateTime ConfigurationDateTime { get; set; }
 }
 

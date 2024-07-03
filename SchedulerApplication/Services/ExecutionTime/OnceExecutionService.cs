@@ -15,7 +15,12 @@ public class OnceExecutionService : IOnceExecutionService
     public DateTime CalculateNextExecutionTime(OnceSchedulerConfiguration configuration)
     {
         _validator.Validate(configuration);
-        return configuration.CurrentDate;
+
+        if (configuration.ConfigurationDateTime < configuration.CurrentDate)
+        {
+            throw new ArgumentException("Configuration date time cannot be in the past.");
+        }
+        return configuration.ConfigurationDateTime;
     }
 }
 

@@ -17,7 +17,7 @@ public class RecurringExecutionService : IRecurringExecutionService
         _weekCalculator = weekCalculator;
     }
 
-    public List<DateTime> CalculateNextExecutionTimes(RecurringSchedulerConfiguration configuration)
+    public List<DateTime> CalculateNextExecutionTime(RecurringSchedulerConfiguration configuration)
     {
         const int maxExecutions = 3;
         var executionCount = 0;
