@@ -6,19 +6,6 @@ namespace SchedulerApp.Testing.ValueObjects;
 
 public class HourTimeRangeTests
 {
-    [Fact]
-    public void Constructor_ShouldThrowException_WhenStartHourIsGreaterThanEndHour()
-    {
-        // Arrange
-        var startHour = new TimeSpan(12, 0, 0);
-        var endHour = new TimeSpan(10, 0, 0);
-
-        // Act
-        Action act = () => new HourTimeRange(startHour, endHour, 1, DailyHourFrequency.Recurrent);
-
-        // Assert
-        act.Should().Throw<ArgumentException>().WithMessage("StartHour must be less than or equal to EndHour.");
-    }
 
     [Fact]
     public void Constructor_ShouldThrowException_WhenHourlyIntervalIsLessThanOrEqualToZero()

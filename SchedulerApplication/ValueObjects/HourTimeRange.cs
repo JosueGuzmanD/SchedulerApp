@@ -20,10 +20,7 @@ public class HourTimeRange : IEquatable<HourTimeRange>
     }
     public HourTimeRange(TimeSpan startHour, TimeSpan endHour, int hourlyInterval, DailyHourFrequency hourlyFrequency)
     {
-        if (startHour > endHour)
-        {
-            throw new ArgumentException("StartHour must be less than or equal to EndHour.");
-        }
+      
 
         if (hourlyInterval <= 0)
         {

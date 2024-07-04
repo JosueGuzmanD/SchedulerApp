@@ -51,4 +51,9 @@ public class TimeInterval : IEquatable<TimeInterval>
     {
         return $"{LimitStartDateTime}- {LimitEndDateTime}";
     }
+
+    public bool IsWithinInterval(DateTime date)
+    {
+        return date >= LimitStartDateTime && (LimitEndDateTime == null || date <= LimitEndDateTime);
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using SchedulerApplication.Models;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.Description;
 using SchedulerApplication.ValueObjects;

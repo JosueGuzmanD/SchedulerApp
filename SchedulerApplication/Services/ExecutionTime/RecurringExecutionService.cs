@@ -28,21 +28,27 @@ public class RecurringExecutionService : IRecurringExecutionService
         var currentDate = configuration.CurrentDate;
         var endDate = configuration.TimeInterval.LimitEndDateTime ?? DateTime.MaxValue;
 
-
-        var weeklyDates =
-            _weekCalculator.CalculateWeeklyDates(currentDate, configuration.DaysOfWeek, configuration.WeekInterval);
+        var weeklyDates = _weekCalculator.CalculateWeeklyDates(currentDate, configuration.DaysOfWeek, configuration.WeekInterval);
 
         foreach (var date in weeklyDates)
         {
             if (executionCount >= maxExecutions) break;
 
-            if (date < configuration.TimeInterval.LimitStartDateTime || date > endDate) continue;
+            if (!configuration.TimeInterval.IsWithinInterval(date)) continue;
+
             var hourlyExecutions = _hourCalculator.CalculateHour(date, configuration.HourTimeRange);
-            executionTimes.AddRange(hourlyExecutions);
-            executionCount++;
+
+            foreach (var hour in hourlyExecutions)
+            {
+                if (executionCount >= maxExecutions) break;
+
+                executionTimes.Add(hour);
+                executionCount++;
+            }
         }
 
         return executionTimes;
     }
 }
+
 

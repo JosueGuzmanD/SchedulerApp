@@ -229,4 +229,37 @@ public class TimeIntervalTests
         // Act & Assert
         interval1.Equals(interval2).Should().BeFalse();
     }
+
+    [Fact]
+    public void IsWithinInterval_ShouldReturnTrue_ForDateWithinInterval()
+    {
+        // Arrange
+        var startDateTime = new DateTime(2024, 1, 1);
+        var endDateTime = new DateTime(2024, 12, 31);
+        var interval = new TimeInterval(startDateTime, endDateTime);
+        var date = new DateTime(2024, 6, 15);
+
+        // Act
+        var result = interval.IsWithinInterval(date);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsWithinInterval_ShouldReturnFalse_ForDateOutsideInterval()
+    {
+        // Arrange
+        var startDateTime = new DateTime(2024, 1, 1);
+        var endDateTime = new DateTime(2024, 12, 31);
+        var interval = new TimeInterval(startDateTime, endDateTime);
+        var date = new DateTime(2025, 1, 1);
+
+        // Act
+        var result = interval.IsWithinInterval(date);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
 }
