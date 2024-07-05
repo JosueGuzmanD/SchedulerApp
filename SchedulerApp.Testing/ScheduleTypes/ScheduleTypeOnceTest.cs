@@ -4,129 +4,125 @@ using SchedulerApplication.Models;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.Description;
 using SchedulerApplication.Services.ExecutionTime;
+using SchedulerApplication.Services.Interfaces;
 using SchedulerApplication.Services.ScheduleTypes;
 using SchedulerApplication.ValueObjects;
 
 namespace SchedulerApp.Testing.ScheduleTypes;
 
-public class ScheduleTypeOnceTest
+public class ScheduleTypeOnceTests
 {
+    private readonly IDescriptionService _descriptionService;
+    private readonly IOnceExecutionService _onceExecutionService;
+    private readonly IConfigurationValidator _validator;
+    private readonly ScheduleTypeOnce _scheduleTypeOnce;
+
+    public ScheduleTypeOnceTests()
+    {
+        _descriptionService = new DescriptionService();
+        _onceExecutionService = new OnceExecutionService(new ConfigurationValidator());
+        _validator = new ConfigurationValidator();
+        _scheduleTypeOnce = new ScheduleTypeOnce(_descriptionService, _onceExecutionService, _validator);
+    }
+
     [Fact]
-    public void CreateScheduleOutput_ShouldReturnExampleScheduleOutput_WhenConfigurationIsValid()
+    public void CreateScheduleOutput_ShouldReturnCorrectOutput_ForValidConfiguration()
     {
         // Arrange
-        var validator = new ConfigurationValidator();
         var configuration = new OnceSchedulerConfiguration
         {
-            CurrentDate = new DateTime(2020,01,04),
+            CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            ConfigurationDateTime = new DateTime(2020,01,08,14,00,00),
-            TimeInterval = new TimeInterval(new DateTime(2020,01,01))
+            ConfigurationDateTime = new DateTime(2024, 01, 02, 09, 0, 0),
+            TimeInterval = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31))
         };
-
-
-        var onceExecutionService = new OnceExecutionService(validator);
-        var descriptionService = new DescriptionService();
-
-        var expectedList = new List<ScheduleOutput>
-        {
-            new()
-            {
-                Description = $"Occurs Once. Schedule will be used on 08/01/2020 at 14:00 starting on 01/01/2020.",
-                ExecutionTime = new DateTime(2020,01,08,14,00,00)
-            }
-        };
-
-        var scheduleTypeOnce = new ScheduleTypeOnce(descriptionService, onceExecutionService, validator);
 
         // Act
-        var result = scheduleTypeOnce.GetNextExecutionTimes(configuration);
+        var result = _scheduleTypeOnce.GetNextExecutionTimes(configuration);
 
         // Assert
-        result.Should().BeEquivalentTo(expectedList);
+        result.Should().HaveCount(1);
+        result[0].ExecutionTime.Should().Be(new DateTime(2024, 01, 02, 09, 0, 0));
+        result[0].Description.Should().Be("Occurs Once. Schedule will be used on 02/01/2024 at 09:00 starting on 01/01/2024.");
     }
 
     [Fact]
-    public void CreateScheduleOutput_ShouldThrowException_IfIsEnabledIsFalse()
-    {
-        //Arrange
-        var validator = new ConfigurationValidator();
-        var executionService = new OnceExecutionService(validator);
-        var descriptionService = new DescriptionService();
-        var configuration = new OnceSchedulerConfiguration()
-        {
-            CurrentDate = new DateTime(2024, 02, 12, 21, 12, 32),
-            IsEnabled = false
-        };
-
-        //Act   
-        Action act = () =>
-            new ScheduleTypeOnce(descriptionService, executionService, validator).GetNextExecutionTimes(configuration);
-
-        //Assert
-        act.Should().Throw<ArgumentException>("Configuration must be enabled.");
-    }
-
-    [Theory]
-    [InlineData(2020, 01, 01, 2020, 01, 08, 14, 00, 00)]
-    [InlineData(2021, 03, 01, 2021, 03, 15, 10, 30, 00)]
-    [InlineData(2022, 06, 15, 2022, 06, 25, 12, 00, 00)]
-    public void CreateScheduleOutput_ShouldReturnCorrectDescriptionAndExecutionTime(int startYear, int startMonth, int startDay, int execYear, int execMonth, int execDay, int execHour, int execMinute, int execSecond)
+    public void CreateScheduleOutput_ShouldThrowException_WhenConfigurationIsDisabled()
     {
         // Arrange
-        var validator = new ConfigurationValidator();
         var configuration = new OnceSchedulerConfiguration
         {
-            CurrentDate = new DateTime(startYear, startMonth, startDay),
-            IsEnabled = true,
-            ConfigurationDateTime = new DateTime(execYear, execMonth, execDay, execHour, execMinute, execSecond),
-            TimeInterval = new TimeInterval(new DateTime(startYear, startMonth, startDay))
+            CurrentDate = new DateTime(2024, 01, 01),
+            IsEnabled = false,
+            ConfigurationDateTime = new DateTime(2024, 01, 02, 09, 0, 0),
+            TimeInterval = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31))
         };
-
-        var onceExecutionService = new OnceExecutionService(validator);
-        var descriptionService = new DescriptionService();
-
-        var expectedList = new List<ScheduleOutput>
-        {
-            new()
-            {
-                Description = $"Occurs Once. Schedule will be used on {execDay:D2}/{execMonth:D2}/{execYear} at {execHour:D2}:{execMinute:D2} starting on {startDay:D2}/{startMonth:D2}/{startYear}.",
-                ExecutionTime = new DateTime(execYear, execMonth, execDay, execHour, execMinute, execSecond)
-            }
-        };
-
-        var scheduleTypeOnce = new ScheduleTypeOnce(descriptionService, onceExecutionService, validator);
 
         // Act
-        var result = scheduleTypeOnce.GetNextExecutionTimes(configuration);
+        Action act = () => _scheduleTypeOnce.GetNextExecutionTimes(configuration);
 
         // Assert
-        result.Should().BeEquivalentTo(expectedList);
+        act.Should().Throw<ArgumentException>().WithMessage("Configuration must be enabled.");
     }
 
     [Fact]
-    public void CreateScheduleOutput_ShouldThrowException_WhenConfigurationDateTimeIsInPast()
+    public void CreateScheduleOutput_ShouldThrowException_WhenConfigurationDateTimeIsInThePast()
     {
         // Arrange
-        var validator = new ConfigurationValidator();
         var configuration = new OnceSchedulerConfiguration
         {
-            CurrentDate = new DateTime(2024, 02, 12),
+            CurrentDate = new DateTime(2024, 01, 03),
             IsEnabled = true,
-            ConfigurationDateTime = new DateTime(2023, 02, 10),
-            TimeInterval = new TimeInterval(new DateTime(2024, 01, 01))
+            ConfigurationDateTime = new DateTime(2024, 01, 02, 09, 0, 0),
+            TimeInterval = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31))
         };
 
-        var onceExecutionService = new OnceExecutionService(validator);
-        var descriptionService = new DescriptionService();
-
-        var scheduleTypeOnce = new ScheduleTypeOnce(descriptionService, onceExecutionService, validator);
-
         // Act
-        Action act = () => scheduleTypeOnce.GetNextExecutionTimes(configuration);
+        Action act = () => _scheduleTypeOnce.GetNextExecutionTimes(configuration);
 
         // Assert
         act.Should().Throw<ArgumentException>().WithMessage("Configuration date time cannot be in the past.");
+    }
+
+    [Theory]
+    [InlineData("2024-01-01", "2024-01-01 09:00:00", "2024-01-01 09:00:00", true)]
+    [InlineData("2024-01-01", "2024-01-02 10:00:00", "2024-01-02 10:00:00", true)]
+    [InlineData("2024-01-01", "2024-01-01 08:59:59", "2024-01-01 08:59:59", false)]
+    public void CreateScheduleOutput_ShouldHandleVariousConfigurations(string currentDate, string configurationDateTime, string expectedExecutionTime, bool isEnabled)
+    {
+        // Arrange
+        var configuration = new OnceSchedulerConfiguration
+        {
+            CurrentDate = DateTime.Parse(currentDate),
+            IsEnabled = isEnabled,
+            ConfigurationDateTime = DateTime.Parse(configurationDateTime),
+            TimeInterval = new LimitsTimeInterval(DateTime.Parse(currentDate), new DateTime(2024, 12, 31))
+        };
+
+        if (!isEnabled || DateTime.Parse(configurationDateTime) < DateTime.Parse(currentDate))
+        {
+            // Act
+            Action act = () => _scheduleTypeOnce.GetNextExecutionTimes(configuration);
+
+            // Assert
+            if (!isEnabled)
+            {
+                act.Should().Throw<ArgumentException>().WithMessage("Configuration must be enabled.");
+            }
+            else
+            {
+                act.Should().Throw<ArgumentException>().WithMessage("Configuration date time cannot be in the past.");
+            }
+        }
+        else
+        {
+            // Act
+            var result = _scheduleTypeOnce.GetNextExecutionTimes(configuration);
+
+            // Assert
+            result.Should().HaveCount(1);
+            result[0].ExecutionTime.Should().Be(DateTime.Parse(expectedExecutionTime));
+        }
     }
 }
 

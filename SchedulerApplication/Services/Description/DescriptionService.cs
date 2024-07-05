@@ -1,4 +1,5 @@
 ﻿using SchedulerApplication.Models;
+using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.Interfaces;
 
@@ -8,29 +9,31 @@ public class DescriptionService : IDescriptionService
 {
     public string GenerateDescription(SchedulerConfiguration configuration, DateTime executionTime)
     {
-        if (configuration is RecurringSchedulerConfiguration { DaysInterval: 0 })
+        if (configuration is DailyFrequencyConfiguration { DaysInterval: 0 } or WeeklyFrequencyConfiguration { DaysInterval: 0 })
         {
             throw new IndexOutOfRangeException("Days interval cannot be 0");
         }
 
-        string intervalDescription= string.Empty;
+        var intervalDescription = string.Empty;
 
-        if (configuration is OnceSchedulerConfiguration)
+        switch (configuration)
         {
-            intervalDescription = "Occurs Once";
-        }
-        else if (configuration is RecurringSchedulerConfiguration recurringConfig)
-        {
-            if (recurringConfig.DaysInterval == 1)
-            {
+            case OnceSchedulerConfiguration:
+                intervalDescription = "Occurs Once";
+                break;
+            case DailyFrequencyConfiguration { DaysInterval: 1 }:
                 intervalDescription = "Occurs every day";
-            }
-            else
-            {
-                intervalDescription = $"Occurs every {recurringConfig.DaysInterval} days";
-            }
+                break;
+            case DailyFrequencyConfiguration dailyConfig:
+                intervalDescription = $"Occurs every {dailyConfig.DaysInterval} days";
+                break;
+            case WeeklyFrequencyConfiguration { DaysInterval: 1 }:
+                intervalDescription = "Occurs every week";
+                break;
+            case WeeklyFrequencyConfiguration weeklyConfig:
+                intervalDescription = $"Occurs every {weeklyConfig.DaysInterval} weeks";
+                break;
         }
-    
 
         return $"{intervalDescription}. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.TimeInterval.LimitStartDateTime:dd/MM/yyyy}.";
     }

@@ -1,81 +1,129 @@
 ﻿using FluentAssertions;
-using SchedulerApplication.Models;
+using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.Description;
 using SchedulerApplication.ValueObjects;
 
 namespace SchedulerApp.Testing.DescriptionServiceTest;
 
-public class DescriptionServiceTest
+public class DescriptionServiceTests
 {
-    [Theory]
-    [InlineData("2024-06-20T20:12:32")]
-    [InlineData("2004-05-21T01:13:32")]
-    [InlineData("2014-03-22T23:12:32")]
-    public void GenerateDescription_ShouldReturnCorrectDescription_ForDifferentDates(string date)
+    private readonly DescriptionService _descriptionService;
+
+    public DescriptionServiceTests()
     {
-        //Arrange
-        var dateTime = DateTime.Parse(date);
-        var configuration = new OnceSchedulerConfiguration(){TimeInterval = new TimeInterval(new DateTime(2025,04,12))};
-        var service = new DescriptionService();
-
-        //Act
-        var result = service.GenerateDescription(configuration, dateTime);
-
-        //Assert
-        result.Should().BeEquivalentTo($"Occurs Once. Schedule will be used on {dateTime:dd/MM/yyyy} at {dateTime:HH:mm} starting on {configuration.TimeInterval.LimitStartDateTime:dd/MM/yyyy}.");
-    }
-
-    [Fact]
-    public void GenerateDescription_ShouldReturnDescription_WhenDaysIntervalIs1()
-    {
-        //Arrange
-        var configuration = new RecurringSchedulerConfiguration()
-        { DaysInterval = 1, TimeInterval = new TimeInterval(new DateTime(2025, 04, 12))};
-        var service = new DescriptionService();
-        var dateTime = new DateTime(2026, 01, 29, 03, 10, 39);
-
-        //Act
-        var result = service.GenerateDescription(configuration, dateTime);
-
-        //Assert
-        result.Should().BeEquivalentTo($"Occurs every day. Schedule will be used on {dateTime:dd/MM/yyyy} at {dateTime:HH:mm} starting on {configuration.TimeInterval.LimitStartDateTime:dd/MM/yyyy}.");
-
-    }
-
-    [Fact]
-    public void GenerateDescription_ShouldReturnException_WhenDaysIntervalIs0()
-    {
-        //Arrange
-        var configuration = new RecurringSchedulerConfiguration()
-        { DaysInterval = 0 };
-        var service = new DescriptionService();
-        var dateTime = new DateTime(2028, 06, 09, 23, 21, 21);
-
-        //Act
-        Action act = () => service.GenerateDescription(configuration, dateTime);
-
-        //Assert
-        act.Should().Throw<IndexOutOfRangeException>();
+        _descriptionService = new DescriptionService();
     }
 
     [Theory]
-    [InlineData(2)]
-    [InlineData(5)]
-    [InlineData(65)]
-    public void GenerateDescription_ShouldReturnDescription_WhenDaysIntervalIsMajor1(int DaysInterval)
+    [InlineData(0)]
+    public void GenerateDescription_ShouldThrowException_WhenDaysIntervalIsZero_DailyFrequency(int daysInterval)
     {
-        //Arrange
-        var configuration = new RecurringSchedulerConfiguration()
-        { DaysInterval = DaysInterval, TimeInterval = new TimeInterval(new DateTime(2024,02,12), new DateTime(2026,03,15))};
-        var service = new DescriptionService();
-        var dateTime = new DateTime(2028, 04, 5, 23, 23, 21, 21);
+        // Arrange
+        var configuration = new DailyFrequencyConfiguration
+        {
+            DaysInterval = daysInterval,
+            TimeInterval = new LimitsTimeInterval(DateTime.Now)
+        };
 
-        //Act
-        var result = service.GenerateDescription(configuration, dateTime);
+        // Act
+        Action act = () => _descriptionService.GenerateDescription(configuration, DateTime.Now);
 
-        //Assert
-        result.Should().BeEquivalentTo($"Occurs every {configuration.DaysInterval} days. Schedule will be used on {dateTime:dd/MM/yyyy} at {dateTime:HH:mm} starting on {configuration.TimeInterval.LimitStartDateTime:dd/MM/yyyy}.");
+        // Assert
+        act.Should().Throw<IndexOutOfRangeException>().WithMessage("Days interval cannot be 0");
+    }
+
+    [Theory]
+    [InlineData(0)]
+    public void GenerateDescription_ShouldThrowException_WhenDaysIntervalIsZero_WeeklyFrequency(int daysInterval)
+    {
+        // Arrange
+        var configuration = new WeeklyFrequencyConfiguration
+        {
+            DaysInterval = daysInterval,
+            TimeInterval = new LimitsTimeInterval(DateTime.Now)
+        };
+
+        // Act
+        Action act = () => _descriptionService.GenerateDescription(configuration, DateTime.Now);
+
+        // Assert
+        act.Should().Throw<IndexOutOfRangeException>().WithMessage("Days interval cannot be 0");
+    }
+
+    [Fact]
+    public void GenerateDescription_ShouldReturnCorrectDescription_ForOnceScheduler()
+    {
+        // Arrange
+        var configuration = new OnceSchedulerConfiguration
+        {
+            TimeInterval = new LimitsTimeInterval(DateTime.Now)
+        };
+        var executionTime = DateTime.Now;
+
+        // Act
+        var result = _descriptionService.GenerateDescription(configuration, executionTime);
+
+        // Assert
+        result.Should().Be($"Occurs Once. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.TimeInterval.LimitStartDateTime:dd/MM/yyyy}.");
+    }
+
+    [Theory]
+    [InlineData(1, "Occurs every day")]
+    [InlineData(2, "Occurs every 2 days")]
+    public void GenerateDescription_ShouldReturnCorrectDescription_ForDailyFrequency(int daysInterval, string expectedDescription)
+    {
+        // Arrange
+        var configuration = new DailyFrequencyConfiguration
+        {
+            DaysInterval = daysInterval,
+            TimeInterval = new LimitsTimeInterval(DateTime.Now)
+        };
+        var executionTime = DateTime.Now;
+
+        // Act
+        var result = _descriptionService.GenerateDescription(configuration, executionTime);
+
+        // Assert
+        result.Should().Be($"{expectedDescription}. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.TimeInterval.LimitStartDateTime:dd/MM/yyyy}.");
+    }
+
+    [Theory]
+    [InlineData(1, "Occurs every week")]
+    [InlineData(2, "Occurs every 2 weeks")]
+    public void GenerateDescription_ShouldReturnCorrectDescription_ForWeeklyFrequency(int daysInterval, string expectedDescription)
+    {
+        // Arrange
+        var configuration = new WeeklyFrequencyConfiguration
+        {
+            DaysInterval = daysInterval,
+            TimeInterval = new LimitsTimeInterval(DateTime.Now)
+        };
+        var executionTime = DateTime.Now;
+
+        // Act
+        var result = _descriptionService.GenerateDescription(configuration, executionTime);
+
+        // Assert
+        result.Should().Be($"{expectedDescription}. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.TimeInterval.LimitStartDateTime:dd/MM/yyyy}.");
+    }
+
+    [Fact]
+    public void GenerateDescription_ShouldReturnCorrectDescription_ForWeeklyFrequency_WithMultipleDays()
+    {
+        // Arrange
+        var configuration = new WeeklyFrequencyConfiguration
+        {
+            DaysInterval = 2,
+            TimeInterval = new LimitsTimeInterval(DateTime.Now),
+            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday }
+        };
+        var executionTime = DateTime.Now;
+
+        // Act
+        var result = _descriptionService.GenerateDescription(configuration, executionTime);
+
+        // Assert
+        result.Should().Be($"Occurs every 2 weeks. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.TimeInterval.LimitStartDateTime:dd/MM/yyyy}.");
     }
 }
-

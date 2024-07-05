@@ -1,18 +1,17 @@
 ﻿namespace SchedulerApplication.ValueObjects;
 
-public class TimeInterval : IEquatable<TimeInterval>
+public class LimitsTimeInterval : IEquatable<LimitsTimeInterval>
 {
-    public DateTime LimitStartDateTime { get; }
+    public DateTime LimitStartDateTime { get; set; }
     public DateTime? LimitEndDateTime { get; }
 
-    public TimeInterval(DateTime limitStartDateTime)
+    public LimitsTimeInterval(DateTime limitStartDateTime)
     {
-      
         LimitStartDateTime = limitStartDateTime;
         LimitEndDateTime = null;
     }
 
-    public TimeInterval(DateTime limitStartDateTime, DateTime limitEndDateTime)
+    public LimitsTimeInterval(DateTime limitStartDateTime, DateTime limitEndDateTime)
     {
         if (limitEndDateTime < limitStartDateTime)
             throw new ArgumentException("End date must be greater than or equal to start date");
@@ -21,15 +20,15 @@ public class TimeInterval : IEquatable<TimeInterval>
         LimitEndDateTime = limitEndDateTime;
     }
 
-    public bool Equals(TimeInterval? other)
+    public bool Equals(LimitsTimeInterval other)
     {
         if (other is null) return false;
         return LimitStartDateTime == other.LimitStartDateTime && LimitEndDateTime == other.LimitEndDateTime;
     }
 
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
-        return Equals(obj as TimeInterval);
+        return Equals(obj as LimitsTimeInterval);
     }
 
     public override int GetHashCode()
@@ -37,19 +36,14 @@ public class TimeInterval : IEquatable<TimeInterval>
         return HashCode.Combine(LimitStartDateTime, LimitEndDateTime);
     }
 
-    public static bool operator ==(TimeInterval left, TimeInterval right)
+    public static bool operator ==(LimitsTimeInterval left, LimitsTimeInterval right)
     {
-        return EqualityComparer<TimeInterval>.Default.Equals(left, right);
+        return EqualityComparer<LimitsTimeInterval>.Default.Equals(left, right);
     }
 
-    public static bool operator !=(TimeInterval left, TimeInterval right)
+    public static bool operator !=(LimitsTimeInterval left, LimitsTimeInterval right)
     {
         return !(left == right);
-    }
-
-    public override string ToString()
-    {
-        return $"{LimitStartDateTime}- {LimitEndDateTime}";
     }
 
     public bool IsWithinInterval(DateTime date)

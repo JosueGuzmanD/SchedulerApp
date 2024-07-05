@@ -1,5 +1,4 @@
-﻿using SchedulerApplication.Common.Enums;
-using SchedulerApplication.ValueObjects;
+﻿using SchedulerApplication.ValueObjects;
 
 namespace SchedulerApplication.Models;
 
@@ -7,7 +6,7 @@ public abstract class SchedulerConfiguration
 { 
     public bool IsEnabled { get; set; }
     public DateTime CurrentDate { get; set; }
-    public TimeInterval TimeInterval { get; set; }
+    public LimitsTimeInterval TimeInterval { get; set; }
 
 }
 
