@@ -1,10 +1,11 @@
-﻿using SchedulerApplication.Models.SchedulerConfigurations;
+﻿using SchedulerApplication.Models;
+using SchedulerApplication.Models.SchedulerConfigurations;
 
 namespace SchedulerApplication.Services.Interfaces;
 
 public interface IHourlyExecutionCalculatorService
 {
-    List<DateTime> CalculateHourlyExecutions(RecurringSchedulerConfiguration config);
+    List<DateTime> CalculateHourlyExecutions(SchedulerConfiguration config);
 
 }
 

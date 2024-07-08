@@ -85,7 +85,8 @@ public class ScheduleTypeRecurringTests
         {
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent),
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 03))
         };
 
         // Act
