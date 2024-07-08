@@ -96,9 +96,7 @@ public class ConfigurationValidatorTests
         {
             IsEnabled = isEnabled,
             CurrentDate = new DateTime(2024, 01, 01),
-            DaysInterval = 1,
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent),
-            TimeInterval = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31))
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
         };
 
         var weeklyConfiguration = new WeeklyFrequencyConfiguration
@@ -107,9 +105,7 @@ public class ConfigurationValidatorTests
             CurrentDate = new DateTime(2024, 01, 01),
             DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
             WeekInterval = 1,
-            DaysInterval = 1,
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent),
-            TimeInterval = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31))
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
         };
 
         if (isEnabled)

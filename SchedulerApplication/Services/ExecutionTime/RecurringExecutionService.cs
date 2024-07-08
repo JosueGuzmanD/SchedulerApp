@@ -6,74 +6,70 @@ namespace SchedulerApplication.Services.ExecutionTime;
 
 public class RecurringExecutionService : IRecurringExecutionService
 {
-    private readonly IConfigurationValidator _validator;
-    private readonly IHourCalculatorService _hourCalculator;
-    private readonly IWeekCalculatorService _weekCalculator;
+    private readonly IConfigurationValidator _validatorService;
+    private readonly IHourlyExecutionCalculatorService _hourlyExecutionCalculatorService;
+    private readonly IWeeklyExecutionCalculatorService _weeklyExecutionCalculatorService;
 
-    public RecurringExecutionService(IConfigurationValidator validator, IHourCalculatorService hourCalculator,
-        IWeekCalculatorService weekCalculator)
+    public RecurringExecutionService(
+        IConfigurationValidator validatorService,
+        IHourlyExecutionCalculatorService hourlyExecutionCalculatorService,
+        IWeeklyExecutionCalculatorService weeklyExecutionCalculatorService)
     {
-        _validator = validator;
-        _hourCalculator = hourCalculator;
-        _weekCalculator = weekCalculator;
+        _validatorService = validatorService;
+        _hourlyExecutionCalculatorService = hourlyExecutionCalculatorService;
+        _weeklyExecutionCalculatorService = weeklyExecutionCalculatorService;
     }
 
-    public List<DateTime> CalculateNextExecutionTime(RecurringSchedulerConfiguration configuration)
+    public List<DateTime> CalculateNextExecutionTimes(RecurringSchedulerConfiguration configuration)
     {
         const int maxExecutions = 12;
+        _validatorService.Validate(configuration);
 
-        _validator.Validate(configuration);
-
-        switch (configuration)
+        if (configuration is DailyFrequencyConfiguration dailyConfig)
         {
-            case DailyFrequencyConfiguration dailyConfig:
-                return CalculateDailyExecutions(dailyConfig, maxExecutions);
-            case WeeklyFrequencyConfiguration weeklyConfig:
-                return CalculateWeeklyExecutions(weeklyConfig, maxExecutions);
-            default:
-                throw new ArgumentException("Unsupported configuration type.");
+            return CalculateDailyExecutions(dailyConfig, maxExecutions);
+        }
+        else if (configuration is WeeklyFrequencyConfiguration weeklyConfig)
+        {
+            return _weeklyExecutionCalculatorService.CalculateWeeklyExecutions(weeklyConfig, maxExecutions);
+        }
+        else
+        {
+            throw new ArgumentException("Unsupported configuration type.");
         }
     }
-
+    
     private List<DateTime> CalculateDailyExecutions(DailyFrequencyConfiguration config, int maxExecutions)
     {
         var executionTimes = new List<DateTime>();
         var currentDate = config.CurrentDate;
-        var endDate = config.TimeInterval.LimitEndDateTime ?? DateTime.MaxValue;
+        var endDate = config.Limits.LimitEndDateTime ?? DateTime.MaxValue;
         var executionCount = 0;
 
-        for (var date = currentDate; date <= endDate; date = date.AddDays(config.DaysInterval))
+        for (var date = currentDate; date <= endDate; date = date.AddDays(1))
         {
             if (executionCount >= maxExecutions) break;
-            if (!config.TimeInterval.IsWithinInterval(date)) continue;
+            if (!config.Limits.IsWithinInterval(date)) continue;
 
-            var hourlyExecutions = _hourCalculator.CalculateHour(date, config.HourTimeRange);
-            AddExecutions(hourlyExecutions, executionTimes, ref executionCount, maxExecutions);
+            if (config.OccursOnce)
+            {
+                var executionTime = date.Date + config.OnceAt;
+                if (config.Limits.IsWithinInterval(executionTime))
+                {
+                    executionTimes.Add(executionTime);
+                    executionCount++;
+                }
+            }
+            else
+            {
+                var hourlyExecutions = _hourlyExecutionCalculatorService.CalculateHourlyExecutions(config);
+                AddExecutions(hourlyExecutions, executionTimes, ref executionCount, maxExecutions);
+            }
         }
 
         return executionTimes;
     }
-
-    private List<DateTime> CalculateWeeklyExecutions(WeeklyFrequencyConfiguration config, int maxExecutions)
-    {
-        var executionTimes = new List<DateTime>();
-        var currentDate = config.CurrentDate;
-        var endDate = config.TimeInterval.LimitEndDateTime ?? DateTime.MaxValue;
-        var executionCount = 0;
-
-        var weeklyDates = _weekCalculator.CalculateWeeklyDates(currentDate, config.DaysOfWeek, config.WeekInterval);
-        foreach (var date in weeklyDates)
-        {
-            if (executionCount >= maxExecutions) break;
-            if (!config.TimeInterval.IsWithinInterval(date)) continue;
-
-            var hourlyExecutions = _hourCalculator.CalculateHour(date, config.HourTimeRange);
-            AddExecutions(hourlyExecutions, executionTimes, ref executionCount, maxExecutions);
-        }
-
-        return executionTimes;
-    }
-
+    
     private void AddExecutions(IEnumerable<DateTime> hourlyExecutions, List<DateTime> executionTimes, ref int executionCount, int maxExecutions)
     {
         foreach (var executionTime in hourlyExecutions)

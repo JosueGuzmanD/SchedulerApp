@@ -21,7 +21,7 @@ public class ScheduleTypeRecurringTests
     public ScheduleTypeRecurringTests()
     {
         _descriptionService = new DescriptionService();
-        _recurringExecutionService = new RecurringExecutionService(new ConfigurationValidator(), new HourCalculatorService(), new WeekCalculatorService());
+        _recurringExecutionService = new RecurringExecutionService(new ConfigurationValidator(), new HourlyExecutionCalculatorService(), new WeeklyExecutionCalculatorService(new HourlyExecutionCalculatorService()));
         _scheduleTypeRecurring = new ScheduleTypeRecurring(_descriptionService, _recurringExecutionService);
     }
 
@@ -33,10 +33,8 @@ public class ScheduleTypeRecurringTests
         {
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            TimeInterval = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
             DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
             WeekInterval = 1,
-            DaysInterval = 1,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
         };
 
@@ -66,11 +64,9 @@ public class ScheduleTypeRecurringTests
         var configuration = new WeeklyFrequencyConfiguration
         {
             CurrentDate = new DateTime(2024, 01, 01),
-            IsEnabled = false, 
-            TimeInterval = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
+            IsEnabled = false,
             DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
             WeekInterval = 1,
-            DaysInterval = 1,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
         };
 
@@ -89,8 +85,6 @@ public class ScheduleTypeRecurringTests
         {
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            TimeInterval = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
-            DaysInterval = 1,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
         };
 
@@ -121,8 +115,6 @@ public class ScheduleTypeRecurringTests
         {
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            TimeInterval = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
-            DaysInterval = 1,
             HourTimeRange = new HourTimeRange(new TimeSpan(23, 0, 0), new TimeSpan(2, 0, 0), 1, DailyHourFrequency.Recurrent)
         };
 
@@ -149,10 +141,8 @@ public class ScheduleTypeRecurringTests
         {
             CurrentDate = initialDate,
             IsEnabled = true,
-            TimeInterval = new LimitsTimeInterval(initialDate, initialDate.AddMonths(1)),
             DaysOfWeek = new List<DayOfWeek>(daysOfWeek),
             WeekInterval = weekInterval,
-            DaysInterval = 1,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
         };
 
@@ -171,10 +161,8 @@ public class ScheduleTypeRecurringTests
         {
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            TimeInterval = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
             DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
             WeekInterval = 1,
-            DaysInterval = 1,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
         };
 

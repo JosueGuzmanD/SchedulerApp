@@ -11,7 +11,7 @@ public interface IOnceExecutionService : ISchedulerExecutionService
     DateTime CalculateNextExecutionTime(OnceSchedulerConfiguration configuration);
 }
 
-public interface IRecurringExecutionService : ISchedulerExecutionService
+public interface IRecurringExecutionService: ISchedulerExecutionService
 {
-    List<DateTime> CalculateNextExecutionTime(RecurringSchedulerConfiguration configuration);
+    List<DateTime> CalculateNextExecutionTimes(RecurringSchedulerConfiguration configuration);
 }
