@@ -29,7 +29,8 @@ public class WeeklyExecutionCalculatorServiceTests
             IsEnabled = true,
             DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
             WeekInterval = 1,
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent),
+            Limits = new LimitsTimeInterval(new DateTime(2024,01,01), new DateTime(2024, 01, 03))
         };
         var expectedTimes = new List<DateTime>
         {

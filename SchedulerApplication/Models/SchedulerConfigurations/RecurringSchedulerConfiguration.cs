@@ -2,7 +2,7 @@
 
 namespace SchedulerApplication.Models.SchedulerConfigurations;
 
-public class RecurringSchedulerConfiguration : SchedulerConfiguration
+public abstract class RecurringSchedulerConfiguration : SchedulerConfiguration
 {
     public HourTimeRange HourTimeRange { get; set; }
 }

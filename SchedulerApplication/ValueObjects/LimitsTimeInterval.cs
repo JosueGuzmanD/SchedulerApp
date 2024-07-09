@@ -3,12 +3,12 @@
 public class LimitsTimeInterval : IEquatable<LimitsTimeInterval>
 {
     public DateTime LimitStartDateTime { get; set; }
-    public DateTime? LimitEndDateTime { get; }
+    public DateTime? LimitEndDateTime { get; set; }
 
     public LimitsTimeInterval(DateTime limitStartDateTime)
     {
         LimitStartDateTime = limitStartDateTime;
-        LimitEndDateTime = null;
+        LimitEndDateTime = DateTime.MaxValue;
     }
 
     public LimitsTimeInterval(DateTime limitStartDateTime, DateTime limitEndDateTime)

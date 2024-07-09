@@ -5,7 +5,7 @@ namespace SchedulerApplication.Services.Interfaces;
 
 public interface IHourlyExecutionCalculatorService
 {
-    List<DateTime> CalculateHourlyExecutions(SchedulerConfiguration config);
+    IEnumerable<DateTime> CalculateHourlyExecutions(SchedulerConfiguration config);
 
 }
 

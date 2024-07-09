@@ -27,14 +27,14 @@ public class WeeklyExecutionCalculatorService : IWeeklyExecutionCalculatorServic
                 if (nextValidDate >= config.CurrentDate && executionCount < maxExecutions)
                 {
                     var hourlyExecutions = _hourlyExecutionCalculatorService.CalculateHourlyExecutions(
-                        new RecurringSchedulerConfiguration
+                        new WeeklyFrequencyConfiguration()
                         {
                             IsEnabled = config.IsEnabled,
                             CurrentDate = nextValidDate,
                             HourTimeRange = config.HourTimeRange
                         }
                     );
-
+                        
                     foreach (var exec in hourlyExecutions)
                     {
                         if (executionCount < maxExecutions)
