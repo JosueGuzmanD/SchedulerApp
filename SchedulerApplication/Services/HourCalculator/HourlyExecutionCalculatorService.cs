@@ -2,133 +2,8 @@
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.Interfaces;
-using SchedulerApplication.ValueObjects;
 
 namespace SchedulerApplication.Services.HourCalculator;
-
-/*public class HourlyExecutionCalculatorService : IHourlyExecutionCalculatorService
-{
-    public List<DateTime> CalculateHourlyExecutions(SchedulerConfiguration config)
-    {
-        return config switch
-        {
-            OnceSchedulerConfiguration onceConfig => CalculateOnceExecutions(onceConfig),
-            DailyFrequencyConfiguration dailyConfig => CalculateDailyExecutions(dailyConfig),
-            WeeklyFrequencyConfiguration weeklyConfig => CalculateWeeklyExecutions(weeklyConfig),
-            _ => throw new ArgumentException("Unsupported configuration type.")
-        };
-    }
-
-    private List<DateTime> CalculateOnceExecutions(OnceSchedulerConfiguration config)
-    {
-        var executions = new List<DateTime>();
-        var currentTime = config.CurrentDate.Date + config.ConfigurationDateTime.TimeOfDay;
-
-        while (executions.Count < 12)
-        {
-            executions.Add(currentTime);
-            currentTime = currentTime.AddDays(1);
-        }
-
-        return executions;
-    }
-
-    private List<DateTime> CalculateDailyExecutions(DailyFrequencyConfiguration config)
-    {
-        var executions = new List<DateTime>();
-        var currentTime = config.CurrentDate.Date + config.HourTimeRange.StartHour;
-        var endDateTime = config.Limits.LimitEndDateTime;
-
-        while (executions.Count < 12 && currentTime <= endDateTime)
-        {
-            if (config.OccursOnce)
-            {
-                var executionTime = config.CurrentDate.Date + config.OnceAt;
-                if (executionTime <= endDateTime)
-                {
-                    executions.Add(executionTime);
-                }
-                return executions;
-            }
-
-            if (ShouldAddExecutionTime(currentTime, config.HourTimeRange))
-            {
-                executions.Add(currentTime);
-            }
-
-            currentTime = currentTime.AddHours(config.HourTimeRange.HourlyInterval);
-
-            if (ShouldMoveToNextDay(currentTime, config.HourTimeRange))
-            {
-                currentTime = MoveToNextDay(currentTime, config.HourTimeRange);
-            }
-        }
-
-        return executions;
-    }
-
-    private List<DateTime> CalculateWeeklyExecutions(WeeklyFrequencyConfiguration config)
-    {
-        var executions = new List<DateTime>();
-        var currentDate = config.CurrentDate;
-        var endDateTime = config.Limits.LimitEndDateTime;
-
-        while (executions.Count < 12 && currentDate <= endDateTime)
-        {
-            foreach (var dayOfWeek in config.DaysOfWeek)
-            {
-                var nextValidDate = GetNextValidDate(currentDate, dayOfWeek, config.WeekInterval);
-                if (nextValidDate > endDateTime) break;
-
-                var dailyExecutions = CalculateDailyExecutions(new DailyFrequencyConfiguration
-                {
-                    IsEnabled = config.IsEnabled,
-                    CurrentDate = nextValidDate,
-                    HourTimeRange = config.HourTimeRange,
-                    Limits = config.Limits
-                });
-
-                foreach (var exec in dailyExecutions)
-                {
-                    if (executions.Count < 12)
-                    {
-                        executions.Add(exec);
-                    }
-                    else
-                    {
-                        return executions;
-                    }
-                }
-            }
-
-            currentDate = currentDate.AddDays(7 * config.WeekInterval);
-        }
-
-        return executions;
-    }
-
-    private bool ShouldAddExecutionTime(DateTime currentTime, HourTimeRange hourTimeRange)
-    {
-        return currentTime.TimeOfDay >= hourTimeRange.StartHour && currentTime.TimeOfDay <= hourTimeRange.EndHour;
-    }
-
-    private bool ShouldMoveToNextDay(DateTime currentTime, HourTimeRange hourTimeRange)
-    {
-        return currentTime.TimeOfDay > hourTimeRange.EndHour ||
-               (hourTimeRange.EndHour < hourTimeRange.StartHour && currentTime.TimeOfDay < hourTimeRange.StartHour);
-    }
-
-    private DateTime MoveToNextDay(DateTime currentTime, HourTimeRange hourTimeRange)
-    {
-        return currentTime.Date.AddDays(1) + hourTimeRange.StartHour;
-    }
-
-    private DateTime GetNextValidDate(DateTime startDate, DayOfWeek targetDay, int weekInterval)
-    {
-        var daysUntilNextTargetDay = ((int)targetDay - (int)startDate.DayOfWeek + 7) % 7;
-        return startDate.AddDays(daysUntilNextTargetDay).AddDays(7 * (weekInterval - 1));
-    }
-}*/
 public class HourlyExecutionCalculatorService : IHourlyExecutionCalculatorService
 {
     public IEnumerable<DateTime> CalculateHourlyExecutions(SchedulerConfiguration config)
@@ -180,10 +55,11 @@ public class HourlyExecutionCalculatorService : IHourlyExecutionCalculatorServic
 
         while (currentDate <= limits.LimitEndDateTime && results.Count < 12)
         {
+            var currentHour = currentDate.Date.Add(startTime);
+
             if (startTime <= endTime)
             {
-                var currentHour = currentDate.Date.Add(startTime);
-                while (currentHour.TimeOfDay <= endTime && results.Count < 12)
+                while (currentHour.TimeOfDay <= endTime && results.Count < 12 && currentHour <= limits.LimitEndDateTime)
                 {
                     if (currentHour >= limits.LimitStartDateTime && currentHour <= limits.LimitEndDateTime)
                     {
@@ -194,7 +70,6 @@ public class HourlyExecutionCalculatorService : IHourlyExecutionCalculatorServic
             }
             else
             {
-                var currentHour = currentDate.Date.Add(startTime);
                 while (currentHour.TimeOfDay < TimeSpan.FromHours(24) && results.Count < 12 && currentHour <= limits.LimitEndDateTime)
                 {
                     if (currentHour >= limits.LimitStartDateTime && currentHour <= limits.LimitEndDateTime)
@@ -204,39 +79,7 @@ public class HourlyExecutionCalculatorService : IHourlyExecutionCalculatorServic
                     currentHour = currentHour.AddHours(interval);
                 }
 
-                currentHour = currentDate.Date.AddDays(1); 
-                while (currentHour.TimeOfDay <= endTime && results.Count < 12)
-                {
-                    if (currentHour >= limits.LimitStartDateTime && currentHour <= limits.LimitEndDateTime)
-                    {
-                        results.Add(currentHour);
-                    }
-                    currentHour = currentHour.AddHours(interval);
-                }
-            }
-
-            currentDate = currentDate.AddDays(1);
-        }
-
-        return results;
-    }
-
-    private IEnumerable<DateTime> CalculateWeeklyExecutions(WeeklyFrequencyConfiguration config)
-    {
-        var results = new List<DateTime>();
-        var currentDate = config.CurrentDate;
-        var startTime = config.HourTimeRange.StartHour;
-        var endTime = config.HourTimeRange.EndHour;
-        var interval = config.HourTimeRange.HourlyInterval;
-        var limits = config.Limits;
-        var weekInterval = config.WeekInterval;
-        var daysOfWeek = new HashSet<DayOfWeek>(config.DaysOfWeek); 
-
-        while (currentDate <= limits.LimitEndDateTime && results.Count < 12)
-        {
-            if (daysOfWeek.Contains(currentDate.DayOfWeek))
-            {
-                var currentHour = currentDate.Date.Add(startTime);
+                currentHour = currentDate.Date.AddDays(1).Date.Add(startTime); 
 
                 while (currentHour.TimeOfDay <= endTime && results.Count < 12 && currentHour <= limits.LimitEndDateTime)
                 {
@@ -249,14 +92,47 @@ public class HourlyExecutionCalculatorService : IHourlyExecutionCalculatorServic
             }
 
             currentDate = currentDate.AddDays(1);
+        }
 
-            if ((int)currentDate.DayOfWeek == 0) // If it's Sunday, check week interval
+        return results.Take(12).Where(dt => dt <= limits.LimitEndDateTime);
+    }
+
+    private IEnumerable<DateTime> CalculateWeeklyExecutions(WeeklyFrequencyConfiguration config)
+    {
+        var results = new List<DateTime>();
+        var currentDate = config.CurrentDate;
+        var startTime = config.HourTimeRange.StartHour;
+        var endTime = config.HourTimeRange.EndHour;
+        var interval = config.HourTimeRange.HourlyInterval;
+        var startLimit = config.Limits.LimitStartDateTime;
+        var endLimit = config.Limits.LimitEndDateTime ?? DateTime.MaxValue;
+        var weekInterval = config.WeekInterval;
+        var daysOfWeek = new HashSet<DayOfWeek>(config.DaysOfWeek); 
+
+        while (currentDate <= endLimit && results.Count < 12)
+        {
+            if (daysOfWeek.Contains(currentDate.DayOfWeek))
+            {
+                var currentHour = currentDate.Date.Add(startTime);
+
+                while (currentHour.TimeOfDay <= endTime && results.Count < 12 && currentHour <= endLimit)
+                {
+                    if (currentHour >= startLimit && currentHour <= endLimit)
+                    {
+                        results.Add(currentHour);
+                    }
+                    currentHour = currentHour.AddHours(interval);
+                }
+            }
+            
+            currentDate = currentDate.AddDays(1);
+
+            if ((int)currentDate.DayOfWeek == 0) 
             {
                 currentDate = currentDate.AddDays(7 * (weekInterval - 1));
             }
         }
 
-        // Ensure to limit the results to the limit end date time
-        return results.Take(12).Where(dt => dt <= limits.LimitEndDateTime);
+        return results.Take(12).Where(dt => dt <= endLimit);
     }
 }

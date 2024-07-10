@@ -10,18 +10,76 @@ using SchedulerApplication.ValueObjects;
 
 public class RecurringExecutionServiceTests
 {
+    private readonly IConfigurationValidator _validatorService;
+    private readonly IHourlyExecutionCalculatorService _hourlyExecutionCalculatorService;
+    private readonly IWeeklyExecutionCalculatorService _weeklyExecutionCalculatorService;
     private readonly IRecurringExecutionService _recurringExecutionService;
 
     public RecurringExecutionServiceTests()
     {
-        var validatorService = new ConfigurationValidator();
-        var hourlyExecutionCalculatorService = new HourlyExecutionCalculatorService();
-        var weeklyExecutionCalculatorService = new WeeklyExecutionCalculatorService(hourlyExecutionCalculatorService);
-
+        _validatorService = new ConfigurationValidator();
+        _hourlyExecutionCalculatorService = new HourlyExecutionCalculatorService();
+        _weeklyExecutionCalculatorService = new WeeklyExecutionCalculatorService();
         _recurringExecutionService = new RecurringExecutionService(
-            validatorService,
-            hourlyExecutionCalculatorService,
-            weeklyExecutionCalculatorService);
+            _validatorService,
+            _hourlyExecutionCalculatorService,
+            _weeklyExecutionCalculatorService);
+    }
+
+    [Fact]
+    public void CalculateNextExecutionTimes_DailyOccursOnce_ShouldReturnCorrectTimes()
+    {
+        // Arrange
+        var configuration = new DailyFrequencyConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            IsEnabled = true,
+            OccursOnce = true,
+            OnceAt = new TimeSpan(9, 0, 0),
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 12))
+        };
+
+        // Act
+        var result = _recurringExecutionService.CalculateNextExecutionTimes(configuration);
+
+        // Assert
+        result.Should().HaveCount(11);
+        for (int i = 0; i < 11; i++)
+        {
+            result[i].Should().Be(new DateTime(2024, 01, 01).AddDays(i).Add(new TimeSpan(9, 0, 0)));
+        }
+    }
+
+    [Fact]
+    public void CalculateNextExecutionTimes_DailyRecurrent_ShouldReturnCorrectTimes()
+    {
+        // Arrange
+        var configuration = new DailyFrequencyConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            IsEnabled = true,
+            OccursOnce = false,
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(12, 0, 0), 1, DailyHourFrequency.Recurrent),
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02,13,00,00))
+        };
+
+        // Act
+        var result = _recurringExecutionService.CalculateNextExecutionTimes(configuration);
+
+        // Assert
+        var expectedTimes = new List<DateTime>
+        {
+            new DateTime(2024, 01, 01, 9, 0, 0),
+            new DateTime(2024, 01, 01, 10, 0, 0),
+            new DateTime(2024, 01, 01, 11, 0, 0),
+            new DateTime(2024, 01, 01, 12, 0, 0),
+            new DateTime(2024, 01, 02, 9, 0, 0),
+            new DateTime(2024, 01, 02, 10, 0, 0),
+            new DateTime(2024, 01, 02, 11, 0, 0),
+            new DateTime(2024, 01, 02, 12, 0, 0)
+        };
+
+        result.Should().BeEquivalentTo(expectedTimes);
     }
 
     [Fact]
@@ -32,28 +90,69 @@ public class RecurringExecutionServiceTests
         {
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 31)),
             WeekInterval = 1,
             DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(12, 0, 0), 1, DailyHourFrequency.Recurrent)
         };
 
         // Act
         var result = _recurringExecutionService.CalculateNextExecutionTimes(configuration);
 
         // Assert
-        result.Should().HaveCount(12);
-        result[0].Should().Be(new DateTime(2024, 01, 01, 09, 00, 00));
-        result[1].Should().Be(new DateTime(2024, 01, 01, 10, 00, 00));
-        result[2].Should().Be(new DateTime(2024, 01, 01, 11, 00, 00));
-        result[3].Should().Be(new DateTime(2024, 01, 01, 12, 00, 00));
-        result[4].Should().Be(new DateTime(2024, 01, 01, 13, 00, 00));
-        result[5].Should().Be(new DateTime(2024, 01, 01, 14, 00, 00));
-        result[6].Should().Be(new DateTime(2024, 01, 01, 15, 00, 00));
-        result[7].Should().Be(new DateTime(2024, 01, 01, 16, 00, 00));
-        result[8].Should().Be(new DateTime(2024, 01, 01, 17, 00, 00));
-        result[9].Should().Be(new DateTime(2024, 01, 08, 09, 00, 00));
-        result[10].Should().Be(new DateTime(2024, 01, 08, 10, 00, 00));
-        result[11].Should().Be(new DateTime(2024, 01, 08, 11, 00, 00));
+        var expectedTimes = new List<DateTime>
+        {
+            new DateTime(2024, 01, 01, 9, 0, 0),
+            new DateTime(2024, 01, 01, 10, 0, 0),
+            new DateTime(2024, 01, 01, 11, 0, 0),
+            new DateTime(2024, 01, 01, 12, 0, 0),
+            new DateTime(2024, 01, 03, 9, 0, 0),
+            new DateTime(2024, 01, 03, 10, 0, 0),
+            new DateTime(2024, 01, 03, 11, 0, 0),
+            new DateTime(2024, 01, 03, 12, 0, 0),
+            new DateTime(2024, 01, 08, 9, 0, 0),
+            new DateTime(2024, 01, 08, 10, 0, 0),
+            new DateTime(2024, 01, 08, 11, 0, 0),
+            new DateTime(2024, 01, 08, 12, 0, 0)
+        };
+
+        result.Should().BeEquivalentTo(expectedTimes);
+    }
+
+    [Fact]
+    public void CalculateNextExecutionTimes_WeeklyInterval_ShouldReturnCorrectTimes()
+    {
+        // Arrange
+        var configuration = new WeeklyFrequencyConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 31)),
+            WeekInterval = 2,
+            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(12, 0, 0), 1, DailyHourFrequency.Recurrent)
+        };
+
+        // Act
+        var result = _recurringExecutionService.CalculateNextExecutionTimes(configuration);
+
+        // Assert
+        var expectedTimes = new List<DateTime>
+        {
+            new DateTime(2024, 01, 01, 9, 0, 0),
+            new DateTime(2024, 01, 01, 10, 0, 0),
+            new DateTime(2024, 01, 01, 11, 0, 0),
+            new DateTime(2024, 01, 01, 12, 0, 0),
+            new DateTime(2024, 01, 15, 9, 0, 0),
+            new DateTime(2024, 01, 15, 10, 0, 0),
+            new DateTime(2024, 01, 15, 11, 0, 0),
+            new DateTime(2024, 01, 15, 12, 0, 0),
+            new DateTime(2024, 01, 29, 9, 0, 0),
+            new DateTime(2024, 01, 29, 10, 0, 0),
+            new DateTime(2024, 01, 29, 11, 0, 0),
+            new DateTime(2024, 01, 29, 12, 0, 0)
+        };
+
+        result.Should().BeEquivalentTo(expectedTimes);
     }
 }

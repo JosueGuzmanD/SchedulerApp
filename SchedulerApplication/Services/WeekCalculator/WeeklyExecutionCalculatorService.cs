@@ -1,66 +1,48 @@
 ﻿using SchedulerApplication.Models.FrequencyConfigurations;
-using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.Interfaces;
 
 namespace SchedulerApplication.Services.WeekCalculator;
 
 public class WeeklyExecutionCalculatorService : IWeeklyExecutionCalculatorService
 {
-    private readonly IHourlyExecutionCalculatorService _hourlyExecutionCalculatorService;
-
-    public WeeklyExecutionCalculatorService(IHourlyExecutionCalculatorService hourlyExecutionCalculatorService)
+    public IEnumerable<DateTime> CalculateWeeklyExecutions(WeeklyFrequencyConfiguration config)
     {
-        _hourlyExecutionCalculatorService = hourlyExecutionCalculatorService;
-    }
+        if (config == null)
+            throw new ArgumentNullException();
 
-    public List<DateTime> CalculateWeeklyExecutions(WeeklyFrequencyConfiguration config, int maxExecutions)
-    {
-        var executionTimes = new List<DateTime>();
+        var results = new List<DateTime>();
         var currentDate = config.CurrentDate;
-        var executionCount = 0;
+        var weekInterval = config.WeekInterval;
+        var daysOfWeek = new HashSet<DayOfWeek>(config.DaysOfWeek);
+        var limitInitDatetime = config.Limits.LimitStartDateTime;
+        var endDate = config.Limits.LimitEndDateTime ?? DateTime.MaxValue;
 
-        while (executionCount < maxExecutions)
+        if (!daysOfWeek.Any())
         {
-            foreach (var dayOfWeek in config.DaysOfWeek)
+            return results;
+        }
+
+        while (currentDate <= endDate && results.Count < 12)
+        {
+            if (daysOfWeek.Contains(currentDate.DayOfWeek))
             {
-                var nextValidDate = GetNextValidDate(currentDate, dayOfWeek);
-                if (nextValidDate >= config.CurrentDate && executionCount < maxExecutions)
+                var executionTime = currentDate.Date;
+                if (executionTime >= limitInitDatetime && executionTime <= endDate)
                 {
-                    var hourlyExecutions = _hourlyExecutionCalculatorService.CalculateHourlyExecutions(
-                        new WeeklyFrequencyConfiguration()
-                        {
-                            IsEnabled = config.IsEnabled,
-                            CurrentDate = nextValidDate,
-                            HourTimeRange = config.HourTimeRange
-                        }
-                    );
-                        
-                    foreach (var exec in hourlyExecutions)
-                    {
-                        if (executionCount < maxExecutions)
-                        {
-                            executionTimes.Add(exec);
-                            executionCount++;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
+                    results.Add(executionTime);
                 }
             }
 
-            // Increment by the week interval
-            currentDate = currentDate.AddDays(7 * config.WeekInterval);
+            currentDate = currentDate.AddDays(1);
+
+            if (currentDate.DayOfWeek == DayOfWeek.Monday && results.Count > 0)
+            {
+                currentDate = currentDate.AddDays(7 * (weekInterval - 1));
+            }
         }
 
-        return executionTimes;
-    }
-
-    private DateTime GetNextValidDate(DateTime startDate, DayOfWeek targetDay)
-    {
-        var daysUntilNextTargetDay = ((int)targetDay - (int)startDate.DayOfWeek + 7) % 7;
-        return startDate.AddDays(daysUntilNextTargetDay);
+        return results;
     }
 }
+
 

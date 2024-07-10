@@ -4,7 +4,7 @@ namespace SchedulerApplication.Services.Interfaces;
 
 public interface IWeeklyExecutionCalculatorService
 {
-    List<DateTime> CalculateWeeklyExecutions(WeeklyFrequencyConfiguration config, int maxExecutions);
+    IEnumerable<DateTime> CalculateWeeklyExecutions(WeeklyFrequencyConfiguration config);
 }
 
 
