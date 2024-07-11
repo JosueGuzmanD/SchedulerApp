@@ -2,27 +2,26 @@
 using SchedulerApplication.Common.Enums;
 using SchedulerApplication.Common.Validator;
 using SchedulerApplication.Models.FrequencyConfigurations;
+using SchedulerApplication.Services.ExecutionCalculator;
 using SchedulerApplication.Services.ExecutionTime;
-using SchedulerApplication.Services.HourCalculator;
 using SchedulerApplication.Services.Interfaces;
-using SchedulerApplication.Services.WeekCalculator;
 using SchedulerApplication.ValueObjects;
 
 public class RecurringExecutionServiceTests
 {
     private readonly IConfigurationValidator _validatorService;
-    private readonly IHourlyExecutionCalculatorService _hourlyExecutionCalculatorService;
+    private readonly IDailyExecutionCalculatorService _dailyExecutionCalculatorService;
     private readonly IWeeklyExecutionCalculatorService _weeklyExecutionCalculatorService;
     private readonly IRecurringExecutionService _recurringExecutionService;
 
     public RecurringExecutionServiceTests()
     {
         _validatorService = new ConfigurationValidator();
-        _hourlyExecutionCalculatorService = new HourlyExecutionCalculatorService();
-        _weeklyExecutionCalculatorService = new WeeklyExecutionCalculatorService();
+        _dailyExecutionCalculatorService = new DailyExecutionCalculatorService();
+        _weeklyExecutionCalculatorService = new WeeklyExecutionCalculatorService(_dailyExecutionCalculatorService);
         _recurringExecutionService = new RecurringExecutionService(
             _validatorService,
-            _hourlyExecutionCalculatorService,
+            _dailyExecutionCalculatorService,
             _weeklyExecutionCalculatorService);
     }
 
@@ -36,7 +35,8 @@ public class RecurringExecutionServiceTests
             IsEnabled = true,
             OccursOnce = true,
             OnceAt = new TimeSpan(9, 0, 0),
-            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 12))
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 12)),
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0)) 
         };
 
         // Act
@@ -60,7 +60,7 @@ public class RecurringExecutionServiceTests
             IsEnabled = true,
             OccursOnce = false,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(12, 0, 0), 1, DailyHourFrequency.Recurrent),
-            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02,13,00,00))
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02, 13, 0, 0))
         };
 
         // Act

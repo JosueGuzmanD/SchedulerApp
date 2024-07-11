@@ -1,14 +1,43 @@
 ﻿using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Services.Interfaces;
 
-namespace SchedulerApplication.Services.WeekCalculator;
+namespace SchedulerApplication.Services.ExecutionCalculator;
 
 public class WeeklyExecutionCalculatorService : IWeeklyExecutionCalculatorService
 {
-    public IEnumerable<DateTime> CalculateWeeklyExecutions(WeeklyFrequencyConfiguration config)
+    private readonly IDailyExecutionCalculatorService _dailyExecutionCalculatorService;
+
+    public WeeklyExecutionCalculatorService(IDailyExecutionCalculatorService dailyExecutionCalculatorService)
+    {
+        _dailyExecutionCalculatorService = dailyExecutionCalculatorService;
+    }
+
+    public List<DateTime> CalculateWeeklyExecutions(WeeklyFrequencyConfiguration config, int maxExecutions)
+    {
+        var executionTimes = new List<DateTime>();
+        var weeklyDays = CalculateWeeklyDays(config);
+
+        foreach (var day in weeklyDays)
+        {
+            var hourlyExecutions = _dailyExecutionCalculatorService.GenerateHourlyExecutionsForDay(config.HourTimeRange, day, config.Limits);
+
+            foreach (var executionTime in hourlyExecutions)
+            {
+                if (executionTimes.Count >= maxExecutions)
+                {
+                    return executionTimes;
+                }
+                executionTimes.Add(executionTime);
+            }
+        }
+
+        return executionTimes;
+    }
+
+    private IEnumerable<DateTime> CalculateWeeklyDays(WeeklyFrequencyConfiguration config)
     {
         if (config == null)
-            throw new ArgumentNullException();
+            throw new ArgumentNullException(nameof(config));
 
         var results = new List<DateTime>();
         var currentDate = config.CurrentDate;
@@ -44,5 +73,3 @@ public class WeeklyExecutionCalculatorService : IWeeklyExecutionCalculatorServic
         return results;
     }
 }
-
-

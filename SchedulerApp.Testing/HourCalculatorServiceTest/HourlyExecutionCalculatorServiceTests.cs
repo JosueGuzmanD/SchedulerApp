@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using SchedulerApplication.Common.Enums;
+using SchedulerApplication.Models;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.HourCalculator;
@@ -145,4 +146,106 @@ public class HourlyExecutionCalculatorServiceTests
         // Assert
         result.Should().BeEquivalentTo(expectedTimes);
     }
+    [Fact]
+    public void CalculateHourlyExecutions_ShouldHandleWeeklyInterval()
+    {
+        // Arrange
+        var config = new WeeklyFrequencyConfiguration
+        {
+            IsEnabled = true,
+            CurrentDate = new DateTime(2024, 01, 01),
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent),
+            WeekInterval = 2,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 16)),
+            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday }
+        };
+        var expectedTimes = new List<DateTime>
+        {
+            new DateTime(2024, 01, 01, 9, 0, 0),
+            new DateTime(2024, 01, 01, 10, 0, 0),
+            new DateTime(2024, 01, 01, 11, 0, 0),
+            new DateTime(2024, 01, 01, 12, 0, 0),
+            new DateTime(2024, 01, 01, 13, 0, 0),
+            new DateTime(2024, 01, 01, 14, 0, 0),
+            new DateTime(2024, 01, 01, 15, 0, 0),
+            new DateTime(2024, 01, 01, 16, 0, 0),
+            new DateTime(2024, 01, 01, 17, 0, 0),
+            new DateTime(2024, 01, 15, 9, 0, 0),
+            new DateTime(2024, 01, 15, 10, 0, 0),
+            new DateTime(2024, 01, 15, 11, 0, 0)
+        };
+
+        // Act
+        var result = _hourCalculatorService.CalculateHourlyExecutions(config).Take(12).ToList();
+
+        // Assert
+        result.Should().BeEquivalentTo(expectedTimes);
+    }
+
+    [Fact]
+    public void CalculateHourlyExecutions_ShouldReturnEmptyForDisabledConfiguration()
+    {
+        // Arrange
+        var config = new OnceSchedulerConfiguration
+        {
+            IsEnabled = false,
+            CurrentDate = new DateTime(2024, 01, 01),
+            ConfigurationDateTime = new DateTime(2024, 01, 01, 9, 0, 0)
+        };
+
+        // Act
+        var result = _hourCalculatorService.CalculateHourlyExecutions(config);
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void CalculateHourlyExecutions_ShouldThrowException_ForUnsupportedConfiguration()
+    {
+        // Arrange
+        var unsupportedConfig = new UnsupportedSchedulerConfiguration
+        {
+            IsEnabled = true,
+            CurrentDate = new DateTime(2024, 01, 01)
+        };
+
+        // Act
+        Action act = () => _hourCalculatorService.CalculateHourlyExecutions(unsupportedConfig);
+
+        // Assert
+        act.Should().Throw<ArgumentException>().WithMessage("Unknown configuration type");
+    }
+
+    [Fact]
+    public void CalculateHourlyExecutions_ShouldOnlyIncludeHoursWithinLimits()
+    {
+        // Arrange
+        var config = new DailyFrequencyConfiguration
+        {
+            IsEnabled = true,
+            CurrentDate = new DateTime(2024, 01, 01),
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent),
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01, 10, 0, 0), new DateTime(2024, 01, 01, 15, 0, 0))
+        };
+        var expectedTimes = new List<DateTime>
+        {
+            new DateTime(2024, 01, 01, 10, 0, 0),
+            new DateTime(2024, 01, 01, 11, 0, 0),
+            new DateTime(2024, 01, 01, 12, 0, 0),
+            new DateTime(2024, 01, 01, 13, 0, 0),
+            new DateTime(2024, 01, 01, 14, 0, 0),
+            new DateTime(2024, 01, 01, 15, 0, 0)
+        };
+
+        // Act
+        var result = _hourCalculatorService.CalculateHourlyExecutions(config).ToList();
+
+        // Assert
+        result.Should().BeEquivalentTo(expectedTimes);
+    }
+    private class UnsupportedSchedulerConfiguration : SchedulerConfiguration
+    {
+    }
+
 }

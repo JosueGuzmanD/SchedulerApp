@@ -107,7 +107,7 @@ public class HourlyExecutionCalculatorService : IHourlyExecutionCalculatorServic
         var startLimit = config.Limits.LimitStartDateTime;
         var endLimit = config.Limits.LimitEndDateTime ?? DateTime.MaxValue;
         var weekInterval = config.WeekInterval;
-        var daysOfWeek = new HashSet<DayOfWeek>(config.DaysOfWeek); 
+        var daysOfWeek = new HashSet<DayOfWeek>(config.DaysOfWeek);
 
         while (currentDate <= endLimit && results.Count < 12)
         {
@@ -124,15 +124,15 @@ public class HourlyExecutionCalculatorService : IHourlyExecutionCalculatorServic
                     currentHour = currentHour.AddHours(interval);
                 }
             }
-            
+
             currentDate = currentDate.AddDays(1);
 
-            if ((int)currentDate.DayOfWeek == 0) 
+            if (currentDate.DayOfWeek == DayOfWeek.Monday && currentDate != config.CurrentDate)
             {
                 currentDate = currentDate.AddDays(7 * (weekInterval - 1));
             }
         }
 
-        return results.Take(12).Where(dt => dt <= endLimit);
+        return results;
     }
 }

@@ -3,11 +3,10 @@ using SchedulerApplication.Common.Enums;
 using SchedulerApplication.Common.Validator;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Services.Description;
+using SchedulerApplication.Services.ExecutionCalculator;
 using SchedulerApplication.Services.ExecutionTime;
-using SchedulerApplication.Services.HourCalculator;
 using SchedulerApplication.Services.Interfaces;
 using SchedulerApplication.Services.ScheduleTypes;
-using SchedulerApplication.Services.WeekCalculator;
 using SchedulerApplication.ValueObjects;
 
 namespace SchedulerApp.Testing.ScheduleTypes;
@@ -21,12 +20,12 @@ public class ScheduleTypeRecurringTests
     public ScheduleTypeRecurringTests()
     {
         var validatorService = new ConfigurationValidator();
-        var hourlyExecutionCalculatorService = new HourlyExecutionCalculatorService();
-        var weeklyExecutionCalculatorService = new WeeklyExecutionCalculatorService();
+        var dailyExecutionCalculatorService = new DailyExecutionCalculatorService();
+        var weeklyExecutionCalculatorService = new WeeklyExecutionCalculatorService(dailyExecutionCalculatorService);
 
         _recurringExecutionService = new RecurringExecutionService(
             validatorService,
-            hourlyExecutionCalculatorService,
+            dailyExecutionCalculatorService,
             weeklyExecutionCalculatorService);
 
         _descriptionService = new DescriptionService();
@@ -96,7 +95,7 @@ public class ScheduleTypeRecurringTests
         for (int i = 0; i < 8; i++)
         {
             result[i].ExecutionTime.Should().Be(expectedTimes[i]);
-            result[i].Description.Should().NotBeNullOrEmpty(); 
+            result[i].Description.Should().NotBeNullOrEmpty();
         }
     }
 
@@ -138,7 +137,7 @@ public class ScheduleTypeRecurringTests
         for (int i = 0; i < 12; i++)
         {
             result[i].ExecutionTime.Should().Be(expectedTimes[i]);
-            result[i].Description.Should().NotBeNullOrEmpty(); 
+            result[i].Description.Should().NotBeNullOrEmpty();
         }
     }
 
@@ -180,7 +179,7 @@ public class ScheduleTypeRecurringTests
         for (int i = 0; i < 12; i++)
         {
             result[i].ExecutionTime.Should().Be(expectedTimes[i]);
-            result[i].Description.Should().NotBeNullOrEmpty(); 
+            result[i].Description.Should().NotBeNullOrEmpty();
         }
     }
 }

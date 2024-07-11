@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using SchedulerApplication.Common.Validator;
-using SchedulerApplication.Models;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.Description;
 using SchedulerApplication.Services.ExecutionTime;
@@ -9,7 +8,7 @@ using SchedulerApplication.Services.ScheduleTypes;
 using SchedulerApplication.ValueObjects;
 
 namespace SchedulerApp.Testing.ScheduleTypes;
-/*
+
 public class ScheduleTypeOnceTests
 {
     private readonly IDescriptionService _descriptionService;
@@ -124,4 +123,3 @@ public class ScheduleTypeOnceTests
     }
 }
 
-*/
