@@ -1,35 +1,32 @@
-﻿using SchedulerApplication.Models;
+﻿using SchedulerApplication.Interfaces;
+using SchedulerApplication.Models;
 using SchedulerApplication.Models.SchedulerConfigurations;
-using SchedulerApplication.Services.Interfaces;
 
 namespace SchedulerApplication.Services.ScheduleTypes;
 
 public class ScheduleTypeOnce : ScheduleTypeBase<OnceSchedulerConfiguration>
 {
-    private readonly IOnceExecutionService _onceExecutionService;
     private readonly IConfigurationValidator _validator;
 
-    public ScheduleTypeOnce(IDescriptionService descriptionService, IOnceExecutionService onceExecutionService, IConfigurationValidator validator)
-        : base(descriptionService, onceExecutionService)
+    public ScheduleTypeOnce(IDescriptionService descriptionService, IExecutionTimeGenerator executionTimeGenerator, IConfigurationValidator validator)
+        : base(descriptionService, executionTimeGenerator)
     {
-        _onceExecutionService = onceExecutionService;
         _validator = validator;
     }
 
     protected override List<ScheduleOutput> CreateScheduleOutput(OnceSchedulerConfiguration configuration)
     {
         _validator.Validate(configuration);
-        var executionTime = _onceExecutionService.CalculateNextExecutionTime(configuration);
+        var executionTime = _executionTimeGenerator.GenerateExecutions(configuration).First();
         var description = _descriptionService.GenerateDescription(configuration, executionTime);
 
-        var list = new List<ScheduleOutput>
-        {
-            new()
+        return
+        [
+            new ScheduleOutput()
             {
                 Description = description,
                 ExecutionTime = executionTime
             }
-        };
-        return list;
+        ];
     }
 }

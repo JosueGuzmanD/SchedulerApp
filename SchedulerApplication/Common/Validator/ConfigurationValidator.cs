@@ -1,5 +1,5 @@
-﻿using SchedulerApplication.Models;
-using SchedulerApplication.Services.Interfaces;
+﻿using SchedulerApplication.Interfaces;
+using SchedulerApplication.Models;
 
 namespace SchedulerApplication.Common.Validator;
 

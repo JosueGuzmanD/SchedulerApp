@@ -1,22 +1,19 @@
-﻿using SchedulerApplication.Models;
+﻿using SchedulerApplication.Interfaces;
+using SchedulerApplication.Models;
 using SchedulerApplication.Models.SchedulerConfigurations;
-using SchedulerApplication.Services.Interfaces;
 
 namespace SchedulerApplication.Services.ScheduleTypes;
 
 public class ScheduleTypeRecurring : ScheduleTypeBase<RecurringSchedulerConfiguration>
 {
-    private readonly IRecurringExecutionService _recurringExecutionService;
-
-    public ScheduleTypeRecurring(IDescriptionService descriptionService, IRecurringExecutionService recurringExecutionService)
-        : base(descriptionService, recurringExecutionService)
+    public ScheduleTypeRecurring(IDescriptionService descriptionService, IExecutionTimeGenerator executionTimeGenerator)
+        : base(descriptionService, executionTimeGenerator)
     {
-        _recurringExecutionService = recurringExecutionService;
     }
 
     protected override List<ScheduleOutput> CreateScheduleOutput(RecurringSchedulerConfiguration configuration)
     {
-        var executionTimes = _recurringExecutionService.CalculateNextExecutionTimes(configuration);
+        var executionTimes = _executionTimeGenerator.GenerateExecutions(configuration);
         var outputs = new List<ScheduleOutput>();
 
         foreach (var time in executionTimes)

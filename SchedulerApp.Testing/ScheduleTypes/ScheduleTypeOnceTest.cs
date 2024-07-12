@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
 using SchedulerApplication.Common.Validator;
+using SchedulerApplication.Interfaces;
 using SchedulerApplication.Models.SchedulerConfigurations;
+using SchedulerApplication.Models.ValueObjects;
 using SchedulerApplication.Services.Description;
 using SchedulerApplication.Services.ExecutionTime;
-using SchedulerApplication.Services.Interfaces;
 using SchedulerApplication.Services.ScheduleTypes;
-using SchedulerApplication.ValueObjects;
 
 namespace SchedulerApp.Testing.ScheduleTypes;
 

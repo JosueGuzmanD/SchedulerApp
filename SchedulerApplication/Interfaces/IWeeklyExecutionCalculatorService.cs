@@ -1,6 +1,6 @@
 ﻿using SchedulerApplication.Models.FrequencyConfigurations;
 
-namespace SchedulerApplication.Services.Interfaces;
+namespace SchedulerApplication.Interfaces;
 
 public interface IWeeklyExecutionCalculatorService
 {

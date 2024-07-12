@@ -1,4 +1,4 @@
-﻿namespace SchedulerApplication.ValueObjects;
+﻿namespace SchedulerApplication.Models.ValueObjects;
 
 public class HourTimeRange : IEquatable<HourTimeRange>
 {

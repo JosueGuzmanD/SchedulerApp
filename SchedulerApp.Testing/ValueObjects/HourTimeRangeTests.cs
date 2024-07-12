@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using SchedulerApplication.ValueObjects;
+using SchedulerApplication.Models.ValueObjects;
 
 namespace SchedulerApp.Testing.ValueObjects;
 

@@ -1,5 +1,5 @@
-﻿using SchedulerApplication.Models.SchedulerConfigurations;
-using SchedulerApplication.Services.Interfaces;
+﻿using SchedulerApplication.Interfaces;
+using SchedulerApplication.Models.SchedulerConfigurations;
 
 namespace SchedulerApplication.Services.ExecutionTime;
 

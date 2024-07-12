@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using SchedulerApplication.Common.Validator;
+using SchedulerApplication.Interfaces;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.ExecutionTime;
-using SchedulerApplication.Services.Interfaces;
 
 namespace SchedulerApp.Testing.ExecutionTime;
 

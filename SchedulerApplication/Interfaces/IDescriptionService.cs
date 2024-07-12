@@ -1,6 +1,6 @@
 ﻿using SchedulerApplication.Models;
 
-namespace SchedulerApplication.Services.Interfaces;
+namespace SchedulerApplication.Interfaces;
 
 public interface IDescriptionService
 {

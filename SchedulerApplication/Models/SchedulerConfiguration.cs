@@ -1,4 +1,4 @@
-﻿using SchedulerApplication.ValueObjects;
+﻿using SchedulerApplication.Models.ValueObjects;
 
 namespace SchedulerApplication.Models;
 

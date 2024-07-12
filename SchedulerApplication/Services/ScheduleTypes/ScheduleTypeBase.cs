@@ -1,17 +1,17 @@
-﻿using SchedulerApplication.Models;
-using SchedulerApplication.Services.Interfaces;
+﻿using SchedulerApplication.Interfaces;
+using SchedulerApplication.Models;
 
 namespace SchedulerApplication.Services.ScheduleTypes;
 
 public abstract class ScheduleTypeBase<TConfiguration> : IScheduleType where TConfiguration : SchedulerConfiguration
 {
     protected readonly IDescriptionService _descriptionService;
-    protected readonly ISchedulerExecutionService _executionTimeService;
+    protected readonly IExecutionTimeGenerator _executionTimeGenerator;
 
-    protected ScheduleTypeBase(IDescriptionService descriptionService, ISchedulerExecutionService executionTimeService)
+    protected ScheduleTypeBase(IDescriptionService descriptionService, IExecutionTimeGenerator executionTimeGenerator)
     {
         _descriptionService = descriptionService;
-        _executionTimeService = executionTimeService;
+        _executionTimeGenerator = executionTimeGenerator;
     }
 
     public List<ScheduleOutput> GetNextExecutionTimes(SchedulerConfiguration configuration)

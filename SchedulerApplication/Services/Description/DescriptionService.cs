@@ -1,7 +1,7 @@
-﻿using SchedulerApplication.Models;
+﻿using SchedulerApplication.Interfaces;
+using SchedulerApplication.Models;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
-using SchedulerApplication.Services.Interfaces;
 
 namespace SchedulerApplication.Services.Description;
 

@@ -1,8 +1,8 @@
-﻿using SchedulerApplication.Models.FrequencyConfigurations;
-using SchedulerApplication.Services.Interfaces;
-using SchedulerApplication.ValueObjects;
+﻿using SchedulerApplication.Interfaces;
+using SchedulerApplication.Models.FrequencyConfigurations;
+using SchedulerApplication.Models.ValueObjects;
 
-namespace SchedulerApplication.Services.ExecutionCalculator;
+namespace SchedulerApplication.Services.DateCalculatorServices;
 
 public class DailyExecutionCalculatorService : IDailyExecutionCalculatorService
 {

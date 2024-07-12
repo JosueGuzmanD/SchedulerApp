@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
+using SchedulerApplication.Interfaces;
 using SchedulerApplication.Models.FrequencyConfigurations;
-using SchedulerApplication.Services.ExecutionCalculator;
-using SchedulerApplication.Services.Interfaces;
-using SchedulerApplication.ValueObjects;
+using SchedulerApplication.Models.ValueObjects;
+using SchedulerApplication.Services.DateCalculatorServices;
 
 namespace SchedulerApp.Testing.WeekCalculator;
 

@@ -1,7 +1,7 @@
-﻿using SchedulerApplication.Models.FrequencyConfigurations;
-using SchedulerApplication.Services.Interfaces;
+﻿using SchedulerApplication.Interfaces;
+using SchedulerApplication.Models.FrequencyConfigurations;
 
-namespace SchedulerApplication.Services.ExecutionCalculator;
+namespace SchedulerApplication.Services.DateCalculatorServices;
 
 public class WeeklyExecutionCalculatorService : IWeeklyExecutionCalculatorService
 {

@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
+using SchedulerApplication.Models.ValueObjects;
 using SchedulerApplication.Services.Description;
-using SchedulerApplication.ValueObjects;
 
 namespace SchedulerApp.Testing.DescriptionServiceTest;
 

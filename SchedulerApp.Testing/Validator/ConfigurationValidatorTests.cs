@@ -3,7 +3,7 @@ using SchedulerApplication.Common.Validator;
 using SchedulerApplication.Models;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
-using SchedulerApplication.ValueObjects;
+using SchedulerApplication.Models.ValueObjects;
 
 namespace SchedulerApp.Testing.Validator;
 
