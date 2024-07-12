@@ -1,11 +1,12 @@
 ﻿using FluentAssertions;
-using SchedulerApplication.Common.Enums;
 using SchedulerApplication.Common.Validator;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Services.ExecutionCalculator;
 using SchedulerApplication.Services.ExecutionTime;
 using SchedulerApplication.Services.Interfaces;
 using SchedulerApplication.ValueObjects;
+
+namespace SchedulerApp.Testing.ExecutionTime;
 
 public class RecurringExecutionServiceTests
 {
@@ -36,7 +37,7 @@ public class RecurringExecutionServiceTests
             OccursOnce = true,
             OnceAt = new TimeSpan(9, 0, 0),
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 12)),
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0)) 
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0))
         };
 
         // Act
@@ -44,7 +45,7 @@ public class RecurringExecutionServiceTests
 
         // Assert
         result.Should().HaveCount(11);
-        for (int i = 0; i < 11; i++)
+        for (var i = 0; i < 11; i++)
         {
             result[i].Should().Be(new DateTime(2024, 01, 01).AddDays(i).Add(new TimeSpan(9, 0, 0)));
         }
@@ -59,7 +60,8 @@ public class RecurringExecutionServiceTests
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
             OccursOnce = false,
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(12, 0, 0), 1, DailyHourFrequency.Recurrent),
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(12, 0, 0)),
+            HourlyInterval = 1,
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02, 13, 0, 0))
         };
 
@@ -69,14 +71,14 @@ public class RecurringExecutionServiceTests
         // Assert
         var expectedTimes = new List<DateTime>
         {
-            new DateTime(2024, 01, 01, 9, 0, 0),
-            new DateTime(2024, 01, 01, 10, 0, 0),
-            new DateTime(2024, 01, 01, 11, 0, 0),
-            new DateTime(2024, 01, 01, 12, 0, 0),
-            new DateTime(2024, 01, 02, 9, 0, 0),
-            new DateTime(2024, 01, 02, 10, 0, 0),
-            new DateTime(2024, 01, 02, 11, 0, 0),
-            new DateTime(2024, 01, 02, 12, 0, 0)
+            new(2024, 01, 01, 9, 0, 0),
+            new(2024, 01, 01, 10, 0, 0),
+            new(2024, 01, 01, 11, 0, 0),
+            new(2024, 01, 01, 12, 0, 0),
+            new(2024, 01, 02, 9, 0, 0),
+            new(2024, 01, 02, 10, 0, 0),
+            new(2024, 01, 02, 11, 0, 0),
+            new(2024, 01, 02, 12, 0, 0)
         };
 
         result.Should().BeEquivalentTo(expectedTimes);
@@ -92,8 +94,9 @@ public class RecurringExecutionServiceTests
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 31)),
             WeekInterval = 1,
-            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(12, 0, 0), 1, DailyHourFrequency.Recurrent)
+            DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(12, 0, 0)),
+            HourlyInterval = 1
         };
 
         // Act
@@ -102,18 +105,20 @@ public class RecurringExecutionServiceTests
         // Assert
         var expectedTimes = new List<DateTime>
         {
-            new DateTime(2024, 01, 01, 9, 0, 0),
-            new DateTime(2024, 01, 01, 10, 0, 0),
-            new DateTime(2024, 01, 01, 11, 0, 0),
-            new DateTime(2024, 01, 01, 12, 0, 0),
-            new DateTime(2024, 01, 03, 9, 0, 0),
-            new DateTime(2024, 01, 03, 10, 0, 0),
-            new DateTime(2024, 01, 03, 11, 0, 0),
-            new DateTime(2024, 01, 03, 12, 0, 0),
-            new DateTime(2024, 01, 08, 9, 0, 0),
-            new DateTime(2024, 01, 08, 10, 0, 0),
-            new DateTime(2024, 01, 08, 11, 0, 0),
-            new DateTime(2024, 01, 08, 12, 0, 0)
+            new (2024, 01, 01, 9, 0, 0),
+            new (2024, 01, 01, 10, 0, 0),
+
+            new (2024, 01, 01, 11, 0, 0),
+            new (2024, 01, 01, 12, 0, 0),
+            new (2024, 01, 03, 9, 0, 0),
+            new (2024, 01, 03, 10, 0, 0),
+            new (2024, 01, 03, 11, 0, 0),
+            new (2024, 01, 03, 12, 0, 0),
+            new (2024, 01, 08, 9, 0, 0),
+            new (2024, 01, 08, 10, 0, 0),
+            new (2024, 01, 08, 11, 0, 0),
+            new (2024, 01, 08, 12, 0, 0),
+
         };
 
         result.Should().BeEquivalentTo(expectedTimes);
@@ -129,8 +134,9 @@ public class RecurringExecutionServiceTests
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 31)),
             WeekInterval = 2,
-            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(12, 0, 0), 1, DailyHourFrequency.Recurrent)
+            DaysOfWeek = [DayOfWeek.Monday],
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(12, 0, 0)),
+            HourlyInterval = 1
         };
 
         // Act
@@ -139,18 +145,18 @@ public class RecurringExecutionServiceTests
         // Assert
         var expectedTimes = new List<DateTime>
         {
-            new DateTime(2024, 01, 01, 9, 0, 0),
-            new DateTime(2024, 01, 01, 10, 0, 0),
-            new DateTime(2024, 01, 01, 11, 0, 0),
-            new DateTime(2024, 01, 01, 12, 0, 0),
-            new DateTime(2024, 01, 15, 9, 0, 0),
-            new DateTime(2024, 01, 15, 10, 0, 0),
-            new DateTime(2024, 01, 15, 11, 0, 0),
-            new DateTime(2024, 01, 15, 12, 0, 0),
-            new DateTime(2024, 01, 29, 9, 0, 0),
-            new DateTime(2024, 01, 29, 10, 0, 0),
-            new DateTime(2024, 01, 29, 11, 0, 0),
-            new DateTime(2024, 01, 29, 12, 0, 0)
+            new (2024, 01, 01, 9, 0, 0),
+            new (2024, 01, 01, 10, 0, 0),
+            new (2024, 01, 01, 11, 0, 0),
+            new (2024, 01, 01, 12, 0, 0),
+            new (2024, 01, 15, 9, 0, 0),
+            new (2024, 01, 15, 10, 0, 0),
+            new (2024, 01, 15, 11, 0, 0),
+            new (2024, 01, 15, 12, 0, 0),
+            new (2024, 01, 29, 9, 0, 0),
+            new (2024, 01, 29, 10, 0, 0),
+            new (2024, 01, 29, 11, 0, 0),
+            new (2024, 01, 29, 12, 0, 0)
         };
 
         result.Should().BeEquivalentTo(expectedTimes);

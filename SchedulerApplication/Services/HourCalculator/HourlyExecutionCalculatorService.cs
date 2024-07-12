@@ -10,26 +10,19 @@ public class HourlyExecutionCalculatorService : IHourlyExecutionCalculatorServic
     {
         if (!config.IsEnabled)
         {
-            return Enumerable.Empty<DateTime>();
+            return [];
         }
 
-        switch (config)
+        return config switch
         {
-            case OnceSchedulerConfiguration onceConfig:
-                return CalculateOnceExecutions(onceConfig);
-
-            case DailyFrequencyConfiguration dailyConfig:
-                return CalculateDailyExecutions(dailyConfig);
-
-            case WeeklyFrequencyConfiguration weeklyConfig:
-                return CalculateWeeklyExecutions(weeklyConfig);
-
-            default:
-                throw new ArgumentException("Unknown configuration type");
-        }
+            OnceSchedulerConfiguration onceConfig => CalculateOnceExecutions(onceConfig),
+            DailyFrequencyConfiguration dailyConfig => CalculateDailyExecutions(dailyConfig),
+            WeeklyFrequencyConfiguration weeklyConfig => CalculateWeeklyExecutions(weeklyConfig),
+            _ => throw new ArgumentException("Unknown configuration type")
+        };
     }
 
-    private IEnumerable<DateTime> CalculateOnceExecutions(OnceSchedulerConfiguration config)
+    private static List<DateTime> CalculateOnceExecutions(OnceSchedulerConfiguration config)
     {
         var results = new List<DateTime>();
         var currentDate = config.CurrentDate.Date;
@@ -44,13 +37,13 @@ public class HourlyExecutionCalculatorService : IHourlyExecutionCalculatorServic
         return results;
     }
 
-    private IEnumerable<DateTime> CalculateDailyExecutions(DailyFrequencyConfiguration config)
+    private static List<DateTime> CalculateDailyExecutions(DailyFrequencyConfiguration config)
     {
         var results = new List<DateTime>();
         var currentDate = config.CurrentDate;
         var startTime = config.HourTimeRange.StartHour;
         var endTime = config.HourTimeRange.EndHour;
-        var interval = config.HourTimeRange.HourlyInterval;
+        var interval = config.HourlyInterval;
         var limits = config.Limits;
 
         while (currentDate <= limits.LimitEndDateTime && results.Count < 12)
@@ -94,16 +87,16 @@ public class HourlyExecutionCalculatorService : IHourlyExecutionCalculatorServic
             currentDate = currentDate.AddDays(1);
         }
 
-        return results.Take(12).Where(dt => dt <= limits.LimitEndDateTime);
+        return results;
     }
 
-    private IEnumerable<DateTime> CalculateWeeklyExecutions(WeeklyFrequencyConfiguration config)
+    private static List<DateTime> CalculateWeeklyExecutions(WeeklyFrequencyConfiguration config)
     {
         var results = new List<DateTime>();
         var currentDate = config.CurrentDate;
         var startTime = config.HourTimeRange.StartHour;
         var endTime = config.HourTimeRange.EndHour;
-        var interval = config.HourTimeRange.HourlyInterval;
+        var interval = config.HourlyInterval;
         var startLimit = config.Limits.LimitStartDateTime;
         var endLimit = config.Limits.LimitEndDateTime ?? DateTime.MaxValue;
         var weekInterval = config.WeekInterval;

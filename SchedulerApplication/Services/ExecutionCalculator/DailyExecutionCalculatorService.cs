@@ -24,7 +24,7 @@ public class DailyExecutionCalculatorService : IDailyExecutionCalculatorService
             }
             else
             {
-                var hourlyExecutions = GenerateHourlyExecutionsForDay(config.HourTimeRange, currentDate, config.Limits);
+                var hourlyExecutions = GenerateHourlyExecutionsForDay(config.HourTimeRange, currentDate, config.Limits, config.HourlyInterval);
                 foreach (var executionTime in hourlyExecutions)
                 {
                     if (executionTimes.Count >= maxExecutions || executionTime > endDate) break;
@@ -41,12 +41,11 @@ public class DailyExecutionCalculatorService : IDailyExecutionCalculatorService
         return executionTimes;
     }
 
-    public IEnumerable<DateTime> GenerateHourlyExecutionsForDay(HourTimeRange hourTimeRange, DateTime day, LimitsTimeInterval limits)
+    public IEnumerable<DateTime> GenerateHourlyExecutionsForDay(HourTimeRange hourTimeRange, DateTime day, LimitsTimeInterval limits, int interval)
     {
         var results = new List<DateTime>();
         var currentHour = day.Date.Add(hourTimeRange.StartHour);
         var endHour = day.Date.Add(hourTimeRange.EndHour);
-        var interval = hourTimeRange.HourlyInterval;
 
         while (currentHour <= endHour && results.Count < 12)
         {

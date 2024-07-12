@@ -19,7 +19,7 @@ public class WeeklyExecutionCalculatorService : IWeeklyExecutionCalculatorServic
 
         foreach (var day in weeklyDays)
         {
-            var hourlyExecutions = _dailyExecutionCalculatorService.GenerateHourlyExecutionsForDay(config.HourTimeRange, day, config.Limits);
+            var hourlyExecutions = _dailyExecutionCalculatorService.GenerateHourlyExecutionsForDay(config.HourTimeRange, day, config.Limits,config.HourlyInterval);
 
             foreach (var executionTime in hourlyExecutions)
             {
@@ -34,11 +34,9 @@ public class WeeklyExecutionCalculatorService : IWeeklyExecutionCalculatorServic
         return executionTimes;
     }
 
-    private IEnumerable<DateTime> CalculateWeeklyDays(WeeklyFrequencyConfiguration config)
+    private static List<DateTime> CalculateWeeklyDays(WeeklyFrequencyConfiguration config)
     {
-        if (config == null)
-            throw new ArgumentNullException(nameof(config));
-
+        if (config == null) throw new ArgumentNullException(nameof(config));
         var results = new List<DateTime>();
         var currentDate = config.CurrentDate;
         var weekInterval = config.WeekInterval;
@@ -71,5 +69,11 @@ public class WeeklyExecutionCalculatorService : IWeeklyExecutionCalculatorServic
         }
 
         return results;
+
     }
+}
+
+public void Metodo()
+{
+
 }

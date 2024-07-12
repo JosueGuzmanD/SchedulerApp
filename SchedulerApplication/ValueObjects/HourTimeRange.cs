@@ -1,43 +1,27 @@
-﻿using SchedulerApplication.Common.Enums;
-
-namespace SchedulerApplication.ValueObjects;
+﻿namespace SchedulerApplication.ValueObjects;
 
 public class HourTimeRange : IEquatable<HourTimeRange>
 {
     public TimeSpan StartHour { get; }
     public TimeSpan EndHour { get; }
-    public int HourlyInterval { get; set; }
-    public DailyHourFrequency HourlyFrequency { get; set; }
 
     // Constructor solo para el caso 'Once'
     public HourTimeRange(TimeSpan startHour)
     {
         StartHour = startHour;
-        HourlyFrequency = DailyHourFrequency.Once;
-
         EndHour = TimeSpan.Zero;
-        HourlyInterval = 0;
     }
-    public HourTimeRange(TimeSpan startHour, TimeSpan endHour, int hourlyInterval, DailyHourFrequency hourlyFrequency)
+
+    public HourTimeRange(TimeSpan startHour, TimeSpan endHour)
     {
-      
-
-        if (hourlyInterval <= 0)
-        {
-            throw new ArgumentException("HourlyInterval must be greater than 0.");
-        }
-
         StartHour = startHour;
         EndHour = endHour;
-        HourlyInterval = hourlyInterval;
-        HourlyFrequency = hourlyFrequency;
     }
 
     public bool Equals(HourTimeRange other)
     {
         if (other == null) return false;
-        return StartHour == other.StartHour && EndHour == other.EndHour && HourlyInterval == other.HourlyInterval &&
-               HourlyFrequency == other.HourlyFrequency;
+        return StartHour == other.StartHour && EndHour == other.EndHour;
     }
 
     public override bool Equals(object obj)
@@ -47,7 +31,7 @@ public class HourTimeRange : IEquatable<HourTimeRange>
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(StartHour, EndHour, HourlyInterval, HourlyFrequency);
+        return HashCode.Combine(StartHour, EndHour);
     }
 
     public static bool operator ==(HourTimeRange left, HourTimeRange right)
@@ -59,6 +43,5 @@ public class HourTimeRange : IEquatable<HourTimeRange>
     {
         return !(left == right);
     }
-
 }
 

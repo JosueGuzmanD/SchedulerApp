@@ -1,11 +1,8 @@
 ﻿using FluentAssertions;
-using SchedulerApplication.Common.Enums;
-using SchedulerApplication.Models;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Services.Description;
 using SchedulerApplication.ValueObjects;
-
 
 namespace SchedulerApp.Testing.DescriptionServiceTest;
 
@@ -37,13 +34,11 @@ public class DescriptionServiceTests
         result.Should().Be($"Occurs once. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
     }
 
-    [Theory]
-    [InlineData("09:00:00", "Occurs once at 09:00")]
-    [InlineData("10:00:00", "Occurs once at 10:00")]
-    public void GenerateDescription_ShouldReturnCorrectDescription_ForDailyFrequency_Once(string onceAtString, string expectedDescription)
+    [Fact]
+    public void GenerateDescription_ShouldReturnCorrectDescription_ForDailyFrequency_Once_09_00()
     {
         // Arrange
-        var onceAt = TimeSpan.Parse(onceAtString);
+        var onceAt = new TimeSpan(9, 0, 0);
         var configuration = new DailyFrequencyConfiguration
         {
             IsEnabled = true,
@@ -56,7 +51,27 @@ public class DescriptionServiceTests
         var result = _descriptionService.GenerateDescription(configuration, executionTime);
 
         // Assert
-        result.Should().Be($"{expectedDescription}. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+        result.Should().Be($"Occurs once at 09:00. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+    }
+
+    [Fact]
+    public void GenerateDescription_ShouldReturnCorrectDescription_ForDailyFrequency_Once_10_00()
+    {
+        // Arrange
+        var onceAt = new TimeSpan(10, 0, 0);
+        var configuration = new DailyFrequencyConfiguration
+        {
+            IsEnabled = true,
+            CurrentDate = new DateTime(2024, 01, 01),
+            HourTimeRange = new HourTimeRange(onceAt)
+        };
+        var executionTime = new DateTime(2024, 01, 01, 9, 0, 0);
+
+        // Act
+        var result = _descriptionService.GenerateDescription(configuration, executionTime);
+
+        // Assert
+        result.Should().Be($"Occurs once at 10:00. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
     }
 
     [Fact]
@@ -67,7 +82,7 @@ public class DescriptionServiceTests
         {
             IsEnabled = true,
             CurrentDate = new DateTime(2024, 01, 01),
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0))
         };
         var executionTime = new DateTime(2024, 01, 01, 9, 0, 0);
 
@@ -75,7 +90,7 @@ public class DescriptionServiceTests
         var result = _descriptionService.GenerateDescription(configuration, executionTime);
 
         // Assert
-        result.Should().Be($"Occurs every day from 09:00 to 17:00 every 1 hour(s). Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+        result.Should().Be($"Occurs every day from 09:00 to 17:00. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
     }
 
     [Theory]
@@ -90,7 +105,7 @@ public class DescriptionServiceTests
             CurrentDate = new DateTime(2024, 01, 01),
             WeekInterval = weekInterval,
             DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0))
         };
         var executionTime = new DateTime(2024, 01, 01, 9, 0, 0);
 
@@ -111,7 +126,7 @@ public class DescriptionServiceTests
             CurrentDate = new DateTime(2024, 01, 01),
             WeekInterval = 2,
             DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0))
         };
         var executionTime = new DateTime(2024, 01, 01, 9, 0, 0);
 
@@ -121,6 +136,7 @@ public class DescriptionServiceTests
         // Assert
         result.Should().Be($"Occurs every 2 week(s) on Monday, Wednesday. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
     }
+
     [Fact]
     public void GenerateDescription_DailyConfig_NullHourTimeRange_ShouldThrowArgumentNullException()
     {
@@ -149,7 +165,7 @@ public class DescriptionServiceTests
             IsEnabled = true,
             CurrentDate = new DateTime(2024, 01, 01),
             WeekInterval = 1,
-            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday },
+            DaysOfWeek = [DayOfWeek.Monday],
             HourTimeRange = null
         };
         var executionTime = new DateTime(2024, 01, 01, 9, 0, 0);
@@ -171,7 +187,7 @@ public class DescriptionServiceTests
             CurrentDate = new DateTime(2024, 01, 01),
             WeekInterval = 1,
             DaysOfWeek = null,
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0))
         };
         var executionTime = new DateTime(2024, 01, 01, 9, 0, 0);
 
@@ -191,8 +207,8 @@ public class DescriptionServiceTests
             IsEnabled = true,
             CurrentDate = new DateTime(2024, 01, 01),
             WeekInterval = 1,
-            DaysOfWeek = new List<DayOfWeek>(),
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
+            DaysOfWeek = [],
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0))
         };
         var executionTime = new DateTime(2024, 01, 01, 9, 0, 0);
 

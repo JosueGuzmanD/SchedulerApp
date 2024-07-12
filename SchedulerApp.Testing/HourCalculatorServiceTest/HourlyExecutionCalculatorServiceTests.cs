@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using SchedulerApplication.Common.Enums;
 using SchedulerApplication.Models;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
@@ -30,18 +29,18 @@ public class HourlyExecutionCalculatorServiceTests
         };
         var expectedTimes = new List<DateTime>
         {
-            new DateTime(2024, 01, 01, 9, 0, 0),
-            new DateTime(2024, 01, 02, 9, 0, 0),
-            new DateTime(2024, 01, 03, 9, 0, 0),
-            new DateTime(2024, 01, 04, 9, 0, 0),
-            new DateTime(2024, 01, 05, 9, 0, 0),
-            new DateTime(2024, 01, 06, 9, 0, 0),
-            new DateTime(2024, 01, 07, 9, 0, 0),
-            new DateTime(2024, 01, 08, 9, 0, 0),
-            new DateTime(2024, 01, 09, 9, 0, 0),
-            new DateTime(2024, 01, 10, 9, 0, 0),
-            new DateTime(2024, 01, 11, 9, 0, 0),
-            new DateTime(2024, 01, 12, 9, 0, 0)
+            new(2024, 01, 01, 9, 0, 0),
+            new(2024, 01, 02, 9, 0, 0),
+            new(2024, 01, 03, 9, 0, 0),
+            new(2024, 01, 04, 9, 0, 0),
+            new(2024, 01, 05, 9, 0, 0),
+            new(2024, 01, 06, 9, 0, 0),
+            new(2024, 01, 07, 9, 0, 0),
+            new(2024, 01, 08, 9, 0, 0),
+            new(2024, 01, 09, 9, 0, 0),
+            new (2024, 01, 10, 9, 0, 0),
+            new (2024, 01, 11, 9, 0, 0),
+            new (2024, 01, 12, 9, 0, 0)
         };
 
         // Act
@@ -59,23 +58,24 @@ public class HourlyExecutionCalculatorServiceTests
         {
             IsEnabled = true,
             CurrentDate = new DateTime(2024, 01, 01),
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent),
-            Limits = new LimitsTimeInterval(new DateTime(2024,01,01), new DateTime(2024,01,03))
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
+            HourlyInterval = 1,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 03))
         };
         var expectedTimes = new List<DateTime>
         {
-            new DateTime(2024, 01, 01, 9, 0, 0),
-            new DateTime(2024, 01, 01, 10, 0, 0),
-            new DateTime(2024, 01, 01, 11, 0, 0),
-            new DateTime(2024, 01, 01, 12, 0, 0),
-            new DateTime(2024, 01, 01, 13, 0, 0),
-            new DateTime(2024, 01, 01, 14, 0, 0),
-            new DateTime(2024, 01, 01, 15, 0, 0),
-            new DateTime(2024, 01, 01, 16, 0, 0),
-            new DateTime(2024, 01, 01, 17, 0, 0),
-            new DateTime(2024, 01, 02, 9, 0, 0),
-            new DateTime(2024, 01, 02, 10, 0, 0),
-            new DateTime(2024, 01, 02, 11, 0, 0)
+            new (2024, 01, 01, 9, 0, 0),
+            new (2024, 01, 01, 10, 0, 0),
+            new (2024, 01, 01, 11, 0, 0),
+            new (2024, 01, 01, 12, 0, 0),
+            new (2024, 01, 01, 13, 0, 0),
+            new (2024, 01, 01, 14, 0, 0),
+            new (2024, 01, 01, 15, 0, 0),
+            new (2024, 01, 01, 16, 0, 0),
+            new (2024, 01, 01, 17, 0, 0),
+            new (2024, 01, 02, 9, 0, 0),
+            new (2024, 01, 02, 10, 0, 0),
+            new (2024, 01, 02, 11, 0, 0)
         };
 
         // Act
@@ -93,15 +93,16 @@ public class HourlyExecutionCalculatorServiceTests
         {
             IsEnabled = true,
             CurrentDate = new DateTime(2024, 01, 01),
-            HourTimeRange = new HourTimeRange(new TimeSpan(23, 0, 0), new TimeSpan(2, 0, 0), 1, DailyHourFrequency.Recurrent),
-            Limits = new LimitsTimeInterval(new DateTime(2024,01,01),new DateTime(2024,01,02,2,00,00))
+            HourTimeRange = new HourTimeRange(new TimeSpan(23, 0, 0), new TimeSpan(2, 0, 0)),
+            HourlyInterval = 1,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02, 2, 00, 00))
         };
         var expectedTimes = new List<DateTime>
         {
-            new DateTime(2024, 01, 01, 23, 0, 0),
-            new DateTime(2024, 01, 02, 0, 0, 0),
-            new DateTime(2024, 01, 02, 1, 0, 0),
-            new DateTime(2024, 01, 02, 2, 0, 0)
+            new (2024, 01, 01, 23, 0, 0),
+            new (2024, 01, 02, 0, 0, 0),
+            new (2024, 01, 02, 1, 0, 0),
+            new (2024, 01, 02, 2, 0, 0)
         };
 
         // Act
@@ -119,25 +120,26 @@ public class HourlyExecutionCalculatorServiceTests
         {
             IsEnabled = true,
             CurrentDate = new DateTime(2024, 01, 01),
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent),
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
+            HourlyInterval = 1,
             WeekInterval = 1,
-            Limits = new LimitsTimeInterval(new DateTime(2024,01,01), new DateTime(2024,01,04)),
-            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday }
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 04)),
+            DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday]
         };
         var expectedTimes = new List<DateTime>
         {
-            new DateTime(2024, 01, 01, 9, 0, 0),
-            new DateTime(2024, 01, 01, 10, 0, 0),
-            new DateTime(2024, 01, 01, 11, 0, 0),
-            new DateTime(2024, 01, 01, 12, 0, 0),
-            new DateTime(2024, 01, 01, 13, 0, 0),
-            new DateTime(2024, 01, 01, 14, 0, 0),
-            new DateTime(2024, 01, 01, 15, 0, 0),
-            new DateTime(2024, 01, 01, 16, 0, 0),
-            new DateTime(2024, 01, 01, 17, 0, 0),
-            new DateTime(2024, 01, 03, 9, 0, 0),
-            new DateTime(2024, 01, 03, 10, 0, 0),
-            new DateTime(2024, 01, 03, 11, 0, 0)
+            new (2024, 01, 01, 9, 0, 0),
+            new (2024, 01, 01, 10, 0, 0),
+            new (2024, 01, 01, 11, 0, 0),
+            new (2024, 01, 01, 12, 0, 0),
+            new (2024, 01, 01, 13, 0, 0),
+            new (2024, 01, 01, 14, 0, 0),
+            new (2024, 01, 01, 15, 0, 0),
+            new (2024, 01, 01, 16, 0, 0),
+            new (2024, 01, 01, 17, 0, 0),
+            new (2024, 01, 03, 9, 0, 0),
+            new (2024, 01, 03, 10, 0, 0),
+            new (2024, 01, 03, 11, 0, 0)
         };
 
         // Act
@@ -146,6 +148,7 @@ public class HourlyExecutionCalculatorServiceTests
         // Assert
         result.Should().BeEquivalentTo(expectedTimes);
     }
+
     [Fact]
     public void CalculateHourlyExecutions_ShouldHandleWeeklyInterval()
     {
@@ -154,25 +157,26 @@ public class HourlyExecutionCalculatorServiceTests
         {
             IsEnabled = true,
             CurrentDate = new DateTime(2024, 01, 01),
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent),
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
+            HourlyInterval = 1,
             WeekInterval = 2,
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 16)),
-            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday }
+            DaysOfWeek = [DayOfWeek.Monday]
         };
         var expectedTimes = new List<DateTime>
         {
-            new DateTime(2024, 01, 01, 9, 0, 0),
-            new DateTime(2024, 01, 01, 10, 0, 0),
-            new DateTime(2024, 01, 01, 11, 0, 0),
-            new DateTime(2024, 01, 01, 12, 0, 0),
-            new DateTime(2024, 01, 01, 13, 0, 0),
-            new DateTime(2024, 01, 01, 14, 0, 0),
-            new DateTime(2024, 01, 01, 15, 0, 0),
-            new DateTime(2024, 01, 01, 16, 0, 0),
-            new DateTime(2024, 01, 01, 17, 0, 0),
-            new DateTime(2024, 01, 15, 9, 0, 0),
-            new DateTime(2024, 01, 15, 10, 0, 0),
-            new DateTime(2024, 01, 15, 11, 0, 0)
+            new (2024, 01, 01, 9, 0, 0),
+            new (2024, 01, 01, 10, 0, 0),
+            new (2024, 01, 01, 11, 0, 0),
+            new (2024, 01, 01, 12, 0, 0),
+            new (2024, 01, 01, 13, 0, 0),
+            new (2024, 01, 01, 14, 0, 0),
+            new (2024, 01, 01, 15, 0, 0),
+            new (2024, 01, 01, 16, 0, 0),
+            new (2024, 01, 01, 17, 0, 0),
+            new (2024, 01, 15, 9, 0, 0),
+            new (2024, 01, 15, 10, 0, 0),
+            new (2024, 01, 15, 11, 0, 0)
         };
 
         // Act
@@ -225,17 +229,18 @@ public class HourlyExecutionCalculatorServiceTests
         {
             IsEnabled = true,
             CurrentDate = new DateTime(2024, 01, 01),
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent),
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
+            HourlyInterval = 1,
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01, 10, 0, 0), new DateTime(2024, 01, 01, 15, 0, 0))
         };
         var expectedTimes = new List<DateTime>
         {
-            new DateTime(2024, 01, 01, 10, 0, 0),
-            new DateTime(2024, 01, 01, 11, 0, 0),
-            new DateTime(2024, 01, 01, 12, 0, 0),
-            new DateTime(2024, 01, 01, 13, 0, 0),
-            new DateTime(2024, 01, 01, 14, 0, 0),
-            new DateTime(2024, 01, 01, 15, 0, 0)
+            new (2024, 01, 01, 10, 0, 0),
+            new (2024, 01, 01, 11, 0, 0),
+            new (2024, 01, 01, 12, 0, 0),
+            new (2024, 01, 01, 13, 0, 0),
+            new (2024, 01, 01, 14, 0, 0),
+            new (2024, 01, 01, 15, 0, 0)
         };
 
         // Act
@@ -244,8 +249,8 @@ public class HourlyExecutionCalculatorServiceTests
         // Assert
         result.Should().BeEquivalentTo(expectedTimes);
     }
+
     private class UnsupportedSchedulerConfiguration : SchedulerConfiguration
     {
     }
-
 }

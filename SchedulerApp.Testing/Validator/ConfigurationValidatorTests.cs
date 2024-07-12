@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using SchedulerApplication.Common.Enums;
 using SchedulerApplication.Common.Validator;
+using SchedulerApplication.Models;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.ValueObjects;
@@ -28,7 +28,7 @@ public class ConfigurationValidatorTests
         };
 
         // Act
-        Action act = () => _validator.Validate(configuration);
+        var act = () => _validator.Validate(configuration);
 
         // Assert
         act.Should().Throw<ArgumentException>().WithMessage("Configuration must be enabled.");
@@ -46,7 +46,7 @@ public class ConfigurationValidatorTests
         };
 
         // Act
-        Action act = () => _validator.Validate(configuration);
+        var act = () => _validator.Validate(configuration);
 
         // Assert
         act.Should().NotThrow<ArgumentException>();
@@ -66,7 +66,7 @@ public class ConfigurationValidatorTests
         };
 
         // Act
-        Action act = () => _validator.Validate(configuration);
+        var act = () => _validator.Validate(configuration);
 
         // Assert
         if (isEnabled)
@@ -80,50 +80,98 @@ public class ConfigurationValidatorTests
     }
 
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void Validate_ShouldHandleDifferentSchedulerConfigurations(bool isEnabled)
+    [MemberData(nameof(GetSchedulerConfigurations))]
+    public void Validate_ShouldHandleDifferentSchedulerConfigurations(SchedulerConfiguration configuration, bool shouldThrow)
     {
-        // Arrange
-        var onceConfiguration = new OnceSchedulerConfiguration
-        {
-            IsEnabled = isEnabled,
-            CurrentDate = new DateTime(2024, 01, 01),
-            ConfigurationDateTime = new DateTime(2024, 01, 02)
-        };
+        // Act
+        var act = () => _validator.Validate(configuration);
 
-        var dailyConfiguration = new DailyFrequencyConfiguration
+        // Assert
+        if (shouldThrow)
         {
-            IsEnabled = isEnabled,
-            CurrentDate = new DateTime(2024, 01, 01),
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
-        };
-
-        var weeklyConfiguration = new WeeklyFrequencyConfiguration
-        {
-            IsEnabled = isEnabled,
-            CurrentDate = new DateTime(2024, 01, 01),
-            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
-            WeekInterval = 1,
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0), 1, DailyHourFrequency.Recurrent)
-        };
-
-        if (isEnabled)
-        {
-            _validator.Validate(onceConfiguration);
-            _validator.Validate(dailyConfiguration);
-            _validator.Validate(weeklyConfiguration);
+            act.Should().Throw<ArgumentException>().WithMessage("Configuration must be enabled.");
         }
         else
         {
-            Action actOnce = () => _validator.Validate(onceConfiguration);
-            Action actDaily = () => _validator.Validate(dailyConfiguration);
-            Action actWeekly = () => _validator.Validate(weeklyConfiguration);
-
-            actOnce.Should().Throw<ArgumentException>().WithMessage("Configuration must be enabled.");
-            actDaily.Should().Throw<ArgumentException>().WithMessage("Configuration must be enabled.");
-            actWeekly.Should().Throw<ArgumentException>().WithMessage("Configuration must be enabled.");
+            act.Should().NotThrow<ArgumentException>();
         }
+    }
+
+    public static IEnumerable<object[]> GetSchedulerConfigurations()
+    {
+        yield return new object[]
+        {
+            new OnceSchedulerConfiguration
+            {
+                IsEnabled = false,
+                CurrentDate = new DateTime(2024, 01, 01),
+                ConfigurationDateTime = new DateTime(2024, 01, 02)
+            },
+            true
+        };
+
+        yield return new object[]
+        {
+            new OnceSchedulerConfiguration
+            {
+                IsEnabled = true,
+                CurrentDate = new DateTime(2024, 01, 01),
+                ConfigurationDateTime = new DateTime(2024, 01, 02)
+            },
+            false
+        };
+
+        yield return new object[]
+        {
+            new DailyFrequencyConfiguration
+            {
+                IsEnabled = false,
+                CurrentDate = new DateTime(2024, 01, 01),
+                HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
+                HourlyInterval = 1,
+            },
+            true
+        };
+
+        yield return new object[]
+        {
+            new DailyFrequencyConfiguration
+            {
+                IsEnabled = true,
+                CurrentDate = new DateTime(2024, 01, 01),
+                HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
+                HourlyInterval = 1,
+            },
+            false
+        };
+
+        yield return new object[]
+        {
+            new WeeklyFrequencyConfiguration
+            {
+                IsEnabled = false,
+                CurrentDate = new DateTime(2024, 01, 01),
+                DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
+                WeekInterval = 1,
+                HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
+                HourlyInterval = 1,
+            },
+            true
+        };
+
+        yield return new object[]
+        {
+            new WeeklyFrequencyConfiguration
+            {
+                IsEnabled = true,
+                CurrentDate = new DateTime(2024, 01, 01),
+                DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
+                WeekInterval = 1,
+                HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
+                HourlyInterval = 1,
+            },
+            false
+        };
     }
 }
 

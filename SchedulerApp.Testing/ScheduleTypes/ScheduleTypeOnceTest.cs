@@ -102,14 +102,9 @@ public class ScheduleTypeOnceTests
             Action act = () => _scheduleTypeOnce.GetNextExecutionTimes(configuration);
 
             // Assert
-            if (!isEnabled)
-            {
-                act.Should().Throw<ArgumentException>().WithMessage("Configuration must be enabled.");
-            }
-            else
-            {
-                act.Should().Throw<ArgumentException>().WithMessage("Configuration date time cannot be in the past.");
-            }
+            act.Should().Throw<ArgumentException>().WithMessage(!isEnabled
+                ? "Configuration must be enabled."
+                : "Configuration date time cannot be in the past.");
         }
         else
         {
