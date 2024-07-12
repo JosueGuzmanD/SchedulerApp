@@ -72,8 +72,3 @@ public class WeeklyExecutionCalculatorService : IWeeklyExecutionCalculatorServic
 
     }
 }
-
-public void Metodo()
-{
-
-}
