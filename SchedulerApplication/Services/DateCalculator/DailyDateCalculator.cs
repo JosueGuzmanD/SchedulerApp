@@ -10,7 +10,8 @@ namespace SchedulerApplication.Services.DateCalculator;
         {
             var dailyConfig = (DailyFrequencyConfiguration)config;
             var results = new List<DateTime>();
-            var currentDate = dailyConfig.CurrentDate;
+
+            var currentDate = dailyConfig.CurrentDate.Date;
 
             while (results.Count < 12 && currentDate <= dailyConfig.Limits.LimitEndDateTime)
             {
