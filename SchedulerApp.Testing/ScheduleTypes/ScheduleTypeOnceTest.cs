@@ -3,8 +3,10 @@ using SchedulerApplication.Common.Validator;
 using SchedulerApplication.Interfaces;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Models.ValueObjects;
+using SchedulerApplication.Services.DateCalculatorServices;
 using SchedulerApplication.Services.Description;
 using SchedulerApplication.Services.ExecutionTime;
+using SchedulerApplication.Services.HourCalculatorServices;
 using SchedulerApplication.Services.ScheduleTypes;
 
 namespace SchedulerApp.Testing.ScheduleTypes;
@@ -12,18 +14,21 @@ namespace SchedulerApp.Testing.ScheduleTypes;
 public class ScheduleTypeOnceTests
 {
     private readonly IDescriptionService _descriptionService;
-    private readonly IOnceExecutionService _onceExecutionService;
+    private readonly IExecutionTimeGenerator _executionTimeGenerator;
     private readonly IConfigurationValidator _validator;
     private readonly ScheduleTypeOnce _scheduleTypeOnce;
 
     public ScheduleTypeOnceTests()
     {
         _descriptionService = new DescriptionService();
-        _onceExecutionService = new OnceExecutionService(new ConfigurationValidator());
+        _executionTimeGenerator = new ExecutionTimeGenerator(
+            new OnceExecutionService(new ConfigurationValidator()),
+            new DailyExecutionCalculatorService(),
+            new WeeklyExecutionCalculatorService(new DailyExecutionCalculatorService())
+        );
         _validator = new ConfigurationValidator();
-        _scheduleTypeOnce = new ScheduleTypeOnce(_descriptionService, _onceExecutionService, _validator);
+        _scheduleTypeOnce = new ScheduleTypeOnce(_descriptionService, _executionTimeGenerator, _validator);
     }
-
     [Fact]
     public void CreateScheduleOutput_ShouldReturnCorrectOutput_ForValidConfiguration()
     {

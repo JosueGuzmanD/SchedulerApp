@@ -6,29 +6,26 @@ using SchedulerApplication.Models.ValueObjects;
 using SchedulerApplication.Services.DateCalculatorServices;
 using SchedulerApplication.Services.Description;
 using SchedulerApplication.Services.ExecutionTime;
+using SchedulerApplication.Services.HourCalculatorServices;
 using SchedulerApplication.Services.ScheduleTypes;
 
 namespace SchedulerApp.Testing.ScheduleTypes;
 
 public class ScheduleTypeRecurringTests
 {
-    private readonly IRecurringExecutionService _recurringExecutionService;
     private readonly IDescriptionService _descriptionService;
+    private readonly IExecutionTimeGenerator _executionTimeGenerator;
     private readonly ScheduleTypeRecurring _scheduleTypeRecurring;
 
     public ScheduleTypeRecurringTests()
     {
-        var validatorService = new ConfigurationValidator();
-        var dailyExecutionCalculatorService = new DailyExecutionCalculatorService();
-        var weeklyExecutionCalculatorService = new WeeklyExecutionCalculatorService(dailyExecutionCalculatorService);
-
-        _recurringExecutionService = new RecurringExecutionService(
-            validatorService,
-            dailyExecutionCalculatorService,
-            weeklyExecutionCalculatorService);
-
         _descriptionService = new DescriptionService();
-        _scheduleTypeRecurring = new ScheduleTypeRecurring(_descriptionService, _recurringExecutionService);
+        _executionTimeGenerator = new ExecutionTimeGenerator(
+            new OnceExecutionService(new ConfigurationValidator()),
+            new DailyExecutionCalculatorService(),
+            new WeeklyExecutionCalculatorService(new DailyExecutionCalculatorService())
+        );
+        _scheduleTypeRecurring = new ScheduleTypeRecurring(_descriptionService, _executionTimeGenerator);
     }
 
     [Fact]
