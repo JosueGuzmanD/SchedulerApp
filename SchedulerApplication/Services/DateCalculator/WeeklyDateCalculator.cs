@@ -20,9 +20,9 @@ public class WeeklyDateCalculator : IDateCalculator
             }
             currentDate = currentDate.AddDays(1);
 
-            if (currentDate.DayOfWeek == DayOfWeek.Monday)
+            if (currentDate.DayOfWeek == DayOfWeek.Sunday)
             {
-                currentDate = currentDate.AddDays(7 * (weeklyConfig.WeekInterval - 1));
+                currentDate = currentDate.AddDays(7 * (weeklyConfig.WeekInterval));
             }
         }
 

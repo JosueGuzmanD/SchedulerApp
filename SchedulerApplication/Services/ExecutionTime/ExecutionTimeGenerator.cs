@@ -34,13 +34,16 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
             return new List<DateTime>();
         }
 
+        ValidateConfiguration(configuration);
+
+
         List<DateTime> dates;
 
         switch (configuration)
         {
             case OnceSchedulerConfiguration onceConfig:
                 dates = _onceDateCalculator.CalculateDates(onceConfig);
-                break;
+                return dates;
             case DailyFrequencyConfiguration dailyConfig:
                 dates = _dailyDateCalculator.CalculateDates(dailyConfig);
                 break;
@@ -54,6 +57,27 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
         var hourTimeRange = (configuration as RecurringSchedulerConfiguration)?.HourTimeRange ?? new HourTimeRange(new TimeSpan(0, 0, 0));
         var hourlyInterval = (configuration as RecurringSchedulerConfiguration)?.HourlyInterval ?? 0;
 
-        return _hourCalculator.CalculateHours(dates, hourTimeRange, hourlyInterval);
+        var results = _hourCalculator.CalculateHours(dates, hourTimeRange, hourlyInterval);
+
+        if (configuration.Limits != null)
+        {
+            var endLimit = configuration.Limits.LimitEndDateTime?.Date.AddDays(1) ?? DateTime.MaxValue;
+            results = results.Where(result => result >= configuration.Limits.LimitStartDateTime && result < endLimit).ToList();
+        }
+
+        return results.Take(12).ToList();
+    }
+
+    private void ValidateConfiguration(SchedulerConfiguration configuration)
+    {
+        if (configuration is RecurringSchedulerConfiguration { HourlyInterval: < 0 })
+        {
+            throw new ArgumentException("Invalid hourly interval");
+        }
+
+        if (configuration.Limits.LimitEndDateTime < configuration.Limits.LimitStartDateTime)
+        {
+            throw new ArgumentException("End date must be greater than or equal to start date");
+        }
     }
 }
