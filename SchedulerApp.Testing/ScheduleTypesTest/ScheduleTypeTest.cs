@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using SchedulerApplication.Interfaces;
+using SchedulerApplication.Models;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Models.ValueObjects;
@@ -70,7 +71,7 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
 
         // Assert
         scheduleType.Should().BeOfType<ScheduleTypeRecurring>();
-        executionTimes.Should().HaveCount(12);
+        executionTimes.Should().HaveCount(6);
 
         var expectedTimes = new List<DateTime>
         {
@@ -85,8 +86,86 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         for (int i = 0; i < expectedTimes.Count; i++)
         {
             executionTimes[i].ExecutionTime.Should().Be(expectedTimes[i]);
-            executionTimes[i].Description.Should().Be($"Occurs every day at {expectedTimes[i]:HH:mm} from {configuration.HourTimeRange.StartHour.Hours} to {configuration.HourTimeRange.EndHour.Hours} . Schedule will be used on {expectedTimes[i]:dd/MM/yyyy} at {expectedTimes[i]:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+            executionTimes[i].Description.Should().Be($@"Occurs every day from {configuration.HourTimeRange.StartHour:hh\:mm} to {configuration.HourTimeRange.EndHour:hh\:mm}. Schedule will be used on {expectedTimes[i]:dd/MM/yyyy} at {expectedTimes[i]:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
         }
     }
+
+    [Fact]
+    public void CreateSchedule_ShouldReturnException_WhenConfigurationIsInvalid()
+    {
+        //Arrange
+        var configuration = new UnsupportedConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01))
+        };
+
+        //Act
+        Action act = () => _factory.CreateScheduleType(configuration);
+
+        //Assert
+        act.Should().Throw<System.ArgumentException>("Unsupported configuration type.");
+    }
+
+    [Fact]
+    public void CreateSchedule_ShouldReturnCorrectDescription_WhenOnceSchedulerConfigurationIsValid()
+    {
+        //Arrange
+        var configuration = new OnceSchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            ConfigurationDateTime = new DateTime(2024, 02, 01),
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 02, 01))
+        };
+
+        //Act
+        var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
+
+        //Assert
+
+        scheduleType[0].Description.Should().Be($"Occurs once. Schedule will be used on {configuration.ConfigurationDateTime:dd/MM/yyyy} at {configuration.ConfigurationDateTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+
+    }
+    [Fact]
+    public void CreateSchedule_ShouldReturnCorrectDescription_WhenDailyFrequencyConfigurationHourTimeRangeIsTheSame()
+    {
+        // Arrange
+        var configuration = new DailyFrequencyConfiguration
+        {
+            CurrentDate = new DateTime(2024, 03, 01),
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 03)),
+            HourTimeRange = new HourTimeRange(new TimeSpan(20, 00, 00), new TimeSpan(20, 00, 00))
+        };
+
+        // Act
+        var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
+        var expectedTimes = new List<DateTime>
+        {
+            new DateTime(2024, 03, 01, 20, 00, 00),
+            new DateTime(2024, 03, 02, 20, 00, 00),
+            new DateTime(2024, 03, 03, 20, 00, 00)
+        };
+
+        // Assert
+        for (int i = 0; i < expectedTimes.Count; i++)
+        {
+            scheduleType[i].ExecutionTime.Should().Be(expectedTimes[i]);
+            scheduleType[i].Description.Should()
+                .Be(
+                    $"Occurs every day from {configuration.HourTimeRange.StartHour:hh\\:mm} to {configuration.HourTimeRange.EndHour:hh\\:mm}. Schedule will be used on {expectedTimes[i]:dd/MM/yyyy} at {expectedTimes[i]:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+        }
+    }
+
+
+
+
 }
+
+public class UnsupportedConfiguration: SchedulerConfiguration
+    {
+
+    }
 

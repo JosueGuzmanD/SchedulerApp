@@ -3,7 +3,7 @@ using SchedulerApplication.Models;
 
 namespace SchedulerApplication.Common.Validator;
 
-public class ConfigurationValidator : IConfigurationValidator
+public class ConfigurationValidator 
 {
     public void Validate(SchedulerConfiguration configuration)
     {
