@@ -11,19 +11,22 @@ public class WeeklyDateCalculator : IDateCalculator
         var weeklyConfig = (WeeklyFrequencyConfiguration)config;
         var results = new List<DateTime>();
         var currentDate = weeklyConfig.CurrentDate;
+        var needInterval = true;
 
         while (results.Count < 12 && currentDate <= weeklyConfig.Limits.LimitEndDateTime)
         {
             if (weeklyConfig.DaysOfWeek.Contains(currentDate.DayOfWeek))
             {
                 results.Add(currentDate);
+                needInterval = true;
+            }
+
+            if (needInterval)
+            {
+                currentDate=currentDate.AddDays(7*weeklyConfig.WeekInterval);
+                needInterval=false;
             }
             currentDate = currentDate.AddDays(1);
-
-            if (currentDate.DayOfWeek == DayOfWeek.Monday)
-            {
-                currentDate = currentDate.AddDays(7 * (weeklyConfig.WeekInterval - 1));
-            }
         }
 
         return results;
