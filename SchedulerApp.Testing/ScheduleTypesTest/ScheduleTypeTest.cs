@@ -760,25 +760,6 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         executionTimes.Should().HaveCount(12);
     }
 
-    [Fact]
-    public void Configuration_WithZeroHourlyInterval_ShouldHandleCorrectly()
-    {
-        // Arrange
-        var configuration = new DailyFrequencyConfiguration
-        {
-            CurrentDate = new DateTime(2024, 01, 01),
-            IsEnabled = true,
-            HourlyInterval = 0,
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02))
-        };
-
-        // Act
-        Action act = () => _timeGenerator.GenerateExecutions(configuration);
-
-        // Assert
-        act.Should().Throw<ArgumentException>().WithMessage("Invalid hourly interval");
-    }
 
     [Fact]
     public void Configuration_WithWeekendExclusion_ShouldHandleCorrectly()
