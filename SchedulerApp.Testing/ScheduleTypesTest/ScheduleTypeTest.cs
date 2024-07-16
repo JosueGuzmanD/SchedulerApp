@@ -374,11 +374,11 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 03, 01),
             IsEnabled = true,
-            DaysOfWeek = [DayOfWeek.Monday],
-            WeekInterval = 2,
+            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
+            WeekInterval = 1,
             HourlyInterval = 2,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 31))
+            Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 15))
         };
 
         // Act
@@ -387,11 +387,18 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         // Assert
         var expectedTimes = new List<DateTime>
         {
-            new (2024, 03, 18, 9, 0, 0),
-            new (2024, 03, 18, 11, 0, 0),
-            new (2024, 03, 18, 13, 0, 0),
-            new (2024, 03, 18, 15, 0, 0),
-            new (2024, 03, 18, 17, 0, 0),
+            new DateTime(2024, 03, 04, 9, 0, 0),
+            new DateTime(2024, 03, 04, 11, 0, 0),
+            new DateTime(2024, 03, 04, 13, 0, 0),
+            new DateTime(2024, 03, 04, 15, 0, 0),
+            new DateTime(2024, 03, 04, 17, 0, 0),
+            new DateTime(2024, 03, 06, 9, 0, 0),
+            new DateTime(2024, 03, 06, 11, 0, 0),
+            new DateTime(2024, 03, 06, 13, 0, 0),
+            new DateTime(2024, 03, 06, 15, 0, 0),
+            new DateTime(2024, 03, 06, 17, 0, 0),
+            new DateTime(2024, 03, 11, 9, 0, 0),
+            new DateTime(2024, 03, 11, 11, 0, 0)
         };
 
         executionTimes.Should().BeEquivalentTo(expectedTimes);
