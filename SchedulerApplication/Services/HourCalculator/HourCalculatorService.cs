@@ -1,4 +1,5 @@
-﻿using SchedulerApplication.Interfaces;
+﻿using SchedulerApplication.Common.Enums;
+using SchedulerApplication.Interfaces;
 using SchedulerApplication.Models.ValueObjects;
 
 namespace SchedulerApplication.Services.HourCalculator;
@@ -6,7 +7,7 @@ namespace SchedulerApplication.Services.HourCalculator;
 
 public class HourCalculatorService 
 {
-    public List<DateTime> CalculateHours(List<DateTime> dates, HourTimeRange hourTimeRange, int hourlyInterval)
+    public List<DateTime> CalculateHours(List<DateTime> dates, HourTimeRange hourTimeRange, int interval, IntervalType intervalType)
     {
         var results = new List<DateTime>();
 
@@ -15,50 +16,45 @@ public class HourCalculatorService
             var currentHour = date.Date.Add(hourTimeRange.StartHour);
             var endDateTime = date.Date.Add(hourTimeRange.EndHour);
 
-            if (hourlyInterval == 0 && hourTimeRange.StartHour == hourTimeRange.EndHour)
-            {
-                // Interval is 0 and start hour is equal to end hour
-                results.Add(currentHour);
-                if (results.Count >= 12)
-                    break;
-                continue;
-            }
-
             if (hourTimeRange.StartHour <= hourTimeRange.EndHour)
             {
                 while (currentHour <= endDateTime && results.Count < 12)
                 {
                     results.Add(currentHour);
-                    currentHour = currentHour.AddHours(hourlyInterval);
+                    currentHour = AddInterval(currentHour, interval, intervalType);
                 }
             }
             else
             {
                 // Handle the case where the time range crosses midnight
-                var nextDay = date.Date.AddDays(1);
-
-                // Add hours until midnight
                 while (currentHour.TimeOfDay < TimeSpan.FromHours(24) && results.Count < 12)
                 {
                     results.Add(currentHour);
-                    currentHour = currentHour.AddHours(hourlyInterval);
+                    currentHour = AddInterval(currentHour, interval, intervalType);
                 }
 
-                currentHour = nextDay.Date.Add(hourTimeRange.StartHour);
+                currentHour = date.Date.AddDays(1).Add(hourTimeRange.StartHour);
 
-                // Add hours for the new day
                 while (currentHour.TimeOfDay <= hourTimeRange.EndHour && results.Count < 12)
                 {
                     results.Add(currentHour);
-                    currentHour = currentHour.AddHours(hourlyInterval);
+                    currentHour = AddInterval(currentHour, interval, intervalType);
                 }
             }
-
-            if (results.Count >= 12)
-                break;
         }
 
         return results;
+    }
+
+    private DateTime AddInterval(DateTime currentHour, int interval, IntervalType intervalType)
+    {
+        return intervalType switch
+        {
+            IntervalType.Hourly => currentHour.AddHours(interval),
+            IntervalType.Minutely => currentHour.AddMinutes(interval),
+            IntervalType.Secondly => currentHour.AddSeconds(interval),
+            _ => throw new ArgumentException("Invalid interval type")
+        };
     }
 }
 

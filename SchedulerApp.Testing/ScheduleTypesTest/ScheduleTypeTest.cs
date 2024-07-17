@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using SchedulerApplication.Common.Enums;
 using SchedulerApplication.Interfaces;
 using SchedulerApplication.Models;
 using SchedulerApplication.Models.FrequencyConfigurations;
@@ -59,7 +60,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         var configuration = new DailyFrequencyConfiguration
         {
             CurrentDate = new DateTime(2024, 07, 15, 09, 02, 21),
-            HourlyInterval = 2,
+            Interval = 2,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(21, 00, 00), new TimeSpan(23, 00, 00)),
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 07, 15), new DateTime(2024, 07, 17))
@@ -107,7 +109,97 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         //Assert
         act.Should().Throw<ArgumentException>("Unsupported configuration type.");
     }
+    [Fact]
+    public void CalculateHours_ShouldReturnCorrectHours_WithHourlyInterval()
+    {
+        // Arrange
+        var configuration = new DailyFrequencyConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 01)),
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
+            Interval = 2,
+            IntervalType = IntervalType.Hourly
+        };
 
+        // Act
+        var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
+        var expectedTimes = new List<DateTime>
+        {
+            new DateTime(2024, 01, 01, 9, 0, 0),
+            new DateTime(2024, 01, 01, 11, 0, 0),
+            new DateTime(2024, 01, 01, 13, 0, 0),
+            new DateTime(2024, 01, 01, 15, 0, 0),
+            new DateTime(2024, 01, 01, 17, 0, 0)
+        };
+
+        // Assert
+        for (var i = 0; i < expectedTimes.Count; i++)
+        {
+            scheduleType[i].ExecutionTime.Should().Be(expectedTimes[i]);
+        }
+    }
+
+    [Fact]
+    public void CalculateHours_ShouldReturnCorrectMinutes_WithMinutelyInterval()
+    {
+        // Arrange
+        var configuration = new DailyFrequencyConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 01)),
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(9, 10, 0)),
+            Interval = 5,
+            IntervalType = IntervalType.Minutely
+        };
+
+        // Act
+        var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
+        var expectedTimes = new List<DateTime>
+        {
+            new DateTime(2024, 01, 01, 9, 0, 0),
+            new DateTime(2024, 01, 01, 9, 5, 0),
+            new DateTime(2024, 01, 01, 9, 10, 0)
+        };
+
+        // Assert
+        for (var i = 0; i < expectedTimes.Count; i++)
+        {
+            scheduleType[i].ExecutionTime.Should().Be(expectedTimes[i]);
+        }
+    }
+
+    [Fact]
+    public void CalculateHours_ShouldReturnCorrectSeconds_WithSecondlyInterval()
+    {
+        // Arrange
+        var configuration = new DailyFrequencyConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 01)),
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(9, 0, 10)),
+            Interval = 5,
+            IntervalType = IntervalType.Secondly
+        };
+
+        // Act
+        var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
+        var expectedTimes = new List<DateTime>
+        {
+            new DateTime(2024, 01, 01, 9, 0, 0),
+            new DateTime(2024, 01, 01, 9, 0, 5),
+            new DateTime(2024, 01, 01, 9, 0, 10)
+        };
+
+        // Assert
+        for (var i = 0; i < expectedTimes.Count; i++)
+        {
+            scheduleType[i].ExecutionTime.Should().Be(expectedTimes[i]);
+        }
+    }
     [Fact]
     public void CreateSchedule_ShouldReturnCorrectDescription_WhenOnceSchedulerConfigurationIsValid()
     {
@@ -128,6 +220,7 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         scheduleType[0].Description.Should().Be($"Occurs once. Schedule will be used on {configuration.ConfigurationDateTime:dd/MM/yyyy} at {configuration.ConfigurationDateTime:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
 
     }
+
     [Fact]
     public void CreateSchedule_ShouldReturnCorrectDescription_WhenDailyFrequencyConfigurationHourTimeRangeIsTheSame()
     {
@@ -137,7 +230,9 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             CurrentDate = new DateTime(2024, 03, 01),
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 03)),
-            HourTimeRange = new HourTimeRange(new TimeSpan(20, 00, 00), new TimeSpan(20, 00, 00))
+            HourTimeRange = new HourTimeRange(new TimeSpan(20, 00, 00), new TimeSpan(20, 00, 00)),
+            Interval = 1,
+            IntervalType = IntervalType.Hourly
         };
 
         // Act
@@ -210,7 +305,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             CurrentDate = new DateTime(2024, 03, 01),
             IsEnabled = true,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            HourlyInterval = 2,
+            Interval = 2,
+            IntervalType = 0,
             Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 03))
         };
 
@@ -248,7 +344,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
             WeekInterval = 1,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            HourlyInterval = 2,
+            Interval = 2,
+            IntervalType = 0,
             Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 15))
         };
 
@@ -300,7 +397,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 03, 01),
             IsEnabled = true,
-            HourlyInterval = 2,
+            Interval = 2,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 03))
         };
@@ -338,7 +436,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             IsEnabled = true,
             DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Friday],
             WeekInterval = 1,
-            HourlyInterval = 2,
+            Interval = 2,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 15))
         };
@@ -374,9 +473,10 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 03, 01),
             IsEnabled = true,
-            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
+            DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
             WeekInterval = 1,
-            HourlyInterval = 2,
+            Interval = 2,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 15))
         };
@@ -387,18 +487,18 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         // Assert
         var expectedTimes = new List<DateTime>
         {
-            new DateTime(2024, 03, 04, 9, 0, 0),
-            new DateTime(2024, 03, 04, 11, 0, 0),
-            new DateTime(2024, 03, 04, 13, 0, 0),
-            new DateTime(2024, 03, 04, 15, 0, 0),
-            new DateTime(2024, 03, 04, 17, 0, 0),
-            new DateTime(2024, 03, 06, 9, 0, 0),
-            new DateTime(2024, 03, 06, 11, 0, 0),
-            new DateTime(2024, 03, 06, 13, 0, 0),
-            new DateTime(2024, 03, 06, 15, 0, 0),
-            new DateTime(2024, 03, 06, 17, 0, 0),
-            new DateTime(2024, 03, 11, 9, 0, 0),
-            new DateTime(2024, 03, 11, 11, 0, 0)
+            new (2024, 03, 04, 9, 0, 0),
+            new (2024, 03, 04, 11, 0, 0),
+            new (2024, 03, 04, 13, 0, 0),
+            new (2024, 03, 04, 15, 0, 0),
+            new (2024, 03, 04, 17, 0, 0),
+            new (2024, 03, 06, 9, 0, 0),
+            new (2024, 03, 06, 11, 0, 0),
+            new (2024, 03, 06, 13, 0, 0),
+            new (2024, 03, 06, 15, 0, 0),
+            new (2024, 03, 06, 17, 0, 0),
+            new (2024, 03, 11, 9, 0, 0),
+            new (2024, 03, 11, 11, 0, 0)
         };
 
         executionTimes.Should().BeEquivalentTo(expectedTimes);
@@ -412,7 +512,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 03, 01),
             IsEnabled = true,
-            HourlyInterval = 1,
+            Interval = 1,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 03))
         };
@@ -450,7 +551,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             IsEnabled = true,
             DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
             WeekInterval = 1,
-            HourlyInterval = 2,
+            Interval = 2,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 15))
         };
@@ -486,7 +588,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 03, 01),
             IsEnabled = true,
-            HourlyInterval = 3,
+            Interval = 3,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(21, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 02))
         };
@@ -522,7 +625,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             IsEnabled = true,
             DaysOfWeek = [DayOfWeek.Monday],
             WeekInterval = 1,
-            HourlyInterval = 3,
+            Interval = 3,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(21, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 31))
         };
@@ -596,7 +700,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            HourlyInterval = 24,
+            Interval = 24,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 05))
         };
@@ -616,7 +721,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            HourlyInterval = 2,
+            Interval = 2,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(22, 0, 0), new TimeSpan(2, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02))
         };
@@ -650,7 +756,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            HourlyInterval = -1,
+            Interval = -1,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02))
         };
@@ -659,7 +766,7 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         Action act = () => _timeGenerator.GenerateExecutions(configuration);
 
         // Assert
-        act.Should().Throw<ArgumentException>().WithMessage("Invalid hourly interval");
+        act.Should().Throw<ArgumentException>().WithMessage("Invalid interval");
     }
 
 
@@ -671,7 +778,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 02, 28),
             IsEnabled = true,
-            HourlyInterval = 24,
+            Interval = 24,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(0, 0, 0), new TimeSpan(23, 59, 59)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 02, 28), new DateTime(2024, 03, 01))
         };
@@ -691,7 +799,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 02, 28),
             IsEnabled = true,
-            HourlyInterval = 24,
+            Interval = 24,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(0, 0, 0), new TimeSpan(23, 59, 59)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 02, 28), new DateTime(2024, 02, 29))
         };
@@ -711,7 +820,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2023, 02, 28),
             IsEnabled = true,
-            HourlyInterval = 24,
+            Interval = 24,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(0, 0, 0), new TimeSpan(23, 59, 59)),
             Limits = new LimitsTimeInterval(new DateTime(2023, 02, 28), new DateTime(2023, 03, 01))
         };
@@ -733,7 +843,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             IsEnabled = true,
             DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
             WeekInterval = 2,
-            HourlyInterval = 3,
+            Interval = 3,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(15, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 31))
         };
@@ -755,7 +866,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             IsEnabled = true,
             DaysOfWeek = [DayOfWeek.Monday],
             WeekInterval = 1,
-            HourlyInterval = 2,
+            Interval = 2,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(21, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 15))
         };
@@ -779,7 +891,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             DaysOfWeek =
                 [DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday],
             WeekInterval = 1,
-            HourlyInterval = 1,
+            Interval = 1,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 31))
         };
@@ -801,7 +914,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             IsEnabled = true,
             DaysOfWeek = [DayOfWeek.Saturday, DayOfWeek.Sunday],
             WeekInterval = 1,
-            HourlyInterval = 1,
+            Interval = 1,
+            IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 31))
         };

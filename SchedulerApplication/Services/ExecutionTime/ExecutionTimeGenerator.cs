@@ -4,6 +4,7 @@ using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Models.ValueObjects;
 using SchedulerApplication.Models;
 using SchedulerApplication.Services.HourCalculator;
+using SchedulerApplication.Common.Enums;
 
 
 namespace SchedulerApplication.Services.ExecutionTime;
@@ -36,7 +37,6 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
 
         ValidateConfiguration(configuration);
 
-
         List<DateTime> dates;
 
         switch (configuration)
@@ -54,10 +54,12 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
                 throw new ArgumentException("Unknown configuration type");
         }
 
-        var hourTimeRange = (configuration as RecurringSchedulerConfiguration)?.HourTimeRange ?? new HourTimeRange(new TimeSpan(0, 0, 0));
-        var hourlyInterval = (configuration as RecurringSchedulerConfiguration)?.HourlyInterval ?? 0;
+        var recurringConfig = configuration as RecurringSchedulerConfiguration;
+        var hourTimeRange = recurringConfig?.HourTimeRange ?? new HourTimeRange(new TimeSpan(0, 0, 0));
+        var interval = recurringConfig?.Interval ?? 0;
+        var intervalType = recurringConfig?.IntervalType ?? IntervalType.Hourly;
 
-        var results = _hourCalculator.CalculateHours(dates, hourTimeRange, hourlyInterval);
+        var results = _hourCalculator.CalculateHours(dates, hourTimeRange, interval, intervalType);
 
         if (configuration.Limits != null)
         {
@@ -70,12 +72,20 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
 
     private void ValidateConfiguration(SchedulerConfiguration configuration)
     {
-        if (configuration is RecurringSchedulerConfiguration { HourlyInterval: < 0 })
+        if (configuration is RecurringSchedulerConfiguration recurringConfig)
         {
-            throw new ArgumentException("Invalid hourly interval");
+            if (recurringConfig.Interval < 0)
+            {
+                throw new ArgumentException("Invalid interval");
+            }
+
+            if (configuration.Limits?.LimitEndDateTime < configuration.Limits.LimitStartDateTime)
+            {
+                throw new ArgumentException("End date must be greater than or equal to start date");
+            }
         }
 
-        if (configuration.Limits.LimitEndDateTime < configuration.Limits.LimitStartDateTime)
+        if (configuration.Limits?.LimitEndDateTime < configuration.Limits.LimitStartDateTime)
         {
             throw new ArgumentException("End date must be greater than or equal to start date");
         }

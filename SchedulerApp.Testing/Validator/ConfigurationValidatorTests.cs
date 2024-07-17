@@ -61,7 +61,8 @@ public class ConfigurationValidatorTests
             IsEnabled = false,
             CurrentDate = new DateTime(2024, 01, 01),
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            HourlyInterval = 1,
+            Interval = 1,
+            IntervalType = 0,
         };
 
         // Act
@@ -80,7 +81,8 @@ public class ConfigurationValidatorTests
             IsEnabled = true,
             CurrentDate = new DateTime(2024, 01, 01),
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            HourlyInterval = 1,
+            Interval = 1,
+            IntervalType = 0,
         };
 
         // Act
@@ -101,7 +103,8 @@ public class ConfigurationValidatorTests
             DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
             WeekInterval = 1,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            HourlyInterval = 1,
+            Interval = 1,
+            IntervalType = 0,
         };
 
         // Act
@@ -122,7 +125,8 @@ public class ConfigurationValidatorTests
             DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
             WeekInterval = 1,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            HourlyInterval = 1,
+            Interval = 1,
+            IntervalType = 0,
         };
 
         // Act

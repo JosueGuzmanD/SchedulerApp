@@ -23,8 +23,8 @@ namespace SchedulerApplication.Services.DateCalculator;
 
 //            if (needInterval)
 //            {
-//                currentDate=currentDate.AddDays(7*weeklyConfig.WeekInterval);
-//                needInterval=false;
+//                currentDate = currentDate.AddDays(7 * weeklyConfig.WeekInterval);
+//                needInterval = false;
 //            }
 //            currentDate = currentDate.AddDays(1);
 //        }
