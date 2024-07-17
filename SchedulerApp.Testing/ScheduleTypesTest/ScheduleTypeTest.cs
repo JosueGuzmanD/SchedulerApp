@@ -902,7 +902,67 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         executionTimes.Should().OnlyContain(dt => dt.DayOfWeek == DayOfWeek.Saturday || dt.DayOfWeek == DayOfWeek.Sunday);
     }
 
+    [Fact]
+    public void ValidateConfiguration_WithDateTimeInPast_ShouldReturnException()
+    {
+        //Arrange
+        var configuration = new OnceSchedulerConfiguration()
+        {
+            ConfigurationDateTime = new DateTime(2023, 01, 01),
+            CurrentDate = new DateTime(2024, 01, 01),
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01))
+        };
+
+        //Act
+        Action act = () => _timeGenerator.GenerateExecutions(configuration);
+
+
+        //Assert
+        act.Should().Throw<ArgumentException>("Configuration date time cannot be in the past.");
+
+    }
+    [Fact]
+    public void ValidateConfiguration_WithNullOnceConfiguration_ShouldReturnException()
+    {
+        //Arrange
+        var invalidConfig = new DailyFrequencyConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            IsEnabled = true,
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
+            Interval = 1,
+            IntervalType = IntervalType.Hourly
+        };
+
+        //Act
+        Action act = () => new OnceDateCalculator().CalculateDates(invalidConfig);
+
+
+        //Assert
+        act.Should().Throw<ArgumentException>("Invalid configuration type for OnceDateCalculator.");
+
+    }
+
+    [Fact]
+    public void GenerateExecutions_ShouldThrowException_ForUnknownConfigurationType()
+    {
+        // Arrange
+        var unknownConfiguration = new UnsupportedConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            IsEnabled = true,
+        };
+
+        // Act
+        Action act = () => _timeGenerator.GenerateExecutions(unknownConfiguration);
+
+        // Assert
+        act.Should().Throw<ArgumentException>().WithMessage("Unknown configuration type");
+    }
 }
+
+
 
     public class UnsupportedConfiguration: SchedulerConfiguration;
 

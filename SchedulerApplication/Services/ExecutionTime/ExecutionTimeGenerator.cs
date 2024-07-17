@@ -72,22 +72,11 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
 
     private void ValidateConfiguration(SchedulerConfiguration configuration)
     {
-        if (configuration is RecurringSchedulerConfiguration recurringConfig)
+        if (configuration is RecurringSchedulerConfiguration { Interval: < 0 })
         {
-            if (recurringConfig.Interval < 0)
-            {
-                throw new ArgumentException("Invalid interval");
-            }
-
-            if (configuration.Limits?.LimitEndDateTime < configuration.Limits.LimitStartDateTime)
-            {
-                throw new ArgumentException("End date must be greater than or equal to start date");
-            }
+            throw new ArgumentException("Invalid interval");
         }
 
-        if (configuration.Limits?.LimitEndDateTime < configuration.Limits.LimitStartDateTime)
-        {
-            throw new ArgumentException("End date must be greater than or equal to start date");
-        }
+      
     }
 }

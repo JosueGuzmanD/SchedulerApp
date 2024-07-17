@@ -1,5 +1,4 @@
 ﻿using SchedulerApplication.Common.Enums;
-using SchedulerApplication.Interfaces;
 using SchedulerApplication.Models.ValueObjects;
 
 namespace SchedulerApplication.Services.HourCalculator;
@@ -34,12 +33,6 @@ public class HourCalculatorService
                 }
 
                 currentHour = date.Date.AddDays(1).Add(hourTimeRange.StartHour);
-
-                while (currentHour.TimeOfDay <= hourTimeRange.EndHour && results.Count < 12)
-                {
-                    results.Add(currentHour);
-                    currentHour = AddInterval(currentHour, interval, intervalType);
-                }
             }
         }
 
