@@ -6,12 +6,10 @@ namespace SchedulerApplication.Services.ScheduleTypes;
 
 public class ScheduleTypeOnce : ScheduleTypeBase<OnceSchedulerConfiguration>
 {
-    private readonly IExecutionTimeGenerator _executionTimeGenerator;
 
     public ScheduleTypeOnce(IDescriptionService descriptionService, IExecutionTimeGenerator executionTimeGenerator)
         : base(descriptionService, executionTimeGenerator)
     {
-        _executionTimeGenerator = executionTimeGenerator;
     }
 
     protected override List<ScheduleOutput> CreateScheduleOutput(OnceSchedulerConfiguration configuration)

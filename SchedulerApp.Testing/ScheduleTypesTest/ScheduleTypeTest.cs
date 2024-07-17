@@ -61,7 +61,7 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 07, 15, 09, 02, 21),
             Interval = 2,
-            IntervalType = 0,
+            IntervalType = IntervalType.Hourly,
             HourTimeRange = new HourTimeRange(new TimeSpan(21, 00, 00), new TimeSpan(23, 00, 00)),
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 07, 15), new DateTime(2024, 07, 17))
@@ -75,21 +75,23 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         scheduleType.Should().BeOfType<ScheduleTypeRecurring>();
         executionTimes.Should().HaveCount(6);
 
-        var expectedTimes = new List<DateTime>
-        {
-            new (2024, 07, 15, 21, 00, 00),
-            new (2024, 07, 15, 23, 00, 00),
-            new (2024, 07, 16, 21, 00, 00),
-            new (2024, 07, 16, 23, 00, 00),
-            new (2024, 07, 17, 21, 00, 00),
-            new (2024, 07, 17, 23, 00, 00)
-        };
+        executionTimes[0].ExecutionTime.Should().Be(new DateTime(2024, 07, 15, 21, 00, 00));
+        executionTimes[0].Description.Should().Be($@"Occurs every day from {configuration.HourTimeRange.StartHour:hh\:mm} to {configuration.HourTimeRange.EndHour:hh\:mm}. Schedule will be used on {new DateTime(2024, 07, 15, 21, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 07, 15, 21, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
 
-        for (var i = 0; i < expectedTimes.Count; i++)
-        {
-            executionTimes[i].ExecutionTime.Should().Be(expectedTimes[i]);
-            executionTimes[i].Description.Should().Be($@"Occurs every day from {configuration.HourTimeRange.StartHour:hh\:mm} to {configuration.HourTimeRange.EndHour:hh\:mm}. Schedule will be used on {expectedTimes[i]:dd/MM/yyyy} at {expectedTimes[i]:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
-        }
+        executionTimes[1].ExecutionTime.Should().Be(new DateTime(2024, 07, 15, 23, 00, 00));
+        executionTimes[1].Description.Should().Be($@"Occurs every day from {configuration.HourTimeRange.StartHour:hh\:mm} to {configuration.HourTimeRange.EndHour:hh\:mm}. Schedule will be used on {new DateTime(2024, 07, 15, 23, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 07, 15, 23, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+
+        executionTimes[2].ExecutionTime.Should().Be(new DateTime(2024, 07, 16, 21, 00, 00));
+        executionTimes[2].Description.Should().Be($@"Occurs every day from {configuration.HourTimeRange.StartHour:hh\:mm} to {configuration.HourTimeRange.EndHour:hh\:mm}. Schedule will be used on {new DateTime(2024, 07, 16, 21, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 07, 16, 21, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+
+        executionTimes[3].ExecutionTime.Should().Be(new DateTime(2024, 07, 16, 23, 00, 00));
+        executionTimes[3].Description.Should().Be($@"Occurs every day from {configuration.HourTimeRange.StartHour:hh\:mm} to {configuration.HourTimeRange.EndHour:hh\:mm}. Schedule will be used on {new DateTime(2024, 07, 16, 23, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 07, 16, 23, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+
+        executionTimes[4].ExecutionTime.Should().Be(new DateTime(2024, 07, 17, 21, 00, 00));
+        executionTimes[4].Description.Should().Be($@"Occurs every day from {configuration.HourTimeRange.StartHour:hh\:mm} to {configuration.HourTimeRange.EndHour:hh\:mm}. Schedule will be used on {new DateTime(2024, 07, 17, 21, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 07, 17, 21, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+
+        executionTimes[5].ExecutionTime.Should().Be(new DateTime(2024, 07, 17, 23, 00, 00));
+        executionTimes[5].Description.Should().Be($@"Occurs every day from {configuration.HourTimeRange.StartHour:hh\:mm} to {configuration.HourTimeRange.EndHour:hh\:mm}. Schedule will be used on {new DateTime(2024, 07, 17, 23, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 07, 17, 23, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
     }
 
     [Fact]
@@ -125,20 +127,13 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
 
         // Act
         var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
-        var expectedTimes = new List<DateTime>
-        {
-            new DateTime(2024, 01, 01, 9, 0, 0),
-            new DateTime(2024, 01, 01, 11, 0, 0),
-            new DateTime(2024, 01, 01, 13, 0, 0),
-            new DateTime(2024, 01, 01, 15, 0, 0),
-            new DateTime(2024, 01, 01, 17, 0, 0)
-        };
 
         // Assert
-        for (var i = 0; i < expectedTimes.Count; i++)
-        {
-            scheduleType[i].ExecutionTime.Should().Be(expectedTimes[i]);
-        }
+        scheduleType[0].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 0, 0));
+        scheduleType[1].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 11, 0, 0));
+        scheduleType[2].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 13, 0, 0));
+        scheduleType[3].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 15, 0, 0));
+        scheduleType[4].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 17, 0, 0));
     }
 
     [Fact]
@@ -157,18 +152,11 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
 
         // Act
         var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
-        var expectedTimes = new List<DateTime>
-        {
-            new DateTime(2024, 01, 01, 9, 0, 0),
-            new DateTime(2024, 01, 01, 9, 5, 0),
-            new DateTime(2024, 01, 01, 9, 10, 0)
-        };
 
         // Assert
-        for (var i = 0; i < expectedTimes.Count; i++)
-        {
-            scheduleType[i].ExecutionTime.Should().Be(expectedTimes[i]);
-        }
+        scheduleType[0].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 0, 0));
+        scheduleType[1].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 5, 0));
+        scheduleType[2].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 10, 0));
     }
 
     [Fact]
@@ -187,18 +175,11 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
 
         // Act
         var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
-        var expectedTimes = new List<DateTime>
-        {
-            new DateTime(2024, 01, 01, 9, 0, 0),
-            new DateTime(2024, 01, 01, 9, 0, 5),
-            new DateTime(2024, 01, 01, 9, 0, 10)
-        };
 
         // Assert
-        for (var i = 0; i < expectedTimes.Count; i++)
-        {
-            scheduleType[i].ExecutionTime.Should().Be(expectedTimes[i]);
-        }
+        scheduleType[0].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 0, 0));
+        scheduleType[1].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 0, 5));
+        scheduleType[2].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 0, 10));
     }
     [Fact]
     public void CreateSchedule_ShouldReturnCorrectDescription_WhenOnceSchedulerConfigurationIsValid()
@@ -237,23 +218,17 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
 
         // Act
         var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
-        var expectedTimes = new List<DateTime>
-        {
-            new (2024, 03, 01, 20, 00, 00),
-            new (2024, 03, 02, 20, 00, 00),
-            new (2024, 03, 03, 20, 00, 00)
-        };
 
         // Assert
-        for (var i = 0; i < expectedTimes.Count; i++)
-        {
-            scheduleType[i].ExecutionTime.Should().Be(expectedTimes[i]);
-            scheduleType[i].Description.Should()
-                .Be(
-                    $"Occurs every day from {configuration.HourTimeRange.StartHour:hh\\:mm} to {configuration.HourTimeRange.EndHour:hh\\:mm}. Schedule will be used on {expectedTimes[i]:dd/MM/yyyy} at {expectedTimes[i]:HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
-        }
-    }
+        scheduleType[0].ExecutionTime.Should().Be(new DateTime(2024, 03, 01, 20, 00, 00));
+        scheduleType[0].Description.Should().Be($"Occurs every day from {configuration.HourTimeRange.StartHour:hh\\:mm} to {configuration.HourTimeRange.EndHour:hh\\:mm}. Schedule will be used on {new DateTime(2024, 03, 01, 20, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 03, 01, 20, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
 
+        scheduleType[1].ExecutionTime.Should().Be(new DateTime(2024, 03, 02, 20, 00, 00));
+        scheduleType[1].Description.Should().Be($"Occurs every day from {configuration.HourTimeRange.StartHour:hh\\:mm} to {configuration.HourTimeRange.EndHour:hh\\:mm}. Schedule will be used on {new DateTime(2024, 03, 02, 20, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 03, 02, 20, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+
+        scheduleType[2].ExecutionTime.Should().Be(new DateTime(2024, 03, 03, 20, 00, 00));
+        scheduleType[2].Description.Should().Be($"Occurs every day from {configuration.HourTimeRange.StartHour:hh\\:mm} to {configuration.HourTimeRange.EndHour:hh\\:mm}. Schedule will be used on {new DateTime(2024, 03, 03, 20, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 03, 03, 20, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
+    }
     [Fact]
     public void GenerateDescription_ShouldReturnCorrectDescription_ForWeeklyFrequencyConfiguration()
     {

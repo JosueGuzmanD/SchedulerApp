@@ -6,12 +6,10 @@ namespace SchedulerApplication.Services.ScheduleTypes;
 
 public class ScheduleTypeRecurring : ScheduleTypeBase<RecurringSchedulerConfiguration>
 {
-    private readonly IExecutionTimeGenerator _executionTimeGenerator;
-
     public ScheduleTypeRecurring(IDescriptionService descriptionService, IExecutionTimeGenerator executionTimeGenerator)
         : base(descriptionService, executionTimeGenerator)
     {
-        _executionTimeGenerator = executionTimeGenerator;
+
     }
 
     protected override List<ScheduleOutput> CreateScheduleOutput(RecurringSchedulerConfiguration configuration)
