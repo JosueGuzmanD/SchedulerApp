@@ -6,9 +6,10 @@ namespace SchedulerApplication.Services.HourCalculator;
 
 public class HourCalculatorService 
 {
-    public List<DateTime> CalculateHours(List<DateTime> dates, HourTimeRange hourTimeRange, int interval, IntervalType intervalType)
+   public List<DateTime> CalculateHours(List<DateTime> dates, HourTimeRange hourTimeRange, int interval, IntervalType intervalType, LimitsTimeInterval limits)
     {
         var results = new List<DateTime>();
+        var endLimitTime = limits.LimitEndDateTime ?? DateTime.MaxValue;
 
         foreach (var date in dates)
         {
@@ -17,7 +18,7 @@ public class HourCalculatorService
 
             if (hourTimeRange.StartHour <= hourTimeRange.EndHour)
             {
-                while (currentHour <= endDateTime && results.Count < 12)
+                while (currentHour <= endDateTime && results.Count < 12 && currentHour <= endLimitTime)
                 {
                     results.Add(currentHour);
                     currentHour = AddInterval(currentHour, interval, intervalType);
@@ -26,20 +27,26 @@ public class HourCalculatorService
             else
             {
                 // Handle the case where the time range crosses midnight
-                while (currentHour.TimeOfDay < TimeSpan.FromHours(24) && results.Count < 12)
+                while (currentHour.TimeOfDay < TimeSpan.FromHours(24) && results.Count < 12 && currentHour <= endLimitTime)
                 {
                     results.Add(currentHour);
                     currentHour = AddInterval(currentHour, interval, intervalType);
                 }
 
                 currentHour = date.Date.AddDays(1).Add(hourTimeRange.StartHour);
+
+                while (currentHour.TimeOfDay <= hourTimeRange.EndHour && results.Count < 12 && currentHour <= endLimitTime)
+                {
+                    results.Add(currentHour);
+                    currentHour = AddInterval(currentHour, interval, intervalType);
+                }
             }
         }
 
         return results;
     }
 
-    private DateTime AddInterval(DateTime currentHour, int interval, IntervalType intervalType)
+    private static DateTime AddInterval(DateTime currentHour, int interval, IntervalType intervalType)
     {
         return intervalType switch
         {

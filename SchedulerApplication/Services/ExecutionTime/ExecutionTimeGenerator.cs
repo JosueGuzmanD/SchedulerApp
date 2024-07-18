@@ -32,7 +32,7 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
     {
         if (!configuration.IsEnabled)
         {
-            return new List<DateTime>();
+            return [];
         }
 
         ValidateConfiguration(configuration);
@@ -59,7 +59,7 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
         var interval = recurringConfig?.Interval ?? 0;
         var intervalType = recurringConfig?.IntervalType ?? IntervalType.Hourly;
 
-        var results = _hourCalculator.CalculateHours(dates, hourTimeRange, interval, intervalType);
+        var results = _hourCalculator.CalculateHours(dates, hourTimeRange, interval, intervalType,configuration.Limits);
 
         if (configuration.Limits != null)
         {

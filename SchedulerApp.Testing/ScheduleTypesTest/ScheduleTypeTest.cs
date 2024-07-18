@@ -13,8 +13,8 @@ using SchedulerApplication.Services.ScheduleTypes;
 
 namespace SchedulerApp.Testing.ScheduleTypesTest;
 
-    public class ScheduleTypeTest
-    {
+public class ScheduleTypeTest
+{
     private readonly ScheduleTypeFactory _factory;
     private readonly IDescriptionService _descriptionService;
     private readonly IExecutionTimeGenerator _timeGenerator;
@@ -73,7 +73,7 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
 
         // Assert
         scheduleType.Should().BeOfType<ScheduleTypeRecurring>();
-        executionTimes.Should().HaveCount(6);
+        executionTimes.Should().HaveCount(4);
 
         executionTimes[0].ExecutionTime.Should().Be(new DateTime(2024, 07, 15, 21, 00, 00));
         executionTimes[0].Description.Should().Be($@"Occurs every day from {configuration.HourTimeRange.StartHour:hh\:mm} to {configuration.HourTimeRange.EndHour:hh\:mm}. Schedule will be used on {new DateTime(2024, 07, 15, 21, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 07, 15, 21, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
@@ -86,12 +86,6 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
 
         executionTimes[3].ExecutionTime.Should().Be(new DateTime(2024, 07, 16, 23, 00, 00));
         executionTimes[3].Description.Should().Be($@"Occurs every day from {configuration.HourTimeRange.StartHour:hh\:mm} to {configuration.HourTimeRange.EndHour:hh\:mm}. Schedule will be used on {new DateTime(2024, 07, 16, 23, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 07, 16, 23, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
-
-        executionTimes[4].ExecutionTime.Should().Be(new DateTime(2024, 07, 17, 21, 00, 00));
-        executionTimes[4].Description.Should().Be($@"Occurs every day from {configuration.HourTimeRange.StartHour:hh\:mm} to {configuration.HourTimeRange.EndHour:hh\:mm}. Schedule will be used on {new DateTime(2024, 07, 17, 21, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 07, 17, 21, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
-
-        executionTimes[5].ExecutionTime.Should().Be(new DateTime(2024, 07, 17, 23, 00, 00));
-        executionTimes[5].Description.Should().Be($@"Occurs every day from {configuration.HourTimeRange.StartHour:hh\:mm} to {configuration.HourTimeRange.EndHour:hh\:mm}. Schedule will be used on {new DateTime(2024, 07, 17, 23, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 07, 17, 23, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
     }
 
     [Fact]
@@ -119,7 +113,7 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 01)),
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02)),
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
             Interval = 2,
             IntervalType = IntervalType.Hourly
@@ -129,6 +123,7 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
 
         // Assert
+        scheduleType.Should().HaveCount(5);
         scheduleType[0].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 0, 0));
         scheduleType[1].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 11, 0, 0));
         scheduleType[2].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 13, 0, 0));
@@ -144,7 +139,7 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 01)),
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02)),
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(9, 10, 0)),
             Interval = 5,
             IntervalType = IntervalType.Minutely
@@ -154,6 +149,7 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
 
         // Assert
+        scheduleType.Should().HaveCount(3);
         scheduleType[0].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 0, 0));
         scheduleType[1].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 5, 0));
         scheduleType[2].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 10, 0));
@@ -167,7 +163,7 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 01)),
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02)),
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(9, 0, 10)),
             Interval = 5,
             IntervalType = IntervalType.Secondly
@@ -177,10 +173,12 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
 
         // Assert
+        scheduleType.Should().HaveCount(3);
         scheduleType[0].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 0, 0));
         scheduleType[1].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 0, 5));
         scheduleType[2].ExecutionTime.Should().Be(new DateTime(2024, 01, 01, 9, 0, 10));
     }
+
     [Fact]
     public void CreateSchedule_ShouldReturnCorrectDescription_WhenOnceSchedulerConfigurationIsValid()
     {
@@ -210,7 +208,7 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 03, 01),
             IsEnabled = true,
-            Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 03)),
+            Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 03, 20, 00, 00)),
             HourTimeRange = new HourTimeRange(new TimeSpan(20, 00, 00), new TimeSpan(20, 00, 00)),
             Interval = 1,
             IntervalType = IntervalType.Hourly
@@ -220,6 +218,8 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
 
         // Assert
+        scheduleType.Should().HaveCount(3); // Asegurarse de que hay 3 elementos en la lista
+
         scheduleType[0].ExecutionTime.Should().Be(new DateTime(2024, 03, 01, 20, 00, 00));
         scheduleType[0].Description.Should().Be($"Occurs every day from {configuration.HourTimeRange.StartHour:hh\\:mm} to {configuration.HourTimeRange.EndHour:hh\\:mm}. Schedule will be used on {new DateTime(2024, 03, 01, 20, 00, 00):dd/MM/yyyy} at {new DateTime(2024, 03, 01, 20, 00, 00):HH:mm} starting on {configuration.CurrentDate:dd/MM/yyyy}.");
 
@@ -301,8 +301,6 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             new (2024, 03, 02, 13, 0, 0),
             new (2024, 03, 02, 15, 0, 0),
             new (2024, 03, 02, 17, 0, 0),
-            new (2024, 03, 03, 9, 0, 0),
-            new (2024, 03, 03, 11, 0, 0)
         };
 
         executionTimes.Should().BeEquivalentTo(expectedTimes);
@@ -342,6 +340,43 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             new (2024, 03, 06, 17, 0, 0),
             new (2024, 03, 11, 9, 0, 0),
             new (2024, 03, 11, 11, 0, 0)
+        };
+
+        executionTimes.Should().BeEquivalentTo(expectedTimes);
+    }
+    [Fact]
+    public void GenerateExecutions_ShouldReturnCorrectExecutionTimes_ForWeeklyEqualFrequencyConfiguration()
+    {
+        // Arrange
+        var configuration = new WeeklyFrequencyConfiguration
+        {
+            CurrentDate = new DateTime(2024, 03, 01),
+            IsEnabled = true,
+            DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
+            WeekInterval = 1,
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
+            Interval = 2,
+            IntervalType = IntervalType.Hourly,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 11, 9, 0, 0))
+        };
+
+        // Act
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+
+        // Assert
+        var expectedTimes = new List<DateTime>
+        {
+            new (2024, 03, 04, 9, 0, 0),
+            new (2024, 03, 04, 11, 0, 0),
+            new (2024, 03, 04, 13, 0, 0),
+            new (2024, 03, 04, 15, 0, 0),
+            new (2024, 03, 04, 17, 0, 0),
+            new (2024, 03, 06, 9, 0, 0),
+            new (2024, 03, 06, 11, 0, 0),
+            new (2024, 03, 06, 13, 0, 0),
+            new (2024, 03, 06, 15, 0, 0),
+            new (2024, 03, 06, 17, 0, 0),
+            new (2024, 03, 11, 9, 0, 0)
         };
 
         executionTimes.Should().BeEquivalentTo(expectedTimes);
@@ -394,8 +429,6 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             new (2024, 03, 02, 13, 0, 0),
             new (2024, 03, 02, 15, 0, 0),
             new (2024, 03, 02, 17, 0, 0),
-            new (2024, 03, 03, 9, 0, 0),
-            new (2024, 03, 03, 11, 0, 0)
         };
 
         executionTimes.Should().BeEquivalentTo(expectedTimes);
@@ -580,11 +613,6 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             new (2024, 03, 01, 15, 0, 0),
             new (2024, 03, 01, 18, 0, 0),
             new (2024, 03, 01, 21, 0, 0),
-            new (2024, 03, 02, 9, 0, 0),
-            new (2024, 03, 02, 12, 0, 0),
-            new (2024, 03, 02, 15, 0, 0),
-            new (2024, 03, 02, 18, 0, 0),
-            new (2024, 03, 02, 21, 0, 0)
         };
 
         executionTimes.Should().BeEquivalentTo(expectedTimes);
@@ -675,9 +703,9 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         {
             CurrentDate = new DateTime(2024, 01, 01),
             IsEnabled = true,
-            Interval = 24,
-            IntervalType = 0,
-            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0)),
+            Interval = 2, 
+            IntervalType = IntervalType.Hourly,
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(10, 0, 0)), 
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 05))
         };
 
@@ -685,7 +713,7 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
         var executionTimes = _timeGenerator.GenerateExecutions(configuration);
 
         // Assert
-        executionTimes.Should().HaveCount(5);
+        executionTimes.Should().HaveCount(4);
     }
 
     [Fact]
@@ -699,14 +727,14 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
             Interval = 2,
             IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(22, 0, 0), new TimeSpan(2, 0, 0)),
-            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02))
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02, 02, 00, 00))
         };
 
         // Act
         var executionTimes = _timeGenerator.GenerateExecutions(configuration);
 
         // Assert
-        executionTimes.Should().HaveCount(12);
+        executionTimes.Should().HaveCount(3);
     }
 
     [Fact]
@@ -964,5 +992,5 @@ namespace SchedulerApp.Testing.ScheduleTypesTest;
 
 
 
-    public class UnsupportedConfiguration: SchedulerConfiguration;
+public class UnsupportedConfiguration : SchedulerConfiguration;
 

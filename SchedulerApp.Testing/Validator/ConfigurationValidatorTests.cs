@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using SchedulerApplication.Common.Validator;
-using SchedulerApplication.Models;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Models.ValueObjects;
@@ -100,7 +99,7 @@ public class ConfigurationValidatorTests
         {
             IsEnabled = false,
             CurrentDate = new DateTime(2024, 01, 01),
-            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
+            DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
             WeekInterval = 1,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
             Interval = 1,
@@ -122,7 +121,7 @@ public class ConfigurationValidatorTests
         {
             IsEnabled = true,
             CurrentDate = new DateTime(2024, 01, 01),
-            DaysOfWeek = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Wednesday },
+            DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
             WeekInterval = 1,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
             Interval = 1,
