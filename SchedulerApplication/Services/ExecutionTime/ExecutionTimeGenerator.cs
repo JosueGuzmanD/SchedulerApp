@@ -15,16 +15,19 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
     private readonly IDateCalculator _dailyDateCalculator;
     private readonly IDateCalculator _weeklyDateCalculator;
     private readonly HourCalculatorService _hourCalculator;
+    private readonly IDateCalculator _monthlyDateCalculator;
 
     public ExecutionTimeGenerator(
         IDateCalculator onceDateCalculator,
         IDateCalculator dailyDateCalculator,
         IDateCalculator weeklyDateCalculator,
-        HourCalculatorService hourCalculator)
+        HourCalculatorService hourCalculator,
+        IDateCalculator monthlyDateCalculator)
     {
         _onceDateCalculator = onceDateCalculator;
         _dailyDateCalculator = dailyDateCalculator;
         _weeklyDateCalculator = weeklyDateCalculator;
+        _monthlyDateCalculator = monthlyDateCalculator;
         _hourCalculator = hourCalculator;
     }
 
@@ -49,6 +52,9 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
                 break;
             case WeeklyFrequencyConfiguration weeklyConfig:
                 dates = _weeklyDateCalculator.CalculateDates(weeklyConfig);
+                break;
+            case MonthlySchedulerConfiguration monthlyConfig:
+                dates = _monthlyDateCalculator.CalculateDates(monthlyConfig);
                 break;
             default:
                 throw new ArgumentException("Unknown configuration type");

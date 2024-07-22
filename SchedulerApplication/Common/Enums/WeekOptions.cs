@@ -2,6 +2,15 @@
 
     public enum WeekOptions
     {
-        DaysOfTheWeek, Day, Weekday, Weekend
+        Monday = DayOfWeek.Monday,
+        Tuesday = DayOfWeek.Tuesday,
+        Wednesday = DayOfWeek.Wednesday,
+        Thursday = DayOfWeek.Thursday,
+        Friday = DayOfWeek.Friday,
+        Saturday = DayOfWeek.Saturday,
+        Sunday = DayOfWeek.Sunday,
+        Weekday = 7,
+        WeekendDay = 8,
+        AnyDay = 9
     }
 

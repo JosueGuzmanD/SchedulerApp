@@ -26,7 +26,8 @@ public class ScheduleTypeTest
             new OnceDateCalculator(),
             new DailyDateCalculator(),
             new WeeklyDateCalculator(),
-            new HourCalculatorService());
+            new HourCalculatorService(),
+            new MonthlyDateCalculator());
         _factory = new ScheduleTypeFactory(_descriptionService, _timeGenerator);
     }
 
@@ -988,6 +989,114 @@ public class ScheduleTypeTest
         // Assert
         act.Should().Throw<ArgumentException>().WithMessage("Unknown configuration type");
     }
+
+
+    // NO SON CASOS DE USO AL COMPLETO, TENGO QUE CAMBIARLOS
+
+    public class MonthlyDateCalculatorTests
+    {
+        private readonly MonthlyDateCalculator _calculator = new MonthlyDateCalculator();
+
+        [Fact]
+        public void ReturnDateTimesWhenSecond_ShouldReturnCorrectSecondWeekdays()
+        {
+            // Arrange
+            var weekOption = WeekOptions.Weekday;
+            var dayOptions = DayOptions.Second;
+            int monthFrequency = 1;
+            int maxExecutions = 5;
+            var actualDateTime = new DateTime(2024, 01, 01); // Start date
+
+            var config = new MonthlySchedulerConfiguration
+            {
+                WeekOption = weekOption,
+                DayOptions = dayOptions,
+                MonthFrequency = monthFrequency,
+                CurrentDate = actualDateTime,
+                MaxExecutions = maxExecutions,
+                HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
+                Interval = 2,
+                IntervalType = IntervalType.Hourly,
+                IsEnabled = true,
+                Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 31))
+            };
+
+            var hourCalculator = new HourCalculatorService();
+            var timeGenerator = new ExecutionTimeGenerator(
+                new OnceDateCalculator(),
+                new DailyDateCalculator(),
+                new WeeklyDateCalculator(),
+                hourCalculator,
+                _calculator
+            );
+
+            // Act
+            var result = timeGenerator.GenerateExecutions(config);
+
+            // Assert
+            var expectedDates = new List<DateTime>
+        {
+            new DateTime(2024, 01, 02, 9, 0, 0), // Second weekday in January 2024
+            new DateTime(2024, 01, 02, 11, 0, 0),
+            new DateTime(2024, 01, 02, 13, 0, 0),
+            new DateTime(2024, 01, 02, 15, 0, 0),
+            new DateTime(2024, 01, 02, 17, 0, 0)
+        };
+
+            result.Should().BeEquivalentTo(expectedDates);
+        }
+
+        [Fact]
+        public void ReturnDateTimesWhenFirst_ShouldReturnCorrectFirstWeekdays()
+        {
+            // Arrange
+            var weekOption = WeekOptions.Weekday;
+            var dayOptions = DayOptions.First;
+            int monthFrequency = 1;
+            int maxExecutions = 5;
+            var actualDateTime = new DateTime(2024, 01, 01); // Start date
+
+            var config = new MonthlySchedulerConfiguration
+            {
+                WeekOption = weekOption,
+                DayOptions = dayOptions,
+                MonthFrequency = monthFrequency,
+                CurrentDate = actualDateTime,
+                MaxExecutions = maxExecutions,
+                HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
+                Interval = 2,
+                IntervalType = IntervalType.Hourly,
+                IsEnabled = true,
+                Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 31))
+            };
+
+            var hourCalculator = new HourCalculatorService();
+            var timeGenerator = new ExecutionTimeGenerator(
+                new OnceDateCalculator(),
+                new DailyDateCalculator(),
+                new WeeklyDateCalculator(),
+                hourCalculator,
+                _calculator
+            );
+
+            // Act
+            var result = timeGenerator.GenerateExecutions(config);
+
+            // Assert
+            var expectedDates = new List<DateTime>
+        {
+            new DateTime(2024, 01, 01, 9, 0, 0), // First weekday in January 2024
+            new DateTime(2024, 01, 01, 11, 0, 0),
+            new DateTime(2024, 01, 01, 13, 0, 0),
+            new DateTime(2024, 01, 01, 15, 0, 0),
+            new DateTime(2024, 01, 01, 17, 0, 0)
+        };
+
+            result.Should().BeEquivalentTo(expectedDates);
+        }
+    }
+
+
 }
 
 
