@@ -1036,11 +1036,11 @@ public class ScheduleTypeTest
             // Assert
             var expectedDates = new List<DateTime>
         {
-            new DateTime(2024, 01, 02, 9, 0, 0), // Second weekday in January 2024
-            new DateTime(2024, 01, 02, 11, 0, 0),
-            new DateTime(2024, 01, 02, 13, 0, 0),
-            new DateTime(2024, 01, 02, 15, 0, 0),
-            new DateTime(2024, 01, 02, 17, 0, 0)
+            new (2024, 01, 02, 9, 0, 0), // Second weekday in January 2024
+            new (2024, 01, 02, 11, 0, 0),
+            new (2024, 01, 02, 13, 0, 0),
+            new (2024, 01, 02, 15, 0, 0),
+            new (2024, 01, 02, 17, 0, 0)
         };
 
             result.Should().BeEquivalentTo(expectedDates);
@@ -1085,11 +1085,11 @@ public class ScheduleTypeTest
             // Assert
             var expectedDates = new List<DateTime>
         {
-            new DateTime(2024, 01, 01, 9, 0, 0), // First weekday in January 2024
-            new DateTime(2024, 01, 01, 11, 0, 0),
-            new DateTime(2024, 01, 01, 13, 0, 0),
-            new DateTime(2024, 01, 01, 15, 0, 0),
-            new DateTime(2024, 01, 01, 17, 0, 0)
+            new (2024, 01, 01, 9, 0, 0), // First weekday in January 2024
+            new (2024, 01, 01, 11, 0, 0),
+            new (2024, 01, 01, 13, 0, 0),
+            new (2024, 01, 01, 15, 0, 0),
+            new (2024, 01, 01, 17, 0, 0)
         };
 
             result.Should().BeEquivalentTo(expectedDates);

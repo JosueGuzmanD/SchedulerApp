@@ -6,7 +6,8 @@ public enum DayOptions
     Second, 
     Third,
     Fourth,
-    Last
+    Last,
+    SpecificDay
 }
 
 

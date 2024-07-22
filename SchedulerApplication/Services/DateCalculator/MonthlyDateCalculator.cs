@@ -9,32 +9,33 @@ namespace SchedulerApplication.Services.DateCalculator;
 
 public class MonthlyDateCalculator : IDateCalculator
 {
-    private readonly Dictionary<DayOptions, IDateCalculationStrategy> _strategies;
-
-    public MonthlyDateCalculator()
+    private readonly Dictionary<DayOptions, IDateCalculationStrategy> _strategies = new()
     {
-        _strategies = new Dictionary<DayOptions, IDateCalculationStrategy>
-        {
-            { DayOptions.First, new OrdinalWeekdayStrategy(1) },
-            { DayOptions.Second, new OrdinalWeekdayStrategy(2) },
-            { DayOptions.Third, new OrdinalWeekdayStrategy(3) },
-            { DayOptions.Fourth, new OrdinalWeekdayStrategy(4) },
-            { DayOptions.Last, new LastWeekdayStrategy() }
-        };
-    }
+        { DayOptions.First, new OrdinalWeekdayStrategy(1) },
+        { DayOptions.Second, new OrdinalWeekdayStrategy(2) },
+        { DayOptions.Third, new OrdinalWeekdayStrategy(3) },
+        { DayOptions.Fourth, new OrdinalWeekdayStrategy(4) },
+        { DayOptions.Last, new LastWeekdayStrategy() },
+        { DayOptions.SpecificDay, new SpecificDayStrategy() } 
+    };
 
     public List<DateTime> CalculateDates(SchedulerConfiguration config)
     {
+        if (config is SpecificDayMonthlySchedulerConfiguration specificDayConfig)
+        {
+            return _strategies[DayOptions.SpecificDay].CalculateDates(specificDayConfig);
+        }
+
         if (config is not MonthlySchedulerConfiguration monthlyConfig)
         {
             throw new ArgumentException("Invalid configuration type for MonthlyDateCalculator.");
         }
 
-        if (!_strategies.ContainsKey(monthlyConfig.DayOptions))
+        if (!_strategies.TryGetValue(monthlyConfig.DayOptions, out var strategy))
         {
             throw new ArgumentOutOfRangeException(nameof(monthlyConfig.DayOptions), monthlyConfig.DayOptions, null);
         }
 
-        return _strategies[monthlyConfig.DayOptions].CalculateDates(config);
+        return strategy.CalculateDates(monthlyConfig);
     }
 }
