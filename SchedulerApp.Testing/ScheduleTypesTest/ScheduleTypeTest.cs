@@ -728,14 +728,14 @@ public class ScheduleTypeTest
             Interval = 2,
             IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(22, 0, 0), new TimeSpan(2, 0, 0)),
-            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02, 02, 00, 00))
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02, 0, 00, 00))
         };
 
         // Act
         var executionTimes = _timeGenerator.GenerateExecutions(configuration);
 
         // Assert
-        executionTimes.Should().HaveCount(3);
+        executionTimes.Should().HaveCount(2);
     }
 
     [Fact]
@@ -989,113 +989,353 @@ public class ScheduleTypeTest
         // Assert
         act.Should().Throw<ArgumentException>().WithMessage("Unknown configuration type");
     }
-
-
-    // NO SON CASOS DE USO AL COMPLETO, TENGO QUE CAMBIARLOS
-
-    public class MonthlyDateCalculatorTests
+    [Fact]
+    public void MonthlyFrequency_WithAllFirstMondayInAYear_ShouldReturnCorrectly()
     {
-        private readonly MonthlyDateCalculator _calculator = new MonthlyDateCalculator();
-
-        [Fact]
-        public void ReturnDateTimesWhenSecond_ShouldReturnCorrectSecondWeekdays()
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
         {
-            // Arrange
-            var weekOption = WeekOptions.Weekday;
-            var dayOptions = DayOptions.Second;
-            int monthFrequency = 1;
-            int maxExecutions = 5;
-            var actualDateTime = new DateTime(2024, 01, 01); // Start date
-
-            var config = new MonthlySchedulerConfiguration
-            {
-                WeekOption = weekOption,
-                DayOptions = dayOptions,
-                MonthFrequency = monthFrequency,
-                CurrentDate = actualDateTime,
-                MaxExecutions = maxExecutions,
-                HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-                Interval = 2,
-                IntervalType = IntervalType.Hourly,
-                IsEnabled = true,
-                Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 31))
-            };
-
-            var hourCalculator = new HourCalculatorService();
-            var timeGenerator = new ExecutionTimeGenerator(
-                new OnceDateCalculator(),
-                new DailyDateCalculator(),
-                new WeeklyDateCalculator(),
-                hourCalculator,
-                _calculator
-            );
-
-            // Act
-            var result = timeGenerator.GenerateExecutions(config);
-
-            // Assert
-            var expectedDates = new List<DateTime>
-        {
-            new (2024, 01, 02, 9, 0, 0), // Second weekday in January 2024
-            new (2024, 01, 02, 11, 0, 0),
-            new (2024, 01, 02, 13, 0, 0),
-            new (2024, 01, 02, 15, 0, 0),
-            new (2024, 01, 02, 17, 0, 0)
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.First,
+            Interval = 1,
+            IntervalType = IntervalType.Hourly, 
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)), 
+            MaxExecutions = 12,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Monday,
+            HourTimeRange = new HourTimeRange(new TimeSpan(13,00,00), new TimeSpan(13, 00, 00)) 
         };
 
-            result.Should().BeEquivalentTo(expectedDates);
-        }
+        // Act
+        var executionTimes = _timeGenerator.GenerateExecutions(config);
 
-        [Fact]
-        public void ReturnDateTimesWhenFirst_ShouldReturnCorrectFirstWeekdays()
-        {
-            // Arrange
-            var weekOption = WeekOptions.Weekday;
-            var dayOptions = DayOptions.First;
-            int monthFrequency = 1;
-            int maxExecutions = 5;
-            var actualDateTime = new DateTime(2024, 01, 01); // Start date
+        // Assert
+        executionTimes.Should().HaveCount(12);
 
-            var config = new MonthlySchedulerConfiguration
-            {
-                WeekOption = weekOption,
-                DayOptions = dayOptions,
-                MonthFrequency = monthFrequency,
-                CurrentDate = actualDateTime,
-                MaxExecutions = maxExecutions,
-                HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-                Interval = 2,
-                IntervalType = IntervalType.Hourly,
-                IsEnabled = true,
-                Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 31))
-            };
-
-            var hourCalculator = new HourCalculatorService();
-            var timeGenerator = new ExecutionTimeGenerator(
-                new OnceDateCalculator(),
-                new DailyDateCalculator(),
-                new WeeklyDateCalculator(),
-                hourCalculator,
-                _calculator
-            );
-
-            // Act
-            var result = timeGenerator.GenerateExecutions(config);
-
-            // Assert
-            var expectedDates = new List<DateTime>
-        {
-            new (2024, 01, 01, 9, 0, 0), // First weekday in January 2024
-            new (2024, 01, 01, 11, 0, 0),
-            new (2024, 01, 01, 13, 0, 0),
-            new (2024, 01, 01, 15, 0, 0),
-            new (2024, 01, 01, 17, 0, 0)
-        };
-
-            result.Should().BeEquivalentTo(expectedDates);
-        }
+        executionTimes[0].Should().Be(new DateTime(2024, 01, 01,13,00,00));
+        executionTimes[1].Should().Be(new DateTime(2024, 02, 05, 13, 00, 00));
+        executionTimes[2].Should().Be(new DateTime(2024, 03, 04, 13, 00, 00));
+        executionTimes[3].Should().Be(new DateTime(2024, 04, 01, 13, 00, 00));
+        executionTimes[4].Should().Be(new DateTime(2024, 05, 06, 13, 00, 00));
+        executionTimes[5].Should().Be(new DateTime(2024, 06, 03, 13, 00, 00));
+        executionTimes[6].Should().Be(new DateTime(2024, 07, 01, 13, 00, 00));
+        executionTimes[7].Should().Be(new DateTime(2024, 08, 05, 13, 00, 00));
+        executionTimes[8].Should().Be(new DateTime(2024, 09, 02, 13, 00, 00));
+        executionTimes[9].Should().Be(new DateTime(2024, 10, 07, 13, 00, 00));
+        executionTimes[10].Should().Be(new DateTime(2024, 11, 04, 13, 00, 00));
+        executionTimes[11].Should().Be(new DateTime(2024, 12, 02, 13, 00, 00));
     }
 
+    [Fact]
+    public void MonthlyFrequency_WithAllSecondWednesdayInAYear_ShouldReturnCorrectly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.Second,
+            Interval = 1,
+            IntervalType = IntervalType.Hourly,
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
+            MaxExecutions = 12,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Wednesday,
+            HourTimeRange = new HourTimeRange(new TimeSpan(4, 00, 00), new TimeSpan(4, 00, 00))
+        };
+
+        // Act
+        var executionTimes = _timeGenerator.GenerateExecutions(config);
+
+        // Assert
+        executionTimes.Should().HaveCount(12);
+
+        executionTimes[0].Should().Be(new DateTime(2024, 01, 10, 4, 00, 00));
+        executionTimes[1].Should().Be(new DateTime(2024, 02, 14, 4, 00, 00));
+        executionTimes[2].Should().Be(new DateTime(2024, 03, 13, 4, 00, 00));
+        executionTimes[3].Should().Be(new DateTime(2024, 04, 10, 4, 00, 00));
+        executionTimes[4].Should().Be(new DateTime(2024, 05, 08, 4, 00, 00));
+        executionTimes[5].Should().Be(new DateTime(2024, 06, 12, 4, 00, 00));
+        executionTimes[6].Should().Be(new DateTime(2024, 07, 10, 4, 00, 00));
+        executionTimes[7].Should().Be(new DateTime(2024, 08, 14, 4, 00, 00));
+        executionTimes[8].Should().Be(new DateTime(2024, 09, 11, 4, 00, 00));
+        executionTimes[9].Should().Be(new DateTime(2024, 10, 09, 4, 00, 00));
+        executionTimes[10].Should().Be(new DateTime(2024, 11, 13, 4, 00, 00));
+        executionTimes[11].Should().Be(new DateTime(2024, 12, 11, 4, 00, 00));
+    }
+
+    [Fact]
+    public void MonthlyFrequency_WithAllLastSaturdayInAYear_ShouldReturnCorrectly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.Last,
+            Interval = 1,
+            IntervalType = IntervalType.Hourly,
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
+            MaxExecutions = 12,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Saturday,
+            HourTimeRange = new HourTimeRange(new TimeSpan(21, 30, 00), new TimeSpan(21, 30, 00))
+        };
+
+        // Act
+        var executionTimes = _timeGenerator.GenerateExecutions(config);
+
+        // Assert
+        executionTimes.Should().HaveCount(12);
+
+        executionTimes[0].Should().Be(new DateTime(2024, 01, 27, 21, 30, 00));
+        executionTimes[1].Should().Be(new DateTime(2024, 02, 24, 21, 30, 00));
+        executionTimes[2].Should().Be(new DateTime(2024, 03, 30, 21, 30, 00));
+        executionTimes[3].Should().Be(new DateTime(2024, 04, 27, 21, 30, 00));
+        executionTimes[4].Should().Be(new DateTime(2024, 05, 25, 21, 30, 00));
+        executionTimes[5].Should().Be(new DateTime(2024, 06, 29, 21, 30, 00));
+        executionTimes[6].Should().Be(new DateTime(2024, 07, 27, 21, 30, 00));
+        executionTimes[7].Should().Be(new DateTime(2024, 08, 31, 21, 30, 00));
+        executionTimes[8].Should().Be(new DateTime(2024, 09, 28, 21, 30, 00));
+        executionTimes[9].Should().Be(new DateTime(2024, 10, 26, 21, 30, 00));
+        executionTimes[10].Should().Be(new DateTime(2024, 11, 30, 21, 30, 00));
+        executionTimes[11].Should().Be(new DateTime(2024, 12, 28, 21, 30, 00));
+    }
+    [Fact]
+    public void MonthlyFrequency_WithFirstWeekendOfMarch_ShouldReturnCorrectly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2024, 03, 01),
+            DayOptions = DayOptions.First,
+            Interval = 1,
+            IntervalType = IntervalType.Hourly,
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 31)),
+            MaxExecutions = 2,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.WeekendDay,
+            HourTimeRange = new HourTimeRange(new TimeSpan(10, 00, 00), new TimeSpan(10, 00, 00))
+        };
+
+        // Act
+        var executionTimes = _timeGenerator.GenerateExecutions(config);
+
+        // Assert
+        executionTimes.Should().HaveCount(2);
+
+        executionTimes[0].Should().Be(new DateTime(2024, 03, 02, 10, 00, 00));
+        executionTimes[1].Should().Be(new DateTime(2024, 03, 03, 10, 00, 00));
+    }
+    [Fact]
+    public void MonthlyFrequency_WithFirstDayEveryTwoMonths_ShouldReturnCorrectly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.First,
+            Interval = 1,
+            IntervalType = IntervalType.Hourly,
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
+            MaxExecutions = 6,
+            MonthFrequency = 2,
+            WeekOption = WeekOptions.AnyDay,
+            HourTimeRange = new HourTimeRange(new TimeSpan(8, 00, 00), new TimeSpan(8, 00, 00))
+        };
+
+        // Act
+        var executionTimes = _timeGenerator.GenerateExecutions(config);
+
+        // Assert
+        executionTimes.Should().HaveCount(6);
+
+        executionTimes[0].Should().Be(new DateTime(2024, 01, 01, 8, 00, 00));
+        executionTimes[1].Should().Be(new DateTime(2024, 03, 01, 8, 00, 00));
+        executionTimes[2].Should().Be(new DateTime(2024, 05, 01, 8, 00, 00));
+        executionTimes[3].Should().Be(new DateTime(2024, 07, 01, 8, 00, 00));
+        executionTimes[4].Should().Be(new DateTime(2024, 09, 01, 8, 00, 00));
+        executionTimes[5].Should().Be(new DateTime(2024, 11, 01, 8, 00, 00));
+    }
+    [Fact]
+    public void MonthlyFrequency_WithFourthDayEveryFourMonths_ShouldReturnCorrectly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.First,
+            Interval = 1,
+            IntervalType = IntervalType.Hourly,
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
+            MaxExecutions = 3,
+            MonthFrequency = 4,
+            WeekOption = WeekOptions.AnyDay,
+            HourTimeRange = new HourTimeRange(new TimeSpan(8, 00, 00), new TimeSpan(8, 00, 00))
+        };
+
+        // Act
+        var executionTimes = _timeGenerator.GenerateExecutions(config);
+
+        // Assert
+        executionTimes.Should().HaveCount(3);
+
+        executionTimes[0].Should().Be(new DateTime(2024, 01, 04, 8, 00, 00));
+        executionTimes[1].Should().Be(new DateTime(2024, 05, 04, 8, 00, 00));
+        executionTimes[2].Should().Be(new DateTime(2024, 09, 04, 8, 00, 00));
+    }
+    [Fact]
+    public void MonthlyFrequency_WithThirdWeekdayInAYear_ShouldReturnCorrectly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.Third,
+            Interval = 1,
+            IntervalType = IntervalType.Hourly,
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
+            MaxExecutions = 12,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Weekday,
+            HourTimeRange = new HourTimeRange(new TimeSpan(8, 00, 00), new TimeSpan(8, 00, 00))
+        };
+
+        // Act
+        var executionTimes = _timeGenerator.GenerateExecutions(config);
+
+        // Assert
+        executionTimes.Should().HaveCount(12);
+
+        executionTimes[0].Should().Be(new DateTime(2024, 01, 04, 8, 00, 00));
+        executionTimes[1].Should().Be(new DateTime(2024, 02, 05, 8, 00, 00));
+        executionTimes[2].Should().Be(new DateTime(2024, 03, 05, 8, 00, 00));
+        executionTimes[3].Should().Be(new DateTime(2024, 04, 04, 8, 00, 00));
+        executionTimes[4].Should().Be(new DateTime(2024, 05, 06, 8, 00, 00));
+        executionTimes[5].Should().Be(new DateTime(2024, 06, 05, 8, 00, 00));
+        executionTimes[6].Should().Be(new DateTime(2024, 07, 05, 8, 00, 00));
+        executionTimes[7].Should().Be(new DateTime(2024, 08, 05, 8, 00, 00));
+        executionTimes[8].Should().Be(new DateTime(2024, 09, 05, 8, 00, 00));
+        executionTimes[9].Should().Be(new DateTime(2024, 10, 04, 8, 00, 00));
+        executionTimes[10].Should().Be(new DateTime(2024, 11, 05, 8, 00, 00));
+        executionTimes[11].Should().Be(new DateTime(2024, 12, 05, 8, 00, 00));
+    }
+    [Fact]
+    public void MonthlyFrequency_WithSecondWeekendInAYear_ShouldReturnCorrectly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.Second,
+            Interval = 1,
+            IntervalType = IntervalType.Hourly,
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
+            MaxExecutions = 24,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.WeekendDay,
+            HourTimeRange = new HourTimeRange(new TimeSpan(10, 00, 00), new TimeSpan(10, 00, 00))
+        };
+
+        // Act
+        var executionTimes = _timeGenerator.GenerateExecutions(config);
+
+        // Assert
+        executionTimes.Should().HaveCount(12);
+
+        executionTimes[0].Should().Be(new DateTime(2024, 01, 13, 10, 00, 00));
+        executionTimes[1].Should().Be(new DateTime(2024, 01, 14, 10, 00, 00));
+        executionTimes[2].Should().Be(new DateTime(2024, 02, 10, 10, 00, 00));
+        executionTimes[3].Should().Be(new DateTime(2024, 02, 11, 10, 00, 00));
+        executionTimes[4].Should().Be(new DateTime(2024, 03, 09, 10, 00, 00));
+        executionTimes[5].Should().Be(new DateTime(2024, 03, 10, 10, 00, 00));
+        executionTimes[6].Should().Be(new DateTime(2024, 04, 13, 10, 00, 00));
+        executionTimes[7].Should().Be(new DateTime(2024, 04, 14, 10, 00, 00));
+        executionTimes[8].Should().Be(new DateTime(2024, 05, 11, 10, 00, 00));
+        executionTimes[9].Should().Be(new DateTime(2024, 05, 12, 10, 00, 00));
+        executionTimes[10].Should().Be(new DateTime(2024, 06, 08, 10, 00, 00));
+        executionTimes[11].Should().Be(new DateTime(2024, 06, 09, 10, 00, 00));
+    }
+    [Fact]
+    public void MonthlyFrequency_WithLastWeekdayInAYear_ShouldReturnCorrectly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.Last,
+            Interval = 1,
+            IntervalType = IntervalType.Hourly,
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
+            MaxExecutions = 12,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Weekday,
+            HourTimeRange = new HourTimeRange(new TimeSpan(17, 00, 00), new TimeSpan(17, 00, 00))
+        };
+
+        // Act
+        var executionTimes = _timeGenerator.GenerateExecutions(config);
+
+        // Assert
+        executionTimes.Should().HaveCount(12);
+
+        executionTimes[0].Should().Be(new DateTime(2024, 01, 31, 17, 00, 00));
+        executionTimes[1].Should().Be(new DateTime(2024, 02, 29, 17, 00, 00));
+        executionTimes[2].Should().Be(new DateTime(2024, 03, 29, 17, 00, 00));
+        executionTimes[3].Should().Be(new DateTime(2024, 04, 30, 17, 00, 00));
+        executionTimes[4].Should().Be(new DateTime(2024, 05, 31, 17, 00, 00));
+        executionTimes[5].Should().Be(new DateTime(2024, 06, 28, 17, 00, 00));
+        executionTimes[6].Should().Be(new DateTime(2024, 07, 31, 17, 00, 00));
+        executionTimes[7].Should().Be(new DateTime(2024, 08, 30, 17, 00, 00));
+        executionTimes[8].Should().Be(new DateTime(2024, 09, 30, 17, 00, 00));
+        executionTimes[9].Should().Be(new DateTime(2024, 10, 31, 17, 00, 00));
+        executionTimes[10].Should().Be(new DateTime(2024, 11, 29, 17, 00, 00));
+        executionTimes[11].Should().Be(new DateTime(2024, 12, 31, 17, 00, 00));
+    }
+    [Fact]
+    public void MonthlyFrequency_WithLastSaturdaySixMonths_ShouldReturnCorrectly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2024, 07, 01),
+            DayOptions = DayOptions.Last,
+            Interval = 1,
+            IntervalType = IntervalType.Hourly,
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 07, 01), new DateTime(2025, 06, 30)),
+            MaxExecutions = 12,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Saturday,
+            HourTimeRange = new HourTimeRange(new TimeSpan(21, 30, 00), new TimeSpan(21, 30, 00))
+        };
+
+        // Act
+        var executionTimes = _timeGenerator.GenerateExecutions(config);
+
+        // Assert
+        executionTimes.Should().HaveCount(12);
+
+        executionTimes[0].Should().Be(new DateTime(2024, 07, 27, 21, 30, 00));
+        executionTimes[1].Should().Be(new DateTime(2024, 08, 31, 21, 30, 00));
+        executionTimes[2].Should().Be(new DateTime(2024, 09, 28, 21, 30, 00));
+        executionTimes[3].Should().Be(new DateTime(2024, 10, 26, 21, 30, 00));
+        executionTimes[4].Should().Be(new DateTime(2024, 11, 30, 21, 30, 00));
+        executionTimes[5].Should().Be(new DateTime(2024, 12, 28, 21, 30, 00));
+        executionTimes[6].Should().Be(new DateTime(2025, 01, 25, 21, 30, 00));
+        executionTimes[7].Should().Be(new DateTime(2025, 02, 22, 21, 30, 00));
+        executionTimes[8].Should().Be(new DateTime(2025, 03, 29, 21, 30, 00));
+        executionTimes[9].Should().Be(new DateTime(2025, 04, 26, 21, 30, 00));
+        executionTimes[10].Should().Be(new DateTime(2025, 05, 31, 21, 30, 00));
+        executionTimes[11].Should().Be(new DateTime(2025, 06, 28, 21, 30, 00));
+    }
 
 }
 
