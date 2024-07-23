@@ -18,7 +18,7 @@ public class LastWeekdayStrategy : IDateCalculationStrategy
 
             if (config.WeekOption == WeekOptions.WeekendDay)
             {
-                var weekendDates = AddWeekendDates(config.WeekOption, actualDateTime, config.MonthFrequency, maxExecutions, 1);
+                var weekendDates = AddLastWeekendDates(config.WeekOption, actualDateTime, config.MonthFrequency, maxExecutions);
                 list.AddRange(weekendDates);
             }
             else
@@ -47,41 +47,30 @@ public class LastWeekdayStrategy : IDateCalculationStrategy
         };
     }
 
-    private List<DateTime> AddWeekendDates(WeekOptions weekOption, DateTime actualDateTime, int monthFrequency, int maxExecutions, int ordinal)
+    private List<DateTime> AddLastWeekendDates(WeekOptions weekOption, DateTime actualDateTime, int monthFrequency, int maxExecutions)
     {
         var list = new List<DateTime>();
         while (list.Count < maxExecutions)
         {
-            var count = 0;
-            var startDate = new DateTime(actualDateTime.Year, actualDateTime.Month, 1);
+            var startDate = new DateTime(actualDateTime.Year, actualDateTime.Month, DateTime.DaysInMonth(actualDateTime.Year, actualDateTime.Month));
 
             while (startDate.Month == actualDateTime.Month)
             {
                 if (startDate.DayOfWeek == DayOfWeek.Saturday)
                 {
-                    count++;
-                    if (count == ordinal)
-                    {
-                        list.Add(startDate);
-                        list.Add(startDate.AddDays(1)); // Add Sunday
-                        break;
-                    }
-                    startDate = startDate.AddDays(7); // Move to next Saturday
+                    list.Add(startDate);
+                    list.Add(startDate.AddDays(1)); // Add Sunday
+                    break;
                 }
                 else if (startDate.DayOfWeek == DayOfWeek.Sunday)
                 {
-                    count++;
-                    if (count == ordinal)
-                    {
-                        list.Add(startDate.AddDays(-1)); // Add Saturday
-                        list.Add(startDate); // Add Sunday
-                        break;
-                    }
-                    startDate = startDate.AddDays(6); // Move to next Saturday
+                    list.Add(startDate.AddDays(-1)); // Add Saturday
+                    list.Add(startDate); // Add Sunday
+                    break;
                 }
                 else
                 {
-                    startDate = startDate.AddDays(1); // Move to next day
+                    startDate = startDate.AddDays(-1); // Move to previous day
                 }
             }
 

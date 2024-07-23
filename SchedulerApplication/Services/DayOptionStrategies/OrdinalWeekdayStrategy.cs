@@ -25,7 +25,7 @@ public class OrdinalWeekdayStrategy : IDateCalculationStrategy
 
             if (config.WeekOption == WeekOptions.WeekendDay)
             {
-                list.AddRange(AddWeekendDates(config.WeekOption, startDate, config.MonthFrequency, maxExecutions, _ordinal));
+                list.AddRange(AddWeekendDates(startDate, config.MonthFrequency, maxExecutions, _ordinal));
             }
             else
             {
@@ -49,7 +49,7 @@ public class OrdinalWeekdayStrategy : IDateCalculationStrategy
         return list;
     }
 
-    private bool IsValidDay(WeekOptions weekOption, DateTime date)
+    private static bool IsValidDay(WeekOptions weekOption, DateTime date)
     {
         return weekOption switch
         {
@@ -60,7 +60,7 @@ public class OrdinalWeekdayStrategy : IDateCalculationStrategy
         };
     }
 
-    private List<DateTime> AddWeekendDates(WeekOptions weekOption, DateTime actualDateTime, int monthFrequency, int maxExecutions, int ordinal)
+    private static List<DateTime> AddWeekendDates(DateTime actualDateTime, int monthFrequency, int maxExecutions, int ordinal)
     {
         var list = new List<DateTime>();
         while (list.Count < maxExecutions)

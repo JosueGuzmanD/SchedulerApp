@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using SchedulerApplication.Common.Enums;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Models.ValueObjects;
@@ -218,6 +219,226 @@ public class DescriptionServiceTests
         // Assert
         act.Should().Throw<ArgumentNullException>();
     }
+
+    [Fact]
+    public void GenerateDescription_ForFirstMondayMonthly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.First,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Monday
+        };
+        var executionTime = new DateTime(2024, 01, 01, 13, 00, 00);
+        var descriptionService = new DescriptionService();
+
+        // Act
+        var description = descriptionService.GenerateDescription(config, executionTime);
+
+        // Assert
+        description.Should().Be("Occurs on the first Monday of every 1 month(s). Schedule will be used on 01/01/2024 at 13:00 starting on 01/01/2024.");
+    }
+    [Fact]
+    public void GenerateDescription_ForSecondWednesdayMonthly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.Second,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Wednesday
+        };
+        var executionTime = new DateTime(2024, 01, 10, 04, 00, 00);
+        var descriptionService = new DescriptionService();
+
+        // Act
+        var description = descriptionService.GenerateDescription(config, executionTime);
+
+        // Assert
+        description.Should().Be("Occurs on the second Wednesday of every 1 month(s). Schedule will be used on 10/01/2024 at 04:00 starting on 01/01/2024.");
+    }
+    [Fact]
+    public void GenerateDescription_ForThirdFridayMonthly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.Third,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Friday
+        };
+        var executionTime = new DateTime(2024, 01, 19, 15, 00, 00);
+        var descriptionService = new DescriptionService();
+
+        // Act
+        var description = descriptionService.GenerateDescription(config, executionTime);
+
+        // Assert
+        description.Should().Be("Occurs on the third Friday of every 1 month(s). Schedule will be used on 19/01/2024 at 15:00 starting on 01/01/2024.");
+    }
+    [Fact]
+    public void GenerateDescription_ForFourthSaturdayMonthly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.Fourth,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Saturday
+        };
+        var executionTime = new DateTime(2024, 01, 27, 21, 30, 00);
+        var descriptionService = new DescriptionService();
+
+        // Act
+        var description = descriptionService.GenerateDescription(config, executionTime);
+
+        // Assert
+        description.Should().Be("Occurs on the fourth Saturday of every 1 month(s). Schedule will be used on 27/01/2024 at 21:30 starting on 01/01/2024.");
+    }
+    [Fact]
+    public void GenerateDescription_ForLastWeekendDayMonthly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.Last,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.WeekendDay
+        };
+        var executionTime = new DateTime(2024, 01, 27, 21, 30, 00);
+        var descriptionService = new DescriptionService();
+
+        // Act
+        var description = descriptionService.GenerateDescription(config, executionTime);
+
+        // Assert
+        description.Should().Be("Occurs on the last weekend day of every 1 month(s). Schedule will be used on 27/01/2024 at 21:30 starting on 01/01/2024.");
+    }
+    [Fact]
+    public void GenerateDescription_ForFirstWeekdayMonthly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.First,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Weekday
+        };
+        var executionTime = new DateTime(2024, 01, 01, 09, 00, 00);
+        var descriptionService = new DescriptionService();
+
+        // Act
+        var description = descriptionService.GenerateDescription(config, executionTime);
+
+        // Assert
+        description.Should().Be("Occurs on the first weekday of every 1 month(s). Schedule will be used on 01/01/2024 at 09:00 starting on 01/01/2024.");
+    }
+    [Fact]
+    public void GenerateDescription_ForSpecificDay15EveryThreeMonths()
+    {
+        // Arrange
+        var config = new SpecificDayMonthlySchedulerConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            SpecificDay = 15,
+            MonthFrequency = 3
+        };
+        var executionTime = new DateTime(2024, 01, 15, 12, 00, 00);
+        var descriptionService = new DescriptionService();
+
+        // Act
+        var description = descriptionService.GenerateDescription(config, executionTime);
+
+        // Assert
+        description.Should().Be("Occurs on day 15 of every 3 month(s). Schedule will be used on 15/01/2024 at 12:00 starting on 01/01/2024.");
+    }
+    [Fact]
+    public void GenerateDescription_ForSpecificDay5EveryTwoMonths()
+    {
+        // Arrange
+        var config = new SpecificDayMonthlySchedulerConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            SpecificDay = 5,
+            MonthFrequency = 2
+        };
+        var executionTime = new DateTime(2024, 01, 05, 09, 00, 00);
+        var descriptionService = new DescriptionService();
+
+        // Act
+        var description = descriptionService.GenerateDescription(config, executionTime);
+
+        // Assert
+        description.Should().Be("Occurs on day 5 of every 2 month(s). Schedule will be used on 05/01/2024 at 09:00 starting on 01/01/2024.");
+    }
+    [Fact]
+    public void GenerateDescription_ForSpecificDay28EverySixMonths()
+    {
+        // Arrange
+        var config = new SpecificDayMonthlySchedulerConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            SpecificDay = 28,
+            MonthFrequency = 6
+        };
+        var executionTime = new DateTime(2024, 01, 28, 10, 00, 00);
+        var descriptionService = new DescriptionService();
+
+        // Act
+        var description = descriptionService.GenerateDescription(config, executionTime);
+
+        // Assert
+        description.Should().Be("Occurs on day 28 of every 6 month(s). Schedule will be used on 28/01/2024 at 10:00 starting on 01/01/2024.");
+    }
+    [Fact]
+    public void GenerateDescription_ForFirstWeekendDayMonthly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.First,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.WeekendDay
+        };
+        var executionTime = new DateTime(2024, 01, 06, 10, 00, 00);
+        var descriptionService = new DescriptionService();
+
+        // Act
+        var description = descriptionService.GenerateDescription(config, executionTime);
+
+        // Assert
+        description.Should().Be("Occurs on the first weekend day of every 1 month(s). Schedule will be used on 06/01/2024 at 10:00 starting on 01/01/2024.");
+    }
+    [Fact]
+    public void GenerateDescription_ForFirstAnyDayMonthly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.First,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.AnyDay
+        };
+        var executionTime = new DateTime(2024, 01, 01, 08, 00, 00);
+        var descriptionService = new DescriptionService();
+
+        // Act
+        var description = descriptionService.GenerateDescription(config, executionTime);
+
+        // Assert
+        description.Should().Be("Occurs on day 1 of every 1 month(s). Schedule will be used on 01/01/2024 at 08:00 starting on 01/01/2024.");
+    }
+
+
 }
 
 

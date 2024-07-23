@@ -34,12 +34,6 @@ public class HourCalculatorService
                 }
 
                 currentHour = date.Date.AddDays(1).Add(hourTimeRange.StartHour);
-
-                while (currentHour.TimeOfDay <= hourTimeRange.EndHour && results.Count < maxExecutions && currentHour <= endLimitTime)
-                {
-                    results.Add(currentHour);
-                    currentHour = AddInterval(currentHour, interval, intervalType);
-                }
             }
         }
 
@@ -53,7 +47,6 @@ public class HourCalculatorService
             IntervalType.Hourly => currentHour.AddHours(interval),
             IntervalType.Minutely => currentHour.AddMinutes(interval),
             IntervalType.Secondly => currentHour.AddSeconds(interval),
-            _ => throw new ArgumentException("Invalid interval type")
         };
     }
 }
