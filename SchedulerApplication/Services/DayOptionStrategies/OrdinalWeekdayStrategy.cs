@@ -1,7 +1,6 @@
 ﻿using SchedulerApplication.Common.Enums;
 using SchedulerApplication.Interfaces;
 using SchedulerApplication.Models.FrequencyConfigurations;
-using SchedulerApplication.Models;
 
 namespace SchedulerApplication.Services.DayOptionStrategies;
 
@@ -14,43 +13,43 @@ public class OrdinalWeekdayStrategy : IDateCalculationStrategy
         _ordinal = ordinal;
     }
 
-    public List<DateTime> CalculateDates(SchedulerConfiguration config)
-    {
-        if (config is not MonthlySchedulerConfiguration monthlyConfig)
-        {
-            throw new ArgumentException("Invalid configuration type for OrdinalWeekdayStrategy.");
-        }
-
-        return AddOrdinalWeekdays(monthlyConfig.WeekOption, monthlyConfig.CurrentDate, monthlyConfig.MonthFrequency, monthlyConfig.MaxExecutions, _ordinal);
-    }
-
-    private static List<DateTime> AddOrdinalWeekdays(WeekOptions weekOption, DateTime actualDateTime, int monthFrequency, int maxExecutions, int ordinal)
+    public List<DateTime> CalculateDates(MonthlySchedulerConfiguration config, int maxExecutions)
     {
         var list = new List<DateTime>();
+        var actualDateTime = config.CurrentDate;
+
         while (list.Count < maxExecutions)
         {
-            actualDateTime = new DateTime(actualDateTime.Year, actualDateTime.Month, 1);
-            int count = 0;
+            var startDate = new DateTime(actualDateTime.Year, actualDateTime.Month, 1);
+            var count = 0;
 
-            while (count < ordinal)
+            if (config.WeekOption == WeekOptions.WeekendDay)
             {
-                if (IsValidDay(weekOption, actualDateTime))
+                list.AddRange(AddWeekendDates(config.WeekOption, startDate, config.MonthFrequency, maxExecutions, _ordinal));
+            }
+            else
+            {
+                while (count < _ordinal)
                 {
-                    count++;
-                    if (count == ordinal && actualDateTime.Day <= ordinal * 7)
+                    if (IsValidDay(config.WeekOption, startDate))
                     {
-                        list.Add(actualDateTime);
+                        count++;
+                        if (count == _ordinal && startDate.Day <= _ordinal * 7)
+                        {
+                            list.Add(startDate);
+                        }
                     }
+                    startDate = startDate.AddDays(1);
                 }
-                actualDateTime = actualDateTime.AddDays(1);
             }
 
-            actualDateTime = actualDateTime.AddMonths(monthFrequency);
+            actualDateTime = actualDateTime.AddMonths(config.MonthFrequency);
         }
+
         return list;
     }
 
-    private static bool IsValidDay(WeekOptions weekOption, DateTime date)
+    private bool IsValidDay(WeekOptions weekOption, DateTime date)
     {
         return weekOption switch
         {
@@ -59,6 +58,49 @@ public class OrdinalWeekdayStrategy : IDateCalculationStrategy
             WeekOptions.AnyDay => true,
             _ => date.DayOfWeek == (DayOfWeek)weekOption
         };
+    }
+
+    private List<DateTime> AddWeekendDates(WeekOptions weekOption, DateTime actualDateTime, int monthFrequency, int maxExecutions, int ordinal)
+    {
+        var list = new List<DateTime>();
+        while (list.Count < maxExecutions)
+        {
+            var count = 0;
+            var startDate = new DateTime(actualDateTime.Year, actualDateTime.Month, 1);
+
+            while (startDate.Month == actualDateTime.Month)
+            {
+                if (startDate.DayOfWeek == DayOfWeek.Saturday)
+                {
+                    count++;
+                    if (count == ordinal)
+                    {
+                        list.Add(startDate);
+                        list.Add(startDate.AddDays(1));
+                        break;
+                    }
+                    startDate = startDate.AddDays(7);
+                }
+                else if (startDate.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    count++;
+                    if (count == ordinal)
+                    {
+                        list.Add(startDate.AddDays(-1));
+                        list.Add(startDate);
+                        break;
+                    }
+                    startDate = startDate.AddDays(6);
+                }
+                else
+                {
+                    startDate = startDate.AddDays(1);
+                }
+            }
+
+            actualDateTime = actualDateTime.AddMonths(monthFrequency);
+        }
+        return list;
     }
 }
 

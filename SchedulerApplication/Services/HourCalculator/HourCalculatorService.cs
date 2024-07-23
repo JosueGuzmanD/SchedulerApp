@@ -4,9 +4,9 @@ using SchedulerApplication.Models.ValueObjects;
 namespace SchedulerApplication.Services.HourCalculator;
 
 
-public class HourCalculatorService 
+public class HourCalculatorService
 {
-   public List<DateTime> CalculateHours(List<DateTime> dates, HourTimeRange hourTimeRange, int interval, IntervalType intervalType, LimitsTimeInterval limits)
+    public List<DateTime> CalculateHours(List<DateTime> dates, HourTimeRange hourTimeRange, int interval, IntervalType intervalType, LimitsTimeInterval limits, int maxExecutions)
     {
         var results = new List<DateTime>();
         var endLimitTime = limits.LimitEndDateTime ?? DateTime.MaxValue;
@@ -18,7 +18,7 @@ public class HourCalculatorService
 
             if (hourTimeRange.StartHour <= hourTimeRange.EndHour)
             {
-                while (currentHour <= endDateTime && results.Count < 12 && currentHour <= endLimitTime)
+                while (currentHour <= endDateTime && results.Count < maxExecutions && currentHour <= endLimitTime)
                 {
                     results.Add(currentHour);
                     currentHour = AddInterval(currentHour, interval, intervalType);
@@ -27,7 +27,7 @@ public class HourCalculatorService
             else
             {
                 // Handle the case where the time range crosses midnight
-                while (currentHour.TimeOfDay < TimeSpan.FromHours(24) && results.Count < 12 && currentHour <= endLimitTime)
+                while (currentHour.TimeOfDay < TimeSpan.FromHours(24) && results.Count < maxExecutions && currentHour <= endLimitTime)
                 {
                     results.Add(currentHour);
                     currentHour = AddInterval(currentHour, interval, intervalType);
@@ -35,7 +35,7 @@ public class HourCalculatorService
 
                 currentHour = date.Date.AddDays(1).Add(hourTimeRange.StartHour);
 
-                while (currentHour.TimeOfDay <= hourTimeRange.EndHour && results.Count < 12 && currentHour <= endLimitTime)
+                while (currentHour.TimeOfDay <= hourTimeRange.EndHour && results.Count < maxExecutions && currentHour <= endLimitTime)
                 {
                     results.Add(currentHour);
                     currentHour = AddInterval(currentHour, interval, intervalType);

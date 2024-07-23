@@ -6,7 +6,7 @@ namespace SchedulerApplication.Interfaces;
 // Allows adding new strategies for generating execution times.
     public interface IExecutionTimeGenerator
     {
-        List<DateTime> GenerateExecutions(SchedulerConfiguration configuration);
+        List<DateTime> GenerateExecutions(SchedulerConfiguration configuration, int maxExecutions);
     }
 
 

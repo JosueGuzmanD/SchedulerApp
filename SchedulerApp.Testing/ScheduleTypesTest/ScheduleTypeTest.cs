@@ -44,7 +44,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var scheduleType = _factory.CreateScheduleType(configuration);
+        var scheduleType = _factory.CreateScheduleType(configuration,12);
         var executionTimes = scheduleType.GetNextExecutionTimes(configuration);
 
         // Assert
@@ -69,7 +69,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var scheduleType = _factory.CreateScheduleType(configuration);
+        var scheduleType = _factory.CreateScheduleType(configuration,12);
         var executionTimes = scheduleType.GetNextExecutionTimes(configuration);
 
         // Assert
@@ -101,7 +101,7 @@ public class ScheduleTypeTest
         };
 
         //Act
-        Action act = () => _factory.CreateScheduleType(configuration);
+        Action act = () => _factory.CreateScheduleType(configuration, 12);
 
         //Assert
         act.Should().Throw<ArgumentException>("Unsupported configuration type.");
@@ -121,7 +121,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
+        var scheduleType = _factory.CreateScheduleType(configuration, 12).GetNextExecutionTimes(configuration);
 
         // Assert
         scheduleType.Should().HaveCount(5);
@@ -147,7 +147,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
+        var scheduleType = _factory.CreateScheduleType(configuration, 12).GetNextExecutionTimes(configuration);
 
         // Assert
         scheduleType.Should().HaveCount(3);
@@ -171,7 +171,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
+        var scheduleType = _factory.CreateScheduleType(configuration, 12).GetNextExecutionTimes(configuration);
 
         // Assert
         scheduleType.Should().HaveCount(3);
@@ -193,7 +193,7 @@ public class ScheduleTypeTest
         };
 
         //Act
-        var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
+        var scheduleType = _factory.CreateScheduleType(configuration, 12).GetNextExecutionTimes(configuration);
 
         //Assert
 
@@ -216,7 +216,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var scheduleType = _factory.CreateScheduleType(configuration).GetNextExecutionTimes(configuration);
+        var scheduleType = _factory.CreateScheduleType(configuration, 12).GetNextExecutionTimes(configuration);
 
         // Assert
         scheduleType.Should().HaveCount(3); // Asegurarse de que hay 3 elementos en la lista
@@ -264,7 +264,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         executionTimes.Should().HaveCount(1);
@@ -287,7 +287,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         var expectedTimes = new List<DateTime>
@@ -324,7 +324,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         var expectedTimes = new List<DateTime>
@@ -362,7 +362,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         var expectedTimes = new List<DateTime>
@@ -395,7 +395,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         executionTimes.Should().BeEmpty();
@@ -415,7 +415,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         var expectedTimes = new List<DateTime>
@@ -452,7 +452,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         var expectedTimes = new List<DateTime>
@@ -491,7 +491,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         var expectedTimes = new List<DateTime>
@@ -528,7 +528,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         var expectedTimes = new List<DateTime>
@@ -567,7 +567,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         var expectedTimes = new List<DateTime>
@@ -604,7 +604,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         var expectedTimes = new List<DateTime>
@@ -636,7 +636,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         var expectedTimes = new List<DateTime>
@@ -670,7 +670,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         executionTimes.Should().ContainSingle()
@@ -690,7 +690,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         executionTimes.Should().BeEmpty();
@@ -711,7 +711,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         executionTimes.Should().HaveCount(4);
@@ -732,7 +732,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         executionTimes.Should().HaveCount(2);
@@ -745,7 +745,7 @@ public class ScheduleTypeTest
         SchedulerConfiguration configuration = null;
 
         // Act
-        Action act = () => _timeGenerator.GenerateExecutions(configuration);
+        Action act = () => _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         act.Should().Throw<NullReferenceException>();
@@ -767,7 +767,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        Action act = () => _timeGenerator.GenerateExecutions(configuration);
+        Action act = () => _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         act.Should().Throw<ArgumentException>().WithMessage("Invalid interval");
@@ -789,7 +789,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         executionTimes.Should().Contain(new DateTime(2024, 02, 29));
@@ -810,7 +810,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         executionTimes.Should().Contain(new DateTime(2024, 02, 29));
@@ -831,7 +831,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         executionTimes.Should().Contain(new DateTime(2023, 02, 28));
@@ -854,7 +854,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         executionTimes.Should().HaveCount(12);
@@ -877,7 +877,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         executionTimes.Should().HaveCount(12);
@@ -902,7 +902,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         executionTimes.Should().OnlyContain(dt => dt.DayOfWeek != DayOfWeek.Saturday && dt.DayOfWeek != DayOfWeek.Sunday);
@@ -925,7 +925,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _timeGenerator.GenerateExecutions(configuration, 12);
 
         // Assert
         executionTimes.Should().OnlyContain(dt => dt.DayOfWeek == DayOfWeek.Saturday || dt.DayOfWeek == DayOfWeek.Sunday);
@@ -944,7 +944,7 @@ public class ScheduleTypeTest
         };
 
         //Act
-        Action act = () => _timeGenerator.GenerateExecutions(configuration);
+        Action act = () => _timeGenerator.GenerateExecutions(configuration, 12);
 
 
         //Assert
@@ -965,7 +965,7 @@ public class ScheduleTypeTest
         };
 
         //Act
-        Action act = () => new OnceDateCalculator().CalculateDates(invalidConfig);
+        Action act = () => new OnceDateCalculator().CalculateDates(invalidConfig, 12);
 
 
         //Assert
@@ -984,7 +984,7 @@ public class ScheduleTypeTest
         };
 
         // Act
-        Action act = () => _timeGenerator.GenerateExecutions(unknownConfiguration);
+        Action act = () => _timeGenerator.GenerateExecutions(unknownConfiguration, 12);
 
         // Assert
         act.Should().Throw<ArgumentException>().WithMessage("Unknown configuration type");
@@ -1001,14 +1001,13 @@ public class ScheduleTypeTest
             IntervalType = IntervalType.Hourly, 
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)), 
-            MaxExecutions = 12,
             MonthFrequency = 1,
             WeekOption = WeekOptions.Monday,
             HourTimeRange = new HourTimeRange(new TimeSpan(13,00,00), new TimeSpan(13, 00, 00)) 
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(config);
+        var executionTimes = _timeGenerator.GenerateExecutions(config, 12);
 
         // Assert
         executionTimes.Should().HaveCount(12);
@@ -1039,14 +1038,13 @@ public class ScheduleTypeTest
             IntervalType = IntervalType.Hourly,
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
-            MaxExecutions = 12,
             MonthFrequency = 1,
             WeekOption = WeekOptions.Wednesday,
             HourTimeRange = new HourTimeRange(new TimeSpan(4, 00, 00), new TimeSpan(4, 00, 00))
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(config);
+        var executionTimes = _timeGenerator.GenerateExecutions(config, 12);
 
         // Assert
         executionTimes.Should().HaveCount(12);
@@ -1077,14 +1075,13 @@ public class ScheduleTypeTest
             IntervalType = IntervalType.Hourly,
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
-            MaxExecutions = 12,
             MonthFrequency = 1,
             WeekOption = WeekOptions.Saturday,
             HourTimeRange = new HourTimeRange(new TimeSpan(21, 30, 00), new TimeSpan(21, 30, 00))
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(config);
+        var executionTimes = _timeGenerator.GenerateExecutions(config, 12);
 
         // Assert
         executionTimes.Should().HaveCount(12);
@@ -1114,14 +1111,13 @@ public class ScheduleTypeTest
             IntervalType = IntervalType.Hourly,
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 03, 01), new DateTime(2024, 03, 31)),
-            MaxExecutions = 2,
             MonthFrequency = 1,
             WeekOption = WeekOptions.WeekendDay,
             HourTimeRange = new HourTimeRange(new TimeSpan(10, 00, 00), new TimeSpan(10, 00, 00))
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(config);
+        var executionTimes = _timeGenerator.GenerateExecutions(config,2);
 
         // Assert
         executionTimes.Should().HaveCount(2);
@@ -1141,14 +1137,13 @@ public class ScheduleTypeTest
             IntervalType = IntervalType.Hourly,
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
-            MaxExecutions = 6,
             MonthFrequency = 2,
             WeekOption = WeekOptions.AnyDay,
             HourTimeRange = new HourTimeRange(new TimeSpan(8, 00, 00), new TimeSpan(8, 00, 00))
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(config);
+        var executionTimes = _timeGenerator.GenerateExecutions(config, 12);
 
         // Assert
         executionTimes.Should().HaveCount(6);
@@ -1172,21 +1167,20 @@ public class ScheduleTypeTest
             IntervalType = IntervalType.Hourly,
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
-            MaxExecutions = 3,
             MonthFrequency = 4,
             WeekOption = WeekOptions.AnyDay,
             HourTimeRange = new HourTimeRange(new TimeSpan(8, 00, 00), new TimeSpan(8, 00, 00))
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(config);
+        var executionTimes = _timeGenerator.GenerateExecutions(config, 12);
 
         // Assert
         executionTimes.Should().HaveCount(3);
 
-        executionTimes[0].Should().Be(new DateTime(2024, 01, 04, 8, 00, 00));
-        executionTimes[1].Should().Be(new DateTime(2024, 05, 04, 8, 00, 00));
-        executionTimes[2].Should().Be(new DateTime(2024, 09, 04, 8, 00, 00));
+        executionTimes[0].Should().Be(new DateTime(2024, 01, 01, 8, 00, 00));
+        executionTimes[1].Should().Be(new DateTime(2024, 05, 01, 8, 00, 00));
+        executionTimes[2].Should().Be(new DateTime(2024, 09, 01, 8, 00, 00));
     }
     [Fact]
     public void MonthlyFrequency_WithThirdWeekdayInAYear_ShouldReturnCorrectly()
@@ -1200,30 +1194,29 @@ public class ScheduleTypeTest
             IntervalType = IntervalType.Hourly,
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
-            MaxExecutions = 12,
             MonthFrequency = 1,
             WeekOption = WeekOptions.Weekday,
             HourTimeRange = new HourTimeRange(new TimeSpan(8, 00, 00), new TimeSpan(8, 00, 00))
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(config);
+        var executionTimes = _timeGenerator.GenerateExecutions(config, 12);
 
         // Assert
         executionTimes.Should().HaveCount(12);
 
-        executionTimes[0].Should().Be(new DateTime(2024, 01, 04, 8, 00, 00));
+        executionTimes[0].Should().Be(new DateTime(2024, 01, 03, 8, 00, 00));
         executionTimes[1].Should().Be(new DateTime(2024, 02, 05, 8, 00, 00));
         executionTimes[2].Should().Be(new DateTime(2024, 03, 05, 8, 00, 00));
-        executionTimes[3].Should().Be(new DateTime(2024, 04, 04, 8, 00, 00));
-        executionTimes[4].Should().Be(new DateTime(2024, 05, 06, 8, 00, 00));
+        executionTimes[3].Should().Be(new DateTime(2024, 04, 03, 8, 00, 00));
+        executionTimes[4].Should().Be(new DateTime(2024, 05, 03, 8, 00, 00));
         executionTimes[5].Should().Be(new DateTime(2024, 06, 05, 8, 00, 00));
-        executionTimes[6].Should().Be(new DateTime(2024, 07, 05, 8, 00, 00));
+        executionTimes[6].Should().Be(new DateTime(2024, 07, 03, 8, 00, 00));
         executionTimes[7].Should().Be(new DateTime(2024, 08, 05, 8, 00, 00));
-        executionTimes[8].Should().Be(new DateTime(2024, 09, 05, 8, 00, 00));
-        executionTimes[9].Should().Be(new DateTime(2024, 10, 04, 8, 00, 00));
+        executionTimes[8].Should().Be(new DateTime(2024, 09, 04, 8, 00, 00));
+        executionTimes[9].Should().Be(new DateTime(2024, 10, 03, 8, 00, 00));
         executionTimes[10].Should().Be(new DateTime(2024, 11, 05, 8, 00, 00));
-        executionTimes[11].Should().Be(new DateTime(2024, 12, 05, 8, 00, 00));
+        executionTimes[11].Should().Be(new DateTime(2024, 12, 04, 8, 00, 00));
     }
     [Fact]
     public void MonthlyFrequency_WithSecondWeekendInAYear_ShouldReturnCorrectly()
@@ -1237,14 +1230,13 @@ public class ScheduleTypeTest
             IntervalType = IntervalType.Hourly,
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
-            MaxExecutions = 24,
             MonthFrequency = 1,
             WeekOption = WeekOptions.WeekendDay,
             HourTimeRange = new HourTimeRange(new TimeSpan(10, 00, 00), new TimeSpan(10, 00, 00))
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(config);
+        var executionTimes = _timeGenerator.GenerateExecutions(config, 12);
 
         // Assert
         executionTimes.Should().HaveCount(12);
@@ -1263,6 +1255,43 @@ public class ScheduleTypeTest
         executionTimes[11].Should().Be(new DateTime(2024, 06, 09, 10, 00, 00));
     }
     [Fact]
+    public void MonthlyFrequency_WithThirdWeekendInAYear_ShouldReturnCorrectly()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2024, 01, 01),
+            DayOptions = DayOptions.Third,
+            Interval = 1,
+            IntervalType = IntervalType.Hourly,
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.WeekendDay,
+            HourTimeRange = new HourTimeRange(new TimeSpan(10, 00, 00), new TimeSpan(10, 00, 00))
+        };
+
+        // Act
+        var executionTimes = _timeGenerator.GenerateExecutions(config, 12);
+
+        // Assert
+        executionTimes.Should().HaveCount(12);
+
+        executionTimes[0].Should().Be(new DateTime(2024, 01, 20, 10, 00, 00)); // Tercer sábado de enero
+        executionTimes[1].Should().Be(new DateTime(2024, 01, 21, 10, 00, 00)); // Tercer domingo de enero
+        executionTimes[2].Should().Be(new DateTime(2024, 02, 17, 10, 00, 00)); // Tercer sábado de febrero
+        executionTimes[3].Should().Be(new DateTime(2024, 02, 18, 10, 00, 00)); // Tercer domingo de febrero
+        executionTimes[4].Should().Be(new DateTime(2024, 03, 16, 10, 00, 00)); // Tercer sábado de marzo
+        executionTimes[5].Should().Be(new DateTime(2024, 03, 17, 10, 00, 00)); // Tercer domingo de marzo
+        executionTimes[6].Should().Be(new DateTime(2024, 04, 20, 10, 00, 00)); // Tercer sábado de abril
+        executionTimes[7].Should().Be(new DateTime(2024, 04, 21, 10, 00, 00)); // Tercer domingo de abril
+        executionTimes[8].Should().Be(new DateTime(2024, 05, 18, 10, 00, 00)); // Tercer sábado de mayo
+        executionTimes[9].Should().Be(new DateTime(2024, 05, 19, 10, 00, 00)); // Tercer domingo de mayo
+        executionTimes[10].Should().Be(new DateTime(2024, 06, 15, 10, 00, 00)); // Tercer sábado de junio
+        executionTimes[11].Should().Be(new DateTime(2024, 06, 16, 10, 00, 00)); // Tercer domingo de junio
+    }
+
+    [Fact]
     public void MonthlyFrequency_WithLastWeekdayInAYear_ShouldReturnCorrectly()
     {
         // Arrange
@@ -1273,15 +1302,14 @@ public class ScheduleTypeTest
             Interval = 1,
             IntervalType = IntervalType.Hourly,
             IsEnabled = true,
-            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 12, 31)),
-            MaxExecutions = 12,
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2025, 01, 01)),
             MonthFrequency = 1,
             WeekOption = WeekOptions.Weekday,
             HourTimeRange = new HourTimeRange(new TimeSpan(17, 00, 00), new TimeSpan(17, 00, 00))
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(config);
+        var executionTimes = _timeGenerator.GenerateExecutions(config, 12);
 
         // Assert
         executionTimes.Should().HaveCount(12);
@@ -1311,14 +1339,13 @@ public class ScheduleTypeTest
             IntervalType = IntervalType.Hourly,
             IsEnabled = true,
             Limits = new LimitsTimeInterval(new DateTime(2024, 07, 01), new DateTime(2025, 06, 30)),
-            MaxExecutions = 12,
             MonthFrequency = 1,
             WeekOption = WeekOptions.Saturday,
             HourTimeRange = new HourTimeRange(new TimeSpan(21, 30, 00), new TimeSpan(21, 30, 00))
         };
 
         // Act
-        var executionTimes = _timeGenerator.GenerateExecutions(config);
+        var executionTimes = _timeGenerator.GenerateExecutions(config, 12);
 
         // Assert
         executionTimes.Should().HaveCount(12);

@@ -6,15 +6,17 @@ namespace SchedulerApplication.Services.ScheduleTypes;
 
 public class ScheduleTypeRecurring : ScheduleTypeBase<RecurringSchedulerConfiguration>
 {
-    public ScheduleTypeRecurring(IDescriptionService descriptionService, IExecutionTimeGenerator executionTimeGenerator)
+    private readonly int _maxExecutions;
+
+    public ScheduleTypeRecurring(IDescriptionService descriptionService, IExecutionTimeGenerator executionTimeGenerator, int maxExecutions)
         : base(descriptionService, executionTimeGenerator)
     {
-
+        _maxExecutions = maxExecutions;
     }
 
     protected override List<ScheduleOutput> CreateScheduleOutput(RecurringSchedulerConfiguration configuration)
     {
-        var executionTimes = _executionTimeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _executionTimeGenerator.GenerateExecutions(configuration, _maxExecutions);
         var outputs = new List<ScheduleOutput>();
 
         foreach (var time in executionTimes)

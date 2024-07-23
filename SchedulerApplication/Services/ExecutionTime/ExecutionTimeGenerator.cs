@@ -31,7 +31,7 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
         _hourCalculator = hourCalculator;
     }
 
-    public List<DateTime> GenerateExecutions(SchedulerConfiguration configuration)
+    public List<DateTime> GenerateExecutions(SchedulerConfiguration configuration, int maxExecutions)
     {
         if (!configuration.IsEnabled)
         {
@@ -45,16 +45,16 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
         switch (configuration)
         {
             case OnceSchedulerConfiguration onceConfig:
-                dates = _onceDateCalculator.CalculateDates(onceConfig);
+                dates = _onceDateCalculator.CalculateDates(onceConfig, maxExecutions);
                 return dates;
             case DailyFrequencyConfiguration dailyConfig:
-                dates = _dailyDateCalculator.CalculateDates(dailyConfig);
+                dates = _dailyDateCalculator.CalculateDates(dailyConfig, maxExecutions);
                 break;
             case WeeklyFrequencyConfiguration weeklyConfig:
-                dates = _weeklyDateCalculator.CalculateDates(weeklyConfig);
+                dates = _weeklyDateCalculator.CalculateDates(weeklyConfig, maxExecutions);
                 break;
             case MonthlySchedulerConfiguration monthlyConfig:
-                dates = _monthlyDateCalculator.CalculateDates(monthlyConfig);
+                dates = _monthlyDateCalculator.CalculateDates(monthlyConfig, maxExecutions);
                 break;
             default:
                 throw new ArgumentException("Unknown configuration type");
@@ -65,7 +65,7 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
         var interval = recurringConfig?.Interval ?? 0;
         var intervalType = recurringConfig?.IntervalType ?? IntervalType.Hourly;
 
-        var results = _hourCalculator.CalculateHours(dates, hourTimeRange, interval, intervalType,configuration.Limits);
+        var results = _hourCalculator.CalculateHours(dates, hourTimeRange, interval, intervalType,configuration.Limits, maxExecutions);
 
         if (configuration.Limits != null)
         {
@@ -73,7 +73,7 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
             results = results.Where(result => result >= configuration.Limits.LimitStartDateTime && result < endLimit).ToList();
         }
 
-        return results.Take(12).ToList();
+        return results.Take(maxExecutions).ToList();
     }
 
     private void ValidateConfiguration(SchedulerConfiguration configuration)

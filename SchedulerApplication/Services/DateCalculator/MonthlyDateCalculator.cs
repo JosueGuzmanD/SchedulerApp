@@ -19,11 +19,11 @@ public class MonthlyDateCalculator : IDateCalculator
         { DayOptions.SpecificDay, new SpecificDayStrategy() } 
     };
 
-    public List<DateTime> CalculateDates(SchedulerConfiguration config)
+    public List<DateTime> CalculateDates(SchedulerConfiguration config, int maxExecutions)
     {
         if (config is SpecificDayMonthlySchedulerConfiguration specificDayConfig)
         {
-            return _strategies[DayOptions.SpecificDay].CalculateDates(specificDayConfig);
+            return _strategies[DayOptions.SpecificDay].CalculateDates(specificDayConfig,maxExecutions);
         }
 
         if (config is not MonthlySchedulerConfiguration monthlyConfig)
@@ -36,6 +36,6 @@ public class MonthlyDateCalculator : IDateCalculator
             throw new ArgumentOutOfRangeException(nameof(monthlyConfig.DayOptions), monthlyConfig.DayOptions, null);
         }
 
-        return strategy.CalculateDates(monthlyConfig);
+        return strategy.CalculateDates(monthlyConfig, maxExecutions);
     }
 }

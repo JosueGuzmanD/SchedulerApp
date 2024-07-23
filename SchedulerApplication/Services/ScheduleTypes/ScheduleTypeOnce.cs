@@ -6,15 +6,17 @@ namespace SchedulerApplication.Services.ScheduleTypes;
 
 public class ScheduleTypeOnce : ScheduleTypeBase<OnceSchedulerConfiguration>
 {
+    private readonly int _maxExecutions;
 
-    public ScheduleTypeOnce(IDescriptionService descriptionService, IExecutionTimeGenerator executionTimeGenerator)
+    public ScheduleTypeOnce(IDescriptionService descriptionService, IExecutionTimeGenerator executionTimeGenerator, int maxExecutions)
         : base(descriptionService, executionTimeGenerator)
     {
+        _maxExecutions = maxExecutions;
     }
 
     protected override List<ScheduleOutput> CreateScheduleOutput(OnceSchedulerConfiguration configuration)
     {
-        var executionTimes = _executionTimeGenerator.GenerateExecutions(configuration);
+        var executionTimes = _executionTimeGenerator.GenerateExecutions(configuration, _maxExecutions);
         var outputs = new List<ScheduleOutput>();
 
         foreach (var time in executionTimes)

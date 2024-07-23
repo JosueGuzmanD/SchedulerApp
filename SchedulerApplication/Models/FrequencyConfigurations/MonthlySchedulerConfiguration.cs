@@ -9,7 +9,6 @@ public class MonthlySchedulerConfiguration: RecurringSchedulerConfiguration
     public int MonthFrequency { get; set; }
     public DayOptions DayOptions { get; set; }
     public DateTime CurrentDate { get; set; }
-    public int MaxExecutions { get; set; }
 }
     
 

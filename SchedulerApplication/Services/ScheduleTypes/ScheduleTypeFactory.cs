@@ -15,12 +15,12 @@ public class ScheduleTypeFactory
         _executionTimeGenerator = executionTimeGenerator;
     }
 
-    public IScheduleType CreateScheduleType(SchedulerConfiguration configuration)
+    public IScheduleType CreateScheduleType(SchedulerConfiguration configuration, int maxExecutions)
     {
         return configuration switch
         {
-            OnceSchedulerConfiguration _ => new ScheduleTypeOnce(_descriptionService, _executionTimeGenerator),
-            RecurringSchedulerConfiguration _ => new ScheduleTypeRecurring(_descriptionService, _executionTimeGenerator),
+            OnceSchedulerConfiguration _ => new ScheduleTypeOnce(_descriptionService, _executionTimeGenerator, maxExecutions),
+            RecurringSchedulerConfiguration _ => new ScheduleTypeRecurring(_descriptionService, _executionTimeGenerator, maxExecutions),
             _ => throw new ArgumentException("Unsupported configuration type.")
         };
     }

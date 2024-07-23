@@ -6,7 +6,7 @@ namespace SchedulerApplication.Services.DateCalculator;
 
 public class OnceDateCalculator : IDateCalculator
 {
-    public List<DateTime> CalculateDates(SchedulerConfiguration configuration)
+    public List<DateTime> CalculateDates(SchedulerConfiguration configuration, int maxExecutions)
     {
         if (configuration is not OnceSchedulerConfiguration onceConfig)
             throw new ArgumentException("Invalid configuration type for OnceDateCalculator.");
@@ -15,7 +15,13 @@ public class OnceDateCalculator : IDateCalculator
             throw new ArgumentException("Configuration date time cannot be in the past.");
         }
 
-        return [onceConfig.ConfigurationDateTime];
+        var results = new List<DateTime>();
 
+        if (maxExecutions > 0)
+        {
+            results.Add(onceConfig.ConfigurationDateTime);
+        }
+
+        return results;
     }
 }
