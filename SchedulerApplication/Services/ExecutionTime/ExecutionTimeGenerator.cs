@@ -38,6 +38,8 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
             return [];
         }
 
+        CultureManager.SetCulture(configuration.Culture);
+
         ValidateConfiguration(configuration);
 
         List<DateTime> dates;
@@ -67,11 +69,9 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
 
         var results = _hourCalculator.CalculateHours(dates, hourTimeRange, interval, intervalType,configuration.Limits, maxExecutions);
 
-        if (configuration.Limits != null)
-        {
-            var endLimit = configuration.Limits.LimitEndDateTime?.Date.AddDays(1) ?? DateTime.MaxValue;
-            results = results.Where(result => result >= configuration.Limits.LimitStartDateTime && result < endLimit).ToList();
-        }
+        if (configuration.Limits == null) return results.Take(maxExecutions).ToList();
+        var endLimit = configuration.Limits.LimitEndDateTime?.Date.AddDays(1) ?? DateTime.MaxValue;
+        results = results.Where(result => result >= configuration.Limits.LimitStartDateTime && result < endLimit).ToList();
 
         return results.Take(maxExecutions).ToList();
     }
@@ -80,9 +80,7 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
     {
         if (configuration is RecurringSchedulerConfiguration { Interval: < 0 })
         {
-            throw new ArgumentException("Invalid interval");
+            throw new ArgumentException(CultureManager.GetLocalizedString("ExecutionTimeGeneratorInvalidIntervalExc"));
         }
-
-      
     }
 }

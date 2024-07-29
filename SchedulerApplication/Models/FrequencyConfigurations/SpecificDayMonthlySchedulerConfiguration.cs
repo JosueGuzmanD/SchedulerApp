@@ -2,6 +2,6 @@
 
 public class SpecificDayMonthlySchedulerConfiguration : MonthlySchedulerConfiguration
 {
-    public int SpecificDay { get; set; } // Property for the specific day of the month
+    public int SpecificDay { get; set; } 
 }
 

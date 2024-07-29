@@ -17,6 +17,9 @@ public class ScheduleTypeFactory
 
     public IScheduleType CreateScheduleType(SchedulerConfiguration configuration, int maxExecutions)
     {
+
+        CultureManager.SetCulture(configuration.Culture);
+
         return configuration switch
         {
             OnceSchedulerConfiguration _ => new ScheduleTypeOnce(_descriptionService, _executionTimeGenerator, maxExecutions),

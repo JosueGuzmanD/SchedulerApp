@@ -6,6 +6,7 @@ using SchedulerApplication.Models;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Models.ValueObjects;
+using SchedulerApplication.Services;
 using SchedulerApplication.Services.DateCalculator;
 using SchedulerApplication.Services.DayOptionStrategies;
 using SchedulerApplication.Services.Description;
@@ -1417,16 +1418,7 @@ public class ScheduleTypeTest
         executionTimes[0].Should().Be(new DateTime(2024, 01, 06, 10, 00, 00)); executionTimes[1].Should().Be(new DateTime(2024, 01, 07, 10, 00, 00)); executionTimes[2].Should().Be(new DateTime(2024, 02, 03, 10, 00, 00)); executionTimes[3].Should().Be(new DateTime(2024, 02, 04, 10, 00, 00)); executionTimes[4].Should().Be(new DateTime(2024, 03, 02, 10, 00, 00)); executionTimes[5].Should().Be(new DateTime(2024, 03, 03, 10, 00, 00)); executionTimes[6].Should().Be(new DateTime(2024, 04, 06, 10, 00, 00)); executionTimes[7].Should().Be(new DateTime(2024, 04, 07, 10, 00, 00)); executionTimes[8].Should().Be(new DateTime(2024, 05, 04, 10, 00, 00)); executionTimes[9].Should().Be(new DateTime(2024, 05, 05, 10, 00, 00)); executionTimes[10].Should().Be(new DateTime(2024, 06, 01, 10, 00, 00)); executionTimes[11].Should().Be(new DateTime(2024, 06, 02, 10, 00, 00)); executionTimes[12].Should().Be(new DateTime(2024, 07, 06, 10, 00, 00)); executionTimes[13].Should().Be(new DateTime(2024, 07, 07, 10, 00, 00)); executionTimes[14].Should().Be(new DateTime(2024, 08, 03, 10, 00, 00)); executionTimes[15].Should().Be(new DateTime(2024, 08, 04, 10, 00, 00)); executionTimes[16].Should().Be(new DateTime(2024, 08, 31, 10, 00, 00)); executionTimes[17].Should().Be(new DateTime(2024, 09, 01, 10, 00, 00)); executionTimes[18].Should().Be(new DateTime(2024, 10, 05, 10, 00, 00)); executionTimes[19].Should().Be(new DateTime(2024, 10, 06, 10, 00, 00)); executionTimes[20].Should().Be(new DateTime(2024, 11, 02, 10, 00, 00)); executionTimes[21].Should().Be(new DateTime(2024, 11, 03, 10, 00, 00)); executionTimes[22].Should().Be(new DateTime(2024, 11, 30, 10, 00, 00)); executionTimes[23].Should().Be(new DateTime(2024, 12, 01, 10, 00, 00));
     }
 
-    [Fact]
-    public void CalculateDates_WithInvalidConfigurationType_ShouldThrowArgumentException()
-    {
-        var calculator = new MonthlyDateCalculator();
-        var config = new WeeklyFrequencyConfiguration();
-
-        Action act = () => calculator.CalculateDates(config, 12);
-
-        act.Should().Throw<ArgumentException>().WithMessage("Invalid configuration type for MonthlyDateCalculator.");
-    }
+ 
     [Fact]
     public void CalculateDates_WithInvalidConfigurationTypeForSpecificDay_ShouldThrowArgumentException()
     {
@@ -1559,6 +1551,69 @@ public class ScheduleTypeTest
         executionTimes[11].Should().Be(new DateTime(2024, 11, 01, 9, 00, 00));
         executionTimes[12].Should().Be(new DateTime(2024, 12, 01, 9, 00, 00));
     }
+
+    [Fact]
+    public void CalculateDates_WithInvalidConfigurationType_ShouldThrowArgumentException()
+    {
+        // Arrange
+        var config = new DailyFrequencyConfiguration
+        {
+            CurrentDate = new DateTime(2024, 07, 15)
+        };
+        var calculator = new MonthlyDateCalculator();
+
+        // Act
+        Action act = () => calculator.CalculateDates(config, 10);
+
+        // Assert
+        act.Should().Throw<ArgumentException>().WithMessage(CultureManager.GetLocalizedString("MonthlySchedulerConfigurationInvalidConfigurationExc"));
+    }
+
+    [Fact]
+    public void MonthlyFrequency_WithLimitsCrossingYears_ShouldReturnCorrectly_EnUs()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2023, 12, 01),
+            DayOptions = DayOptions.First,
+            Interval = 1,
+            IntervalType = IntervalType.Hourly,
+            IsEnabled = true,
+            Limits = new LimitsTimeInterval(new DateTime(2023, 12, 01), new DateTime(2024, 12, 31)),
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.AnyDay,
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 00, 00), new TimeSpan(9, 00, 00)),
+            Culture = CultureOptions.EnUs
+        };
+
+        var executionTime = new DateTime(2023, 12, 01, 9, 00, 00);
+        var descriptionService = new DescriptionService();
+
+        // Act
+        var executionTimes = _timeGenerator.GenerateExecutions(config, 13);
+
+        // Assert
+        executionTimes.Should().HaveCount(13);
+
+        executionTimes[0].Should().Be(new DateTime(2023, 12, 01, 9, 00, 00));
+        executionTimes[1].Should().Be(new DateTime(2024, 01, 01, 9, 00, 00));
+        executionTimes[2].Should().Be(new DateTime(2024, 02, 01, 9, 00, 00));
+        executionTimes[3].Should().Be(new DateTime(2024, 03, 01, 9, 00, 00));
+        executionTimes[4].Should().Be(new DateTime(2024, 04, 01, 9, 00, 00));
+        executionTimes[5].Should().Be(new DateTime(2024, 05, 01, 9, 00, 00));
+        executionTimes[6].Should().Be(new DateTime(2024, 06, 01, 9, 00, 00));
+        executionTimes[7].Should().Be(new DateTime(2024, 07, 01, 9, 00, 00));
+        executionTimes[8].Should().Be(new DateTime(2024, 08, 01, 9, 00, 00));
+        executionTimes[9].Should().Be(new DateTime(2024, 09, 01, 9, 00, 00));
+        executionTimes[10].Should().Be(new DateTime(2024, 10, 01, 9, 00, 00));
+        executionTimes[11].Should().Be(new DateTime(2024, 11, 01, 9, 00, 00));
+        executionTimes[12].Should().Be(new DateTime(2024, 12, 01, 9, 00, 00));
+
+        var description = descriptionService.GenerateDescription(config, executionTime);
+        description.Should().Be("Occurs on day 1 of every 1 month(s). Schedule will be used on 12/01/2023 at 09:00 starting on 12/01/2023.");
+    }
+
 
 
 }

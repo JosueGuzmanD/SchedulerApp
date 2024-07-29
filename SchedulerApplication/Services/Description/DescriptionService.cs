@@ -3,13 +3,19 @@ using SchedulerApplication.Interfaces;
 using SchedulerApplication.Models;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
+using System.Globalization;
 
 namespace SchedulerApplication.Services.Description;
+
+using System.Globalization;
+using System.Linq;
 
 public class DescriptionService : IDescriptionService
 {
     public string GenerateDescription(SchedulerConfiguration configuration, DateTime executionTime)
     {
+        CultureManager.SetCulture(configuration.Culture);
+
         return configuration switch
         {
             DailyFrequencyConfiguration dailyConfig => GenerateDailyDescription(dailyConfig, executionTime),
@@ -17,70 +23,111 @@ public class DescriptionService : IDescriptionService
             SpecificDayMonthlySchedulerConfiguration specificDayConfig => GenerateSpecificDayDescription(specificDayConfig, executionTime),
             MonthlySchedulerConfiguration monthlyConfig => GenerateMonthlyDescription(monthlyConfig, executionTime),
             OnceSchedulerConfiguration onceConfig => GenerateOnceDescription(onceConfig, executionTime),
-            _ => throw new ArgumentException("Unknown configuration type")
+            _ => throw new ArgumentException(CultureManager.GetLocalizedString("ExecutionTimeGeneratorUnknownConfigurationExc"))
         };
     }
 
     private static string GenerateDailyDescription(DailyFrequencyConfiguration dailyConfig, DateTime executionTime)
     {
-        if (dailyConfig.HourTimeRange == null)
+        var range = dailyConfig.HourTimeRange;
+        var dateStr = CultureManager.FormatDate(executionTime);
+        var timeStr = CultureManager.FormatTime(executionTime.TimeOfDay);
+        var startStr = CultureManager.FormatDate(dailyConfig.CurrentDate);
+
+        if (range.EndHour == TimeSpan.Zero)
         {
-            throw new ArgumentNullException(nameof(dailyConfig.HourTimeRange));
+            return string.Format(CultureManager.GetLocalizedString("DailyDescriptionSingle"),
+                range.StartHour.ToString(@"hh\:mm", CultureInfo.CurrentCulture),
+                dateStr, timeStr, startStr);
         }
 
-        var range = dailyConfig.HourTimeRange;
-        return range.EndHour == TimeSpan.Zero
-            ? $@"Occurs once at {range.StartHour:hh\:mm}. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {dailyConfig.CurrentDate:dd/MM/yyyy}."
-            : $@"Occurs every day from {range.StartHour:hh\:mm} to {range.EndHour:hh\:mm}. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {dailyConfig.CurrentDate:dd/MM/yyyy}.";
+        return string.Format(CultureManager.GetLocalizedString("DailyDescription_Range"),
+            range.StartHour.ToString(@"hh\:mm", CultureInfo.CurrentCulture),
+            range.EndHour.ToString(@"hh\:mm", CultureInfo.CurrentCulture),
+            dateStr, timeStr, startStr);
     }
 
     private static string GenerateWeeklyDescription(WeeklyFrequencyConfiguration weeklyConfig, DateTime executionTime)
     {
-        if (weeklyConfig.HourTimeRange == null)
-        {
-            throw new ArgumentNullException(nameof(weeklyConfig.HourTimeRange));
-        }
+        var range = weeklyConfig.HourTimeRange;
+        var dateStr = CultureManager.FormatDate(executionTime);
+        var timeStr = CultureManager.FormatTime(executionTime.TimeOfDay);
+        var startStr = CultureManager.FormatDate(weeklyConfig.CurrentDate);
+        var daysOfWeek = string.Join(", ", weeklyConfig.DaysOfWeek.Select(d => CultureManager.GetLocalizedString(d.ToString())));
 
-        if (weeklyConfig.DaysOfWeek == null || !weeklyConfig.DaysOfWeek.Any())
-        {
-            throw new ArgumentNullException(nameof(weeklyConfig.DaysOfWeek));
-        }
-
-        var daysOfWeek = string.Join(", ", weeklyConfig.DaysOfWeek);
-        return $"Occurs every {weeklyConfig.WeekInterval} week(s) on {daysOfWeek}. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {weeklyConfig.CurrentDate:dd/MM/yyyy}.";
+        return string.Format(CultureManager.GetLocalizedString("WeeklyDescription"),
+            weeklyConfig.WeekInterval,
+            daysOfWeek,
+            dateStr,
+            timeStr,
+            startStr);
     }
 
     private static string GenerateMonthlyDescription(MonthlySchedulerConfiguration monthlyConfig, DateTime executionTime)
     {
+        var dateStr = CultureManager.FormatDate(executionTime.Date);
+        var timeStr = CultureManager.FormatTime(executionTime.TimeOfDay);
+        var startStr = CultureManager.FormatDate(monthlyConfig.CurrentDate.Date);
+
         if (monthlyConfig.WeekOption == WeekOptions.AnyDay)
         {
-            return $"Occurs on day {executionTime.Day} of every {monthlyConfig.MonthFrequency} month(s). Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {monthlyConfig.CurrentDate:dd/MM/yyyy}.";
+            return string.Format(CultureManager.GetLocalizedString("MonthlyDescription_AnyDay"),
+                executionTime.Day,
+                monthlyConfig.MonthFrequency,
+                dateStr,
+                timeStr,
+                startStr);
         }
 
         var dayOption = monthlyConfig.DayOptions switch
         {
-            DayOptions.First => "first",
-            DayOptions.Second => "second",
-            DayOptions.Third => "third",
-            DayOptions.Fourth => "fourth",
-            DayOptions.Last => "last",
+            DayOptions.First => CultureManager.GetLocalizedString("First"),
+            DayOptions.Second => CultureManager.GetLocalizedString("Second"),
+            DayOptions.Third => CultureManager.GetLocalizedString("Third"),
+            DayOptions.Fourth => CultureManager.GetLocalizedString("Fourth"),
+            DayOptions.Last => CultureManager.GetLocalizedString("Last"),
             _ => throw new ArgumentOutOfRangeException()
         };
 
         var weekOption = monthlyConfig.WeekOption switch
         {
-            WeekOptions.Weekday => "weekday",
-            WeekOptions.WeekendDay => "weekend day",
-            _ => monthlyConfig.WeekOption.ToString()
+            WeekOptions.Weekday => CultureManager.GetLocalizedString("Weekday"),
+            WeekOptions.WeekendDay => CultureManager.GetLocalizedString("WeekendDay"),
+            _ => CultureManager.GetLocalizedString(monthlyConfig.WeekOption.ToString())
         };
 
-        return $"Occurs on the {dayOption} {weekOption} of every {monthlyConfig.MonthFrequency} month(s). Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {monthlyConfig.CurrentDate:dd/MM/yyyy}.";
+        return string.Format(CultureManager.GetLocalizedString("MonthlyDescription_DayOption"),
+            dayOption,
+            weekOption,
+            monthlyConfig.MonthFrequency,
+            dateStr,
+            timeStr,
+            startStr);
     }
 
     private static string GenerateSpecificDayDescription(SpecificDayMonthlySchedulerConfiguration specificDayConfig, DateTime executionTime)
     {
-        return $"Occurs on day {specificDayConfig.SpecificDay} of every {specificDayConfig.MonthFrequency} month(s). Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {specificDayConfig.CurrentDate:dd/MM/yyyy}.";
+        var dateStr = CultureManager.FormatDate(executionTime);
+        var timeStr = CultureManager.FormatTime(executionTime.TimeOfDay);
+        var startStr = CultureManager.FormatDate(specificDayConfig.CurrentDate);
+
+        return string.Format(CultureManager.GetLocalizedString("MonthlyDescription_SpecificDay"),
+            specificDayConfig.SpecificDay,
+            specificDayConfig.MonthFrequency,
+            dateStr,
+            timeStr,
+            startStr);
     }
 
-    protected virtual string GenerateOnceDescription(OnceSchedulerConfiguration onceConfig, DateTime executionTime) => $"Occurs once. Schedule will be used on {executionTime:dd/MM/yyyy} at {executionTime:HH:mm} starting on {onceConfig.CurrentDate:dd/MM/yyyy}.";
+    protected virtual string GenerateOnceDescription(OnceSchedulerConfiguration onceConfig, DateTime executionTime)
+    {
+        var dateStr = CultureManager.FormatDate(executionTime);
+        var timeStr = CultureManager.FormatTime(executionTime.TimeOfDay);
+        var startStr = CultureManager.FormatDate(onceConfig.CurrentDate);
+
+        return string.Format(CultureManager.GetLocalizedString("OnceDescription"),
+            dateStr,
+            timeStr,
+            startStr);
+    }
 }

@@ -1,6 +1,5 @@
 ﻿using SchedulerApplication.Interfaces;
 using SchedulerApplication.Models.FrequencyConfigurations;
-using SchedulerApplication.Models;
 
 namespace SchedulerApplication.Services.DayOptionStrategies;
 
