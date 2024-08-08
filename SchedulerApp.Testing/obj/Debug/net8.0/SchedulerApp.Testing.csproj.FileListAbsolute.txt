@@ -105,3 +105,9 @@ C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\obj\Debug\net8.0
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\obj\Debug\net8.0\ref\SchedulerApp.Testing.dll
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\SchedulerApplication.dll
 C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\SchedulerApplication.pdb
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\Microsoft.Extensions.Localization.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\Microsoft.Extensions.Localization.Abstractions.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+C:\Users\Josuegd\source\repos\SchedulerApp\SchedulerApp.Testing\bin\Debug\net8.0\Microsoft.Extensions.Primitives.dll

@@ -1,6 +1,7 @@
 ﻿using SchedulerApplication.Interfaces;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Models;
+using System.Globalization;
 
 namespace SchedulerApplication.Services.ScheduleTypes;
 
@@ -18,7 +19,6 @@ public class ScheduleTypeFactory
     public IScheduleType CreateScheduleType(SchedulerConfiguration configuration, int maxExecutions)
     {
 
-        CultureManager.SetCulture(configuration.Culture);
 
         return configuration switch
         {

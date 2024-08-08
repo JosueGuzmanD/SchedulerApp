@@ -1,15 +1,12 @@
 ﻿using FluentAssertions;
-using FluentAssertions.Specialized;
 using SchedulerApplication.Common.Enums;
 using SchedulerApplication.Interfaces;
 using SchedulerApplication.Models;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Models.ValueObjects;
-using SchedulerApplication.Services;
 using SchedulerApplication.Services.DateCalculator;
 using SchedulerApplication.Services.DayOptionStrategies;
-using SchedulerApplication.Services.Description;
 using SchedulerApplication.Services.ExecutionTime;
 using SchedulerApplication.Services.HourCalculator;
 using SchedulerApplication.Services.ScheduleTypes;
@@ -21,16 +18,18 @@ public class ScheduleTypeTest
     private readonly ScheduleTypeFactory _factory;
     private readonly IDescriptionService _descriptionService;
     private readonly IExecutionTimeGenerator _timeGenerator;
+    private CustomStringLocalizer localizer = new CustomStringLocalizer();
 
     public ScheduleTypeTest()
     {
-        _descriptionService = new DescriptionService();
+        _descriptionService = new DescriptionService(localizer);
         _timeGenerator = new ExecutionTimeGenerator(
             new OnceDateCalculator(),
             new DailyDateCalculator(),
             new WeeklyDateCalculator(),
             new HourCalculatorService(),
-            new MonthlyDateCalculator());
+            new MonthlyDateCalculator(),
+            localizer);
         _factory = new ScheduleTypeFactory(_descriptionService, _timeGenerator);
     }
 
@@ -686,7 +685,8 @@ public class ScheduleTypeTest
             Interval = -1,
             IntervalType = 0,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02))
+            Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02)),
+            Culture = CultureOptions.en_GB
         };
 
         Action act = () => _timeGenerator.GenerateExecutions(configuration, 12);
@@ -1553,20 +1553,24 @@ public class ScheduleTypeTest
     }
 
     [Fact]
-    public void CalculateDates_WithInvalidConfigurationType_ShouldThrowArgumentException()
+    public void GenerateDescription_ShouldThrowArgumentException_ForUnknownConfiguration()
     {
         // Arrange
-        var config = new DailyFrequencyConfiguration
+        var configuration = new UnsupportedConfiguration
         {
-            CurrentDate = new DateTime(2024, 07, 15)
+            IsEnabled = true,
+            CurrentDate = new DateTime(2024, 01, 01),
+            Culture = CultureOptions.en_GB
         };
-        var calculator = new MonthlyDateCalculator();
+        var executionTime = new DateTime(2024, 01, 01, 9, 0, 0);
 
         // Act
-        Action act = () => calculator.CalculateDates(config, 10);
+        Action act = () => _descriptionService.GenerateDescription(configuration, executionTime);
+        CustomStringLocalizer localizer = new CustomStringLocalizer();
 
         // Assert
-        act.Should().Throw<ArgumentException>().WithMessage(CultureManager.GetLocalizedString("MonthlySchedulerConfigurationInvalidConfigurationExc"));
+        act.Should().Throw<ArgumentException>()
+            .WithMessage(localizer["ExecutionTimeGeneratorUnknownConfigurationExc", configuration.Culture].Value, "*");
     }
 
     [Fact]
@@ -1584,11 +1588,11 @@ public class ScheduleTypeTest
             MonthFrequency = 1,
             WeekOption = WeekOptions.AnyDay,
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 00, 00), new TimeSpan(9, 00, 00)),
-            Culture = CultureOptions.EnUs
+            Culture = CultureOptions.en_US
         };
 
         var executionTime = new DateTime(2023, 12, 01, 9, 00, 00);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var executionTimes = _timeGenerator.GenerateExecutions(config, 13);
@@ -1611,11 +1615,163 @@ public class ScheduleTypeTest
         executionTimes[12].Should().Be(new DateTime(2024, 12, 01, 9, 00, 00));
 
         var description = descriptionService.GenerateDescription(config, executionTime);
-        description.Should().Be("Occurs on day 1 of every 1 month(s). Schedule will be used on 12/01/2023 at 09:00 starting on 12/01/2023.");
+        description.Should().Be("Occurs on day 1 of every 1 month(s). Schedule will be used on 12/1/2023 at 9:00 AM starting on 12/1/2023.");
+    }
+    [Fact]
+    public void MonthlyFrequency_WithLimitsCrossingYears_ShouldReturnCorrectly_AnyDay()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2023, 12, 01),
+            DayOptions = DayOptions.First,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.AnyDay,
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 00, 00), new TimeSpan(9, 00, 00)),
+            Limits = new LimitsTimeInterval(new DateTime(2023, 12, 01), new DateTime(2024, 12, 31)),
+            Culture = CultureOptions.en_US
+        };
+
+        var executionTimes = new List<DateTime>
+        {
+            new DateTime(2023, 12, 01, 9, 00, 00),
+            new DateTime(2024, 01, 01, 9, 00, 00),
+            new DateTime(2024, 02, 01, 9, 00, 00),
+            new DateTime(2024, 03, 01, 9, 00, 00),
+            new DateTime(2024, 04, 01, 9, 00, 00),
+            new DateTime(2024, 05, 01, 9, 00, 00),
+            new DateTime(2024, 06, 01, 9, 00, 00),
+            new DateTime(2024, 07, 01, 9, 00, 00),
+            new DateTime(2024, 08, 01, 9, 00, 00),
+            new DateTime(2024, 09, 01, 9, 00, 00),
+            new DateTime(2024, 10, 01, 9, 00, 00),
+            new DateTime(2024, 11, 01, 9, 00, 00),
+            new DateTime(2024, 12, 01, 9, 00, 00)
+        };
+
+        // Act
+        var result = _descriptionService.GenerateDescription(config, executionTimes[0]);
+
+        // Assert
+        result.Should().Be("Occurs on day 1 of every 1 month(s). Schedule will be used on 12/1/2023 at 9:00 AM starting on 12/1/2023.");
     }
 
+    [Fact]
+    public void MonthlyFrequency_WithLimitsCrossingYears_ShouldReturnCorrectly_Tuesday()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2023, 12, 01),
+            DayOptions = DayOptions.First,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Tuesday,
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 00, 00), new TimeSpan(9, 00, 00)),
+            Limits = new LimitsTimeInterval(new DateTime(2023, 12, 01), new DateTime(2024, 12, 31)),
+            Culture = CultureOptions.en_US
+        };
 
+        var executionTimes = new List<DateTime>
+        {
+            new DateTime(2023, 12, 05, 9, 00, 00),
+            new DateTime(2024, 01, 02, 9, 00, 00),
+            new DateTime(2024, 02, 06, 9, 00, 00),
+            new DateTime(2024, 03, 05, 9, 00, 00),
+            new DateTime(2024, 04, 02, 9, 00, 00),
+            new DateTime(2024, 05, 07, 9, 00, 00),
+            new DateTime(2024, 06, 04, 9, 00, 00),
+            new DateTime(2024, 07, 02, 9, 00, 00),
+            new DateTime(2024, 08, 06, 9, 00, 00),
+            new DateTime(2024, 09, 03, 9, 00, 00),
+            new DateTime(2024, 10, 01, 9, 00, 00),
+            new DateTime(2024, 11, 05, 9, 00, 00),
+            new DateTime(2024, 12, 03, 9, 00, 00)
+        };
 
+        // Act
+        var result = _descriptionService.GenerateDescription(config, executionTimes[0]);
+
+        // Assert
+        result.Should().Be("Occurs on the first Tuesday of every 1 month(s). Schedule will be used on 12/5/2023 at 9:00 AM starting on 12/1/2023.");
+    }
+
+    [Fact]
+    public void MonthlyFrequency_WithLimitsCrossingYears_ShouldReturnCorrectly_Thursday()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2023, 12, 01),
+            DayOptions = DayOptions.First,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Thursday,
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 00, 00), new TimeSpan(9, 00, 00)),
+            Limits = new LimitsTimeInterval(new DateTime(2023, 12, 01), new DateTime(2024, 12, 31)),
+            Culture = CultureOptions.en_US
+        };
+
+        var executionTimes = new List<DateTime>
+        {
+            new DateTime(2023, 12, 07, 9, 00, 00),
+            new DateTime(2024, 01, 04, 9, 00, 00),
+            new DateTime(2024, 02, 01, 9, 00, 00),
+            new DateTime(2024, 03, 07, 9, 00, 00),
+            new DateTime(2024, 04, 04, 9, 00, 00),
+            new DateTime(2024, 05, 02, 9, 00, 00),
+            new DateTime(2024, 06, 06, 9, 00, 00),
+            new DateTime(2024, 07, 04, 9, 00, 00),
+            new DateTime(2024, 08, 01, 9, 00, 00),
+            new DateTime(2024, 09, 05, 9, 00, 00),
+            new DateTime(2024, 10, 03, 9, 00, 00),
+            new DateTime(2024, 11, 07, 9, 00, 00),
+            new DateTime(2024, 12, 05, 9, 00, 00)
+        };
+
+        // Act
+        var result = _descriptionService.GenerateDescription(config, executionTimes[0]);
+
+        // Assert
+        result.Should().Be("Occurs on the first Thursday of every 1 month(s). Schedule will be used on 12/7/2023 at 9:00 AM starting on 12/1/2023.");
+    }
+
+    [Fact]
+    public void MonthlyFrequency_WithLimitsCrossingYears_ShouldReturnCorrectly_Sunday()
+    {
+        // Arrange
+        var config = new MonthlySchedulerConfiguration()
+        {
+            CurrentDate = new DateTime(2023, 12, 01),
+            DayOptions = DayOptions.First,
+            MonthFrequency = 1,
+            WeekOption = WeekOptions.Sunday,
+            HourTimeRange = new HourTimeRange(new TimeSpan(9, 00, 00), new TimeSpan(9, 00, 00)),
+            Limits = new LimitsTimeInterval(new DateTime(2023, 12, 01), new DateTime(2024, 12, 31)),
+            Culture = CultureOptions.en_US
+        };
+
+        var executionTimes = new List<DateTime>
+        {
+            new DateTime(2023, 12, 03, 9, 00, 00),
+            new DateTime(2024, 01, 07, 9, 00, 00),
+            new DateTime(2024, 02, 04, 9, 00, 00),
+            new DateTime(2024, 03, 03, 9, 00, 00),
+            new DateTime(2024, 04, 07, 9, 00, 00),
+            new DateTime(2024, 05, 05, 9, 00, 00),
+            new DateTime(2024, 06, 02, 9, 00, 00),
+            new DateTime(2024, 07, 07, 9, 00, 00),
+            new DateTime(2024, 08, 04, 9, 00, 00),
+            new DateTime(2024, 09, 01, 9, 00, 00),
+            new DateTime(2024, 10, 06, 9, 00, 00),
+            new DateTime(2024, 11, 03, 9, 00, 00),
+            new DateTime(2024, 12, 01, 9, 00, 00)
+        };
+
+        // Act
+        var result = _descriptionService.GenerateDescription(config, executionTimes[0]);
+
+        // Assert
+        result.Should().Be("Occurs on the first Sunday of every 1 month(s). Schedule will be used on 12/3/2023 at 9:00 AM starting on 12/1/2023.");
+    }
 }
 
 

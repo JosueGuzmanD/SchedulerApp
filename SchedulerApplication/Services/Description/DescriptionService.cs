@@ -1,20 +1,23 @@
-﻿using SchedulerApplication.Common.Enums;
+﻿using System.Globalization;
+using Microsoft.Extensions.Localization;
+using SchedulerApplication.Common.Enums;
 using SchedulerApplication.Interfaces;
-using SchedulerApplication.Models;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
-using System.Globalization;
-
-namespace SchedulerApplication.Services.Description;
-
-using System.Globalization;
-using System.Linq;
+using SchedulerApplication.Models;
 
 public class DescriptionService : IDescriptionService
 {
+    private readonly IStringLocalizer _localizer;
+
+    public DescriptionService(IStringLocalizer localizer)
+    {
+        _localizer = localizer;
+    }
+
     public string GenerateDescription(SchedulerConfiguration configuration, DateTime executionTime)
     {
-        CultureManager.SetCulture(configuration.Culture);
+        SetCulture(configuration.Culture);
 
         return configuration switch
         {
@@ -23,111 +26,87 @@ public class DescriptionService : IDescriptionService
             SpecificDayMonthlySchedulerConfiguration specificDayConfig => GenerateSpecificDayDescription(specificDayConfig, executionTime),
             MonthlySchedulerConfiguration monthlyConfig => GenerateMonthlyDescription(monthlyConfig, executionTime),
             OnceSchedulerConfiguration onceConfig => GenerateOnceDescription(onceConfig, executionTime),
-            _ => throw new ArgumentException(CultureManager.GetLocalizedString("ExecutionTimeGeneratorUnknownConfigurationExc"))
+            _ => throw new ArgumentException(_localizer["ExecutionTimeGeneratorUnknownConfigurationExc"].Value)
         };
     }
-
-    private static string GenerateDailyDescription(DailyFrequencyConfiguration dailyConfig, DateTime executionTime)
+    private static void SetCulture(CultureOptions culture)
+    {
+        var cultureName = culture.ToString().Replace("_", "-");
+        CultureInfo.CurrentCulture = new CultureInfo(cultureName);
+        CultureInfo.CurrentUICulture = new CultureInfo(cultureName);
+    }
+    private string GenerateDailyDescription(DailyFrequencyConfiguration dailyConfig, DateTime executionTime)
     {
         var range = dailyConfig.HourTimeRange;
-        var dateStr = CultureManager.FormatDate(executionTime);
-        var timeStr = CultureManager.FormatTime(executionTime.TimeOfDay);
-        var startStr = CultureManager.FormatDate(dailyConfig.CurrentDate);
+        var dateStr = executionTime.ToString("d", CultureInfo.CurrentCulture);
+        var timeStr = executionTime.ToString("t", CultureInfo.CurrentCulture);
+        var startStr = dailyConfig.CurrentDate.ToString("d", CultureInfo.CurrentCulture);
 
         if (range.EndHour == TimeSpan.Zero)
         {
-            return string.Format(CultureManager.GetLocalizedString("DailyDescriptionSingle"),
-                range.StartHour.ToString(@"hh\:mm", CultureInfo.CurrentCulture),
-                dateStr, timeStr, startStr);
+            return string.Format(_localizer["DailyDescriptionSingle"].Value, range.StartHour.ToString(@"hh\:mm", CultureInfo.CurrentCulture), dateStr, timeStr, startStr);
         }
 
-        return string.Format(CultureManager.GetLocalizedString("DailyDescription_Range"),
-            range.StartHour.ToString(@"hh\:mm", CultureInfo.CurrentCulture),
-            range.EndHour.ToString(@"hh\:mm", CultureInfo.CurrentCulture),
-            dateStr, timeStr, startStr);
+        return string.Format(_localizer["DailyDescription_Range"].Value, range.StartHour.ToString(@"hh\:mm", CultureInfo.CurrentCulture), range.EndHour.ToString(@"hh\:mm", CultureInfo.CurrentCulture), dateStr, timeStr, startStr);
     }
 
-    private static string GenerateWeeklyDescription(WeeklyFrequencyConfiguration weeklyConfig, DateTime executionTime)
+    private string GenerateWeeklyDescription(WeeklyFrequencyConfiguration weeklyConfig, DateTime executionTime)
     {
         var range = weeklyConfig.HourTimeRange;
-        var dateStr = CultureManager.FormatDate(executionTime);
-        var timeStr = CultureManager.FormatTime(executionTime.TimeOfDay);
-        var startStr = CultureManager.FormatDate(weeklyConfig.CurrentDate);
-        var daysOfWeek = string.Join(", ", weeklyConfig.DaysOfWeek.Select(d => CultureManager.GetLocalizedString(d.ToString())));
+        var dateStr = executionTime.ToString("d", CultureInfo.CurrentCulture);
+        var timeStr = executionTime.ToString("t", CultureInfo.CurrentCulture);
+        var startStr = weeklyConfig.CurrentDate.ToString("d", CultureInfo.CurrentCulture);
+        var daysOfWeek = string.Join(", ", weeklyConfig.DaysOfWeek.Select(d => _localizer[d.ToString()].Value));
 
-        return string.Format(CultureManager.GetLocalizedString("WeeklyDescription"),
-            weeklyConfig.WeekInterval,
-            daysOfWeek,
-            dateStr,
-            timeStr,
-            startStr);
+        return string.Format(_localizer["WeeklyDescription"].Value, weeklyConfig.WeekInterval, daysOfWeek, dateStr, timeStr, startStr);
     }
 
-    private static string GenerateMonthlyDescription(MonthlySchedulerConfiguration monthlyConfig, DateTime executionTime)
+    private string GenerateMonthlyDescription(MonthlySchedulerConfiguration monthlyConfig, DateTime executionTime)
     {
-        var dateStr = CultureManager.FormatDate(executionTime.Date);
-        var timeStr = CultureManager.FormatTime(executionTime.TimeOfDay);
-        var startStr = CultureManager.FormatDate(monthlyConfig.CurrentDate.Date);
+        var dateStr = executionTime.ToString("d", CultureInfo.CurrentCulture);
+        var timeStr = executionTime.ToString("t", CultureInfo.CurrentCulture);
+        var startStr = monthlyConfig.CurrentDate.ToString("d", CultureInfo.CurrentCulture);
 
         if (monthlyConfig.WeekOption == WeekOptions.AnyDay)
         {
-            return string.Format(CultureManager.GetLocalizedString("MonthlyDescription_AnyDay"),
-                executionTime.Day,
-                monthlyConfig.MonthFrequency,
-                dateStr,
-                timeStr,
-                startStr);
+            return string.Format(_localizer["MonthlyDescription_AnyDay"].Value, executionTime.Day, monthlyConfig.MonthFrequency, dateStr, timeStr, startStr);
         }
 
         var dayOption = monthlyConfig.DayOptions switch
         {
-            DayOptions.First => CultureManager.GetLocalizedString("First"),
-            DayOptions.Second => CultureManager.GetLocalizedString("Second"),
-            DayOptions.Third => CultureManager.GetLocalizedString("Third"),
-            DayOptions.Fourth => CultureManager.GetLocalizedString("Fourth"),
-            DayOptions.Last => CultureManager.GetLocalizedString("Last"),
+            DayOptions.First => _localizer["First"].Value,
+            DayOptions.Second => _localizer["Second"].Value,
+            DayOptions.Third => _localizer["Third"].Value,
+            DayOptions.Fourth => _localizer["Fourth"].Value,
+            DayOptions.Last => _localizer["Last"].Value,
             _ => throw new ArgumentOutOfRangeException()
         };
 
         var weekOption = monthlyConfig.WeekOption switch
         {
-            WeekOptions.Weekday => CultureManager.GetLocalizedString("Weekday"),
-            WeekOptions.WeekendDay => CultureManager.GetLocalizedString("WeekendDay"),
-            _ => CultureManager.GetLocalizedString(monthlyConfig.WeekOption.ToString())
+            WeekOptions.Weekday => _localizer["Weekday"].Value,
+            WeekOptions.WeekendDay => _localizer["WeekendDay"].Value,
+            _ => _localizer[monthlyConfig.WeekOption.ToString()].Value
         };
 
-        return string.Format(CultureManager.GetLocalizedString("MonthlyDescription_DayOption"),
-            dayOption,
-            weekOption,
-            monthlyConfig.MonthFrequency,
-            dateStr,
-            timeStr,
-            startStr);
+        return string.Format(_localizer["MonthlyDescription_DayOption"].Value, dayOption, weekOption, monthlyConfig.MonthFrequency, dateStr, timeStr, startStr);
     }
 
-    private static string GenerateSpecificDayDescription(SpecificDayMonthlySchedulerConfiguration specificDayConfig, DateTime executionTime)
+    private string GenerateSpecificDayDescription(SpecificDayMonthlySchedulerConfiguration specificDayConfig, DateTime executionTime)
     {
-        var dateStr = CultureManager.FormatDate(executionTime);
-        var timeStr = CultureManager.FormatTime(executionTime.TimeOfDay);
-        var startStr = CultureManager.FormatDate(specificDayConfig.CurrentDate);
+        var dateStr = executionTime.ToString("d", CultureInfo.CurrentCulture);
+        var timeStr = executionTime.ToString("t", CultureInfo.CurrentCulture);
+        var startStr = specificDayConfig.CurrentDate.ToString("d", CultureInfo.CurrentCulture);
 
-        return string.Format(CultureManager.GetLocalizedString("MonthlyDescription_SpecificDay"),
-            specificDayConfig.SpecificDay,
-            specificDayConfig.MonthFrequency,
-            dateStr,
-            timeStr,
-            startStr);
+        return string.Format(_localizer["MonthlyDescription_SpecificDay"].Value, specificDayConfig.SpecificDay, specificDayConfig.MonthFrequency, dateStr, timeStr, startStr);
     }
 
-    protected virtual string GenerateOnceDescription(OnceSchedulerConfiguration onceConfig, DateTime executionTime)
+    private string GenerateOnceDescription(OnceSchedulerConfiguration onceConfig, DateTime executionTime)
     {
-        var dateStr = CultureManager.FormatDate(executionTime);
-        var timeStr = CultureManager.FormatTime(executionTime.TimeOfDay);
-        var startStr = CultureManager.FormatDate(onceConfig.CurrentDate);
+        var dateStr = executionTime.ToString("d", CultureInfo.CurrentCulture);
+        var timeStr = executionTime.ToString("t", CultureInfo.CurrentCulture);
+        var startStr = onceConfig.CurrentDate.ToString("d", CultureInfo.CurrentCulture);
 
-        return string.Format(CultureManager.GetLocalizedString("OnceDescription"),
-            dateStr,
-            timeStr,
-            startStr);
+        return string.Format(_localizer["OnceDescription"].Value, dateStr, timeStr, startStr);
     }
 }

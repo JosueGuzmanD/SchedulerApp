@@ -1,21 +1,23 @@
-﻿using FluentAssertions;
+﻿using System.Globalization;
+using FluentAssertions;
 using SchedulerApplication.Common.Enums;
 using SchedulerApplication.Models.FrequencyConfigurations;
 using SchedulerApplication.Models.SchedulerConfigurations;
 using SchedulerApplication.Models.ValueObjects;
-using SchedulerApplication.Services;
-using SchedulerApplication.Services.Description;
+
 
 namespace SchedulerApp.Testing.DescriptionServiceTest;
 
 public class DescriptionServiceTests
 {
     private readonly DescriptionService _descriptionService;
+    CustomStringLocalizer localizer = new CustomStringLocalizer();
 
     public DescriptionServiceTests()
     {
-        _descriptionService = new DescriptionService();
+        _descriptionService = new DescriptionService(localizer);
     }
+
 
     [Fact]
     public void GenerateDescription_ShouldReturnCorrectDescription_ForOnceScheduler()
@@ -26,10 +28,11 @@ public class DescriptionServiceTests
             IsEnabled = true,
             CurrentDate = new DateTime(2024, 01, 01),
             ConfigurationDateTime = new DateTime(2024, 01, 01, 9, 0, 0),
-            Culture = CultureOptions.EnGB
-
         };
         var executionTime = new DateTime(2024, 01, 01, 9, 0, 0);
+
+        // Set culture to en-GB
+        CultureInfo.CurrentUICulture = new CultureInfo("en-GB");
 
         // Act
         var result = _descriptionService.GenerateDescription(configuration, executionTime);
@@ -48,7 +51,7 @@ public class DescriptionServiceTests
             IsEnabled = true,
             CurrentDate = new DateTime(2024, 01, 01),
             HourTimeRange = new HourTimeRange(onceAt),
-            Culture = CultureOptions.EnGB
+            Culture = CultureOptions.en_GB
         };
         var executionTime = new DateTime(2024, 01, 01, 9, 0, 0);
 
@@ -88,7 +91,7 @@ public class DescriptionServiceTests
             IsEnabled = true,
             CurrentDate = new DateTime(2024, 01, 01),
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            Culture = CultureOptions.EnGB
+            Culture = CultureOptions.en_GB
 
         };
         var executionTime = new DateTime(2024, 01, 01, 9, 0, 0);
@@ -113,8 +116,7 @@ public class DescriptionServiceTests
             WeekInterval = weekInterval,
             DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            Culture = CultureOptions.EnGB
-
+            Culture = CultureOptions.en_GB
         };
         var executionTime = new DateTime(2024, 01, 01, 9, 0, 0);
 
@@ -197,11 +199,13 @@ public class DescriptionServiceTests
             CurrentDate = new DateTime(2024, 01, 01),
             DayOptions = DayOptions.First,
             MonthFrequency = 1,
-            Culture = CultureOptions.EnGB,
+            Culture = CultureOptions.en_GB,
             WeekOption = WeekOptions.Monday
         };
+        CultureInfo.CurrentCulture = new CultureInfo("en-GB");
+
         var executionTime = new DateTime(2024, 01, 01, 13, 00, 00);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
@@ -218,11 +222,11 @@ public class DescriptionServiceTests
             CurrentDate = new DateTime(2024, 01, 01),
             DayOptions = DayOptions.Second,
             MonthFrequency = 1,
-            Culture = CultureOptions.EnGB,
+            Culture = CultureOptions.en_GB,
             WeekOption = WeekOptions.Wednesday
         };
         var executionTime = new DateTime(2024, 01, 10, 04, 00, 00);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
@@ -240,11 +244,11 @@ public class DescriptionServiceTests
             DayOptions = DayOptions.Third,
             MonthFrequency = 1,
             WeekOption = WeekOptions.Friday,
-            Culture = CultureOptions.EnGB
+            Culture = CultureOptions.en_GB
 
         };
         var executionTime = new DateTime(2024, 01, 19, 15, 00, 00);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
@@ -264,7 +268,7 @@ public class DescriptionServiceTests
             WeekOption = WeekOptions.Saturday
         };
         var executionTime = new DateTime(2024, 01, 27, 21, 30, 00);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
@@ -282,10 +286,10 @@ public class DescriptionServiceTests
             DayOptions = DayOptions.Last,
             MonthFrequency = 1,
             WeekOption = WeekOptions.WeekendDay,
-            Culture = CultureOptions.EnGB
+            Culture = CultureOptions.en_GB
         };
         var executionTime = new DateTime(2024, 01, 27, 21, 30, 00);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
@@ -303,11 +307,11 @@ public class DescriptionServiceTests
             DayOptions = DayOptions.First,
             MonthFrequency = 1,
             WeekOption = WeekOptions.Weekday,
-            Culture = CultureOptions.EnGB,
+            Culture = CultureOptions.en_GB,
 
         };
         var executionTime = new DateTime(2024, 01, 01, 09, 00, 00);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
@@ -326,7 +330,7 @@ public class DescriptionServiceTests
             MonthFrequency = 3
         };
         var executionTime = new DateTime(2024, 01, 15, 12, 00, 00);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
@@ -345,7 +349,7 @@ public class DescriptionServiceTests
             MonthFrequency = 2
         };
         var executionTime = new DateTime(2024, 01, 05, 09, 00, 00);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
@@ -362,10 +366,10 @@ public class DescriptionServiceTests
             CurrentDate = new DateTime(2024, 01, 01),
             SpecificDay = 28,
             MonthFrequency = 6,
-            Culture = CultureOptions.EnGB
+            Culture = CultureOptions.en_GB
         };
         var executionTime = new DateTime(2024, 01, 28, 10, 00, 00);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
@@ -382,11 +386,11 @@ public class DescriptionServiceTests
             CurrentDate = new DateTime(2024, 01, 01),
             DayOptions = DayOptions.First,
             MonthFrequency = 1,
-            Culture = CultureOptions.EnGB,
+            Culture = CultureOptions.en_GB,
             WeekOption = WeekOptions.WeekendDay
         };
         var executionTime = new DateTime(2024, 01, 06, 10, 00, 00);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
@@ -404,9 +408,12 @@ public class DescriptionServiceTests
             DayOptions = DayOptions.First,
             MonthFrequency = 1,
             WeekOption = WeekOptions.AnyDay,
+            Culture = CultureOptions.en_GB
         };
+
+
         var executionTime = new DateTime(2024, 01, 01, 08, 00, 00);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
@@ -427,16 +434,16 @@ public class DescriptionServiceTests
             WeekInterval = 1,
             DaysOfWeek =  [DayOfWeek.Monday, DayOfWeek.Wednesday],
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            Culture = CultureOptions.EnUs
+            Culture = CultureOptions.en_US
         };
         var executionTime = new DateTime(2024, 07, 15, 9, 0, 0);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
 
         // Assert
-        description.Should().Be("Occurs every 1 week(s) on Monday, Wednesday. Schedule will be used on 07/15/2024 at 09:00 starting on 07/15/2024.");
+        description.Should().Be("Occurs every 1 week(s) on Monday, Wednesday. Schedule will be used on 7/15/2024 at 9:00 AM starting on 7/15/2024.");
     }
 
     [Fact]
@@ -450,10 +457,10 @@ public class DescriptionServiceTests
             WeekInterval = 1,
             DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            Culture = CultureOptions.EnGB
+            Culture = CultureOptions.en_GB
         };
         var executionTime = new DateTime(2024, 07, 15, 9, 0, 0);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
@@ -473,16 +480,16 @@ public class DescriptionServiceTests
             WeekInterval = 1,
             DaysOfWeek = [DayOfWeek.Monday, DayOfWeek.Wednesday],
             HourTimeRange = new HourTimeRange(new TimeSpan(9, 0, 0), new TimeSpan(17, 0, 0)),
-            Culture = CultureOptions.EsEs
+            Culture = CultureOptions.es_ES
         };
         var executionTime = new DateTime(2024, 07, 15, 9, 0, 0);
-        var descriptionService = new DescriptionService();
+        var descriptionService = new DescriptionService(localizer);
 
         // Act
         var description = descriptionService.GenerateDescription(config, executionTime);
 
         // Assert
-        description.Should().Be("Ocurre cada 1 semana(s) los Lunes, Miércoles. El horario se utilizará el 15/07/2024 a las 09:00 comenzando el 15/07/2024.");
+        description.Should().Be("Ocurre cada 1 semana(s) el lunes, miércoles. El horario se utilizará el 15/07/2024 a las 9:00 a partir del 15/07/2024.");
     }
    
 
@@ -496,7 +503,7 @@ public class DescriptionServiceTests
             DayOptions = DayOptions.Third,
             MonthFrequency = 1,
             WeekOption = WeekOptions.Friday,
-            Culture = CultureOptions.EnUs
+            Culture = CultureOptions.en_US
         };
         var executionTime = new DateTime(2024, 05, 17, 15, 00, 00);
 
@@ -504,7 +511,7 @@ public class DescriptionServiceTests
         var description = _descriptionService.GenerateDescription(config, executionTime);
 
         // Assert
-        description.Should().Be("Occurs on the third Friday of every 1 month(s). Schedule will be used on 05/17/2024 at 15:00 starting on 05/15/2024.");
+        description.Should().Be("Occurs on the third Friday of every 1 month(s). Schedule will be used on 5/17/2024 at 3:00 PM starting on 5/15/2024.");
     }
 
     [Fact]
@@ -517,7 +524,7 @@ public class DescriptionServiceTests
             DayOptions = DayOptions.Third,
             MonthFrequency = 1,
             WeekOption = WeekOptions.Friday,
-            Culture = CultureOptions.EnGB
+            Culture = CultureOptions.en_GB
         };
         var executionTime = new DateTime(2024, 05, 17, 15, 00, 00);
 
@@ -538,7 +545,7 @@ public class DescriptionServiceTests
             DayOptions = DayOptions.Third,
             MonthFrequency = 1,
             WeekOption = WeekOptions.Friday,
-            Culture = CultureOptions.EsEs
+            Culture = CultureOptions.es_ES
         };
         var executionTime = new DateTime(2024, 05, 17, 15, 00, 00);
 
@@ -546,7 +553,7 @@ public class DescriptionServiceTests
         var description = _descriptionService.GenerateDescription(config, executionTime);
 
         // Assert
-        description.Should().Be("Ocurre el Tercer Viernes de cada 1 mes(es). El horario se utilizará el 17/05/2024 a las 15:00 comenzando el 15/05/2024.");
+        description.Should().Be("Ocurre el tercer viernes de cada 1 mes(es). El horario se utilizará el 17/05/2024 a las 15:00 a partir del 15/05/2024.");
     }
 
     [Fact]
@@ -558,7 +565,7 @@ public class DescriptionServiceTests
             CurrentDate = new DateTime(2024, 06, 20),
             SpecificDay = 30,
             MonthFrequency = 2,
-            Culture = CultureOptions.EnUs
+            Culture = CultureOptions.en_US
         };
         var executionTime = new DateTime(2024, 06, 30, 10, 00, 00);
 
@@ -566,7 +573,7 @@ public class DescriptionServiceTests
         var description = _descriptionService.GenerateDescription(config, executionTime);
 
         // Assert
-        description.Should().Be("Occurs on day 30 of every 2 month(s). Schedule will be used on 06/30/2024 at 10:00 starting on 06/20/2024.");
+        description.Should().Be("Occurs on day 30 of every 2 month(s). Schedule will be used on 6/30/2024 at 10:00 AM starting on 6/20/2024.");
     }
 
     [Fact]
@@ -578,7 +585,7 @@ public class DescriptionServiceTests
             CurrentDate = new DateTime(2024, 06, 20),
             SpecificDay = 30,
             MonthFrequency = 2,
-            Culture = CultureOptions.EnGB
+            Culture = CultureOptions.en_GB
         };
         var executionTime = new DateTime(2024, 06, 30, 10, 00, 00);
 
@@ -598,7 +605,7 @@ public class DescriptionServiceTests
             CurrentDate = new DateTime(2024, 06, 20),
             SpecificDay = 30,
             MonthFrequency = 2,
-            Culture = CultureOptions.EsEs
+            Culture = CultureOptions.es_ES
         };
         var executionTime = new DateTime(2024, 06, 30, 10, 00, 00);
 
@@ -606,7 +613,7 @@ public class DescriptionServiceTests
         var description = _descriptionService.GenerateDescription(config, executionTime);
 
         // Assert
-        description.Should().Be("Ocurre el día 30 de cada 2 mes(es). El horario se utilizará el 30/06/2024 a las 10:00 comenzando el 20/06/2024.");
+        description.Should().Be("Ocurre el día 30 de cada 2 mes(es). El horario se utilizará el 30/06/2024 a las 10:00 a partir del 20/06/2024.");
     }
 
 

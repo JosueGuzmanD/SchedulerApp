@@ -1,11 +1,11 @@
 ﻿
 namespace SchedulerApplication.Common.Enums;
 
-    public enum CultureOptions
-    {
-        
-    EnGB,
-    EnUs,
-    EsEs
-    }
+public enum CultureOptions
+{
+    en_GB,
+    en_US,
+    es_ES
+}
+
 

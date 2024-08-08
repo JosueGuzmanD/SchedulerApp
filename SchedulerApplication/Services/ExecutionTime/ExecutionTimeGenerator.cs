@@ -16,19 +16,22 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
     private readonly IDateCalculator _weeklyDateCalculator;
     private readonly HourCalculatorService _hourCalculator;
     private readonly IDateCalculator _monthlyDateCalculator;
+    private readonly CustomStringLocalizer _customStringLocalizer;
 
     public ExecutionTimeGenerator(
         IDateCalculator onceDateCalculator,
         IDateCalculator dailyDateCalculator,
         IDateCalculator weeklyDateCalculator,
         HourCalculatorService hourCalculator,
-        IDateCalculator monthlyDateCalculator)
+        IDateCalculator monthlyDateCalculator,
+        CustomStringLocalizer customStringLocalizer)
     {
         _onceDateCalculator = onceDateCalculator;
         _dailyDateCalculator = dailyDateCalculator;
         _weeklyDateCalculator = weeklyDateCalculator;
         _monthlyDateCalculator = monthlyDateCalculator;
         _hourCalculator = hourCalculator;
+        _customStringLocalizer= customStringLocalizer;
     }
 
     public List<DateTime> GenerateExecutions(SchedulerConfiguration configuration, int maxExecutions)
@@ -37,8 +40,6 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
         {
             return [];
         }
-
-        CultureManager.SetCulture(configuration.Culture);
 
         ValidateConfiguration(configuration);
 
@@ -80,7 +81,7 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
     {
         if (configuration is RecurringSchedulerConfiguration { Interval: < 0 })
         {
-            throw new ArgumentException(CultureManager.GetLocalizedString("ExecutionTimeGeneratorInvalidIntervalExc"));
+            throw new ArgumentException(_customStringLocalizer["ExecutionTimeGeneratorInvalidIntervalExc", configuration.Culture].Value);
         }
     }
 }

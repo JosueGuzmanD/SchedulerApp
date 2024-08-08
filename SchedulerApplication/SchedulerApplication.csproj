@@ -7,36 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="Common\Cultures\CultureEn-GB.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>CultureEn-GB.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Common\Cultures\CultureEN-US.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>CultureEn-US.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Common\Cultures\CultureES-ES.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>CultureEs-ES.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Common\Cultures\CultureEn-GB.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>CultureEn-GB.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Common\Cultures\CultureEn-US.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>CultureEN-US.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Common\Cultures\CultureEs-ES.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>CultureES-ES.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.7" />
   </ItemGroup>
 
 </Project>
