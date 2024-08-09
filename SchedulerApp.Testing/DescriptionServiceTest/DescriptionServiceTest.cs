@@ -31,8 +31,6 @@ public class DescriptionServiceTests
         };
         var executionTime = new DateTime(2024, 01, 01, 9, 0, 0);
 
-        // Set culture to en-GB
-        CultureInfo.CurrentUICulture = new CultureInfo("en-GB");
 
         // Act
         var result = _descriptionService.GenerateDescription(configuration, executionTime);
@@ -202,7 +200,6 @@ public class DescriptionServiceTests
             Culture = CultureOptions.en_GB,
             WeekOption = WeekOptions.Monday
         };
-        CultureInfo.CurrentCulture = new CultureInfo("en-GB");
 
         var executionTime = new DateTime(2024, 01, 01, 13, 00, 00);
         var descriptionService = new DescriptionService(localizer);

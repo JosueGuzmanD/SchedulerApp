@@ -11,6 +11,8 @@ using SchedulerApplication.Services.ExecutionTime;
 using SchedulerApplication.Services.HourCalculator;
 using SchedulerApplication.Services.ScheduleTypes;
 using System.Globalization;
+using System.Reflection;
+using Xunit.Sdk;
 
 namespace SchedulerApp.Testing.ScheduleTypesTest;
 
@@ -677,8 +679,10 @@ public class ScheduleTypeTest
 
 
     [Fact]
+    [UseCulture("en-GB")]
     public void Configuration_InvalidHourlyInterval_ShouldThrowException()
     {
+
         var configuration = new DailyFrequencyConfiguration
         {
             CurrentDate = new DateTime(2024, 01, 01),
@@ -689,7 +693,6 @@ public class ScheduleTypeTest
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02)),
             Culture = CultureOptions.en_GB
         };
-        CultureInfo.CurrentCulture = new CultureInfo("en-GB");
 
         Action act = () => _timeGenerator.GenerateExecutions(configuration, 12);
 
@@ -1792,10 +1795,10 @@ public class ScheduleTypeTest
         Assert.True(result.ResourceNotFound);
     }
     [Fact]
+    [UseCulture("en-GB")]
     public void GetAllStrings_ShouldReturnAllStringsForCulture()
     {
         // Arrange
-        CultureInfo.CurrentCulture = new CultureInfo("en-GB");
 
         // Act
         CustomStringLocalizer _localizer = new CustomStringLocalizer();
@@ -1833,6 +1836,33 @@ public class ScheduleTypeTest
 }
 
 
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+public class UseCultureAttribute : BeforeAfterTestAttribute
+{
+    private readonly string _culture;
+    private CultureInfo _originalCulture;
+    private CultureInfo _originalUICulture;
 
+    public UseCultureAttribute(string culture)
+    {
+        _culture = culture;
+    }
+
+    public override void Before(MethodInfo methodUnderTest)
+    {
+        _originalCulture = CultureInfo.CurrentCulture;
+        _originalUICulture = CultureInfo.CurrentUICulture;
+
+        var cultureInfo = new CultureInfo(_culture);
+        CultureInfo.CurrentCulture = cultureInfo;
+        CultureInfo.CurrentUICulture = cultureInfo;
+    }
+
+    public override void After(MethodInfo methodUnderTest)
+    {
+        CultureInfo.CurrentCulture = _originalCulture;
+        CultureInfo.CurrentUICulture = _originalUICulture;
+    }
+}
 public class UnsupportedConfiguration : SchedulerConfiguration;
 
