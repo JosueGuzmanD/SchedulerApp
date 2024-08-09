@@ -119,25 +119,9 @@ public class CustomStringLocalizer : IStringLocalizer
         get
         {
             var format = GetString(name);
-            string value;
-            if (format == null)
-            {
-                value = name;
-            }
-            else
-            {
-                try
-                {
-                    Console.WriteLine($"Formatting key '{name}' with format '{format}' and arguments '{string.Join(",", arguments)}'");
-                    value = string.Format(CultureInfo.CurrentCulture, format, arguments);
-                }
-                catch (FormatException ex)
-                {
-                    Console.WriteLine($"FormatException for key '{name}' with format '{format}' and arguments '{string.Join(",", arguments)}': {ex.Message}");
-                    value = arguments.ToString(); // Fallback in case of format exception
-                }
-            }
-            return new LocalizedString(name, value ?? name, resourceNotFound: format == null);
+
+            var value = string.Format(CultureInfo.CurrentCulture, format, arguments);
+            return new LocalizedString(name, value, resourceNotFound: false);
         }
     }
 

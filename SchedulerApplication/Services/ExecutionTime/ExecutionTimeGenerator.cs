@@ -81,7 +81,8 @@ public class ExecutionTimeGenerator : IExecutionTimeGenerator
     {
         if (configuration is RecurringSchedulerConfiguration { Interval: < 0 })
         {
-            throw new ArgumentException(_customStringLocalizer["ExecutionTimeGeneratorInvalidIntervalExc", configuration.Culture].Value);
+            var localizedMessage = _customStringLocalizer["ExecutionTimeGeneratorInvalidIntervalExc", configuration.Culture].Value;
+            throw new ArgumentException(localizedMessage);
         }
     }
 }

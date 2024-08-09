@@ -10,6 +10,7 @@ using SchedulerApplication.Services.DayOptionStrategies;
 using SchedulerApplication.Services.ExecutionTime;
 using SchedulerApplication.Services.HourCalculator;
 using SchedulerApplication.Services.ScheduleTypes;
+using System.Globalization;
 
 namespace SchedulerApp.Testing.ScheduleTypesTest;
 
@@ -688,6 +689,7 @@ public class ScheduleTypeTest
             Limits = new LimitsTimeInterval(new DateTime(2024, 01, 01), new DateTime(2024, 01, 02)),
             Culture = CultureOptions.en_GB
         };
+        CultureInfo.CurrentCulture = new CultureInfo("en-GB");
 
         Action act = () => _timeGenerator.GenerateExecutions(configuration, 12);
 
@@ -1771,6 +1773,62 @@ public class ScheduleTypeTest
 
         // Assert
         result.Should().Be("Occurs on the first Sunday of every 1 month(s). Schedule will be used on 12/3/2023 at 9:00 AM starting on 12/1/2023.");
+    }
+
+    [Fact]
+    public void LocalizedString_ShouldReturnKey_WhenFormatIsNull()
+    {
+        // Arrange
+        string key = "NonExistentKey";
+
+
+        CustomStringLocalizer _localizer = new CustomStringLocalizer();
+
+        // Act
+        var result = _localizer[key];
+
+        // Assert
+        Assert.Equal(key, result.Value);
+        Assert.True(result.ResourceNotFound);
+    }
+    [Fact]
+    public void GetAllStrings_ShouldReturnAllStringsForCulture()
+    {
+        // Arrange
+        CultureInfo.CurrentCulture = new CultureInfo("en-GB");
+
+        // Act
+        CustomStringLocalizer _localizer = new CustomStringLocalizer();
+
+        var result = _localizer.GetAllStrings(false).ToList();
+
+        // Assert
+        Assert.NotEmpty(result);
+        Assert.All(result, localizedString => Assert.False(localizedString.ResourceNotFound));
+
+        // Example assertions for specific keys
+        Assert.Contains(result, ls => ls.Name == "DailyDescriptionSingle" && ls.Value == "Occurs once at {0}. Schedule will be used on {1} at {2} starting on {3}.");
+        Assert.Contains(result, ls => ls.Name == "Monday" && ls.Value == "Monday");
+    }
+
+    [Fact]
+    public void CalculateDates_ShouldThrowArgumentException_WhenConfigIsNotMonthlySchedulerConfiguration()
+    {
+        // Arrange
+        var calculator = new MonthlyDateCalculator();
+        var invalidConfig = new OnceSchedulerConfiguration
+        {
+            IsEnabled = true,
+            CurrentDate = new DateTime(2024, 01, 01),
+            ConfigurationDateTime = new DateTime(2024, 01, 01, 9, 0, 0)
+        };
+
+        // Act
+        Action act = () => calculator.CalculateDates(invalidConfig, 5);
+
+        // Assert
+        var exception = Assert.Throws<ArgumentException>(act);
+        Assert.Equal("Invalid configuration type for MonthlyDateCalculator.", exception.Message);
     }
 }
 
