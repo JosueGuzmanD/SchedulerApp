@@ -16,12 +16,12 @@ public class ScheduleTypeRecurring : ScheduleTypeBase<RecurringSchedulerConfigur
 
     protected override List<ScheduleOutput> CreateScheduleOutput(RecurringSchedulerConfiguration configuration)
     {
-        var executionTimes = _executionTimeGenerator.GenerateExecutions(configuration, _maxExecutions);
+        var executionTimes = ExecutionTimeGenerator.GenerateExecutions(configuration, _maxExecutions);
         var outputs = new List<ScheduleOutput>();
 
         foreach (var time in executionTimes)
         {
-            var description = _descriptionService.GenerateDescription(configuration, time);
+            var description = DescriptionService.GenerateDescription(configuration, time);
             outputs.Add(new ScheduleOutput
             {
                 Description = description,
