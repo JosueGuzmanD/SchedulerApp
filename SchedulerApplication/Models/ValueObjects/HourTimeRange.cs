@@ -41,7 +41,7 @@ public class HourTimeRange : IEquatable<HourTimeRange>
 
     public static bool operator !=(HourTimeRange left, HourTimeRange right)
     {
-        return !(left == right);
+        return !left.Equals(right);
     }
 }
 
